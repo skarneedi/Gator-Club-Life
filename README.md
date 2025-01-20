@@ -17,6 +17,6 @@ These challenges result in reduced participation, missed opportunities for stude
 ---
 
 
-# Contributors
+## Contributors
 - Frontend: Kommi Deekshita , Abhigna Nimmagadda
 - Backend: Sri Ashritha Appalchity, Sonali Karneedi
