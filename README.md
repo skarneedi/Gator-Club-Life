@@ -15,3 +15,8 @@ University events are essential for fostering community, encouraging engagement,
 These challenges result in reduced participation, missed opportunities for students, and decreased overall impact of university events.
 
 ---
+
+
+##Contributors
+- Frontend: Kommi Deekshita , Abhigna Nimmagadda
+- Backend: Sri Ashritha Appalchity, Sonali Karneedi
