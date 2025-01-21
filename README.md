@@ -14,6 +14,13 @@ University events are essential for fostering community, encouraging engagement,
 
 These challenges result in reduced participation, missed opportunities for students, and decreased overall impact of university events.
 
+--
+
+
+## Overview
+The University Events Platform is a centralized solution for organizing, promoting, and managing university events. It aims to bridge the gap between event organizers and students by providing a seamless interface for event discovery, participation, and management. This platform simplifies event-related processes, enhances student engagement, and fosters a more connected university community.
+
+
 ---
 
 
