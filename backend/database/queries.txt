@@ -1,0 +1,19 @@
+1. Users Table
+CREATE TABLE users (
+    user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_name TEXT NOT NULL,
+    user_email TEXT UNIQUE NOT NULL,
+    user_password TEXT NOT NULL,
+    user_role TEXT CHECK( user_role IN ('admin', 'member', 'organizer') ) NOT NULL,
+    user_created_at INTEGER DEFAULT (strftime('%s', 'now'))
+);
+
+2. Clubs Table
+CREATE TABLE clubs (
+    club_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    club_name TEXT NOT NULL,
+    club_description TEXT NOT NULL,
+    club_created_by INTEGER,
+    club_created_at INTEGER DEFAULT (strftime('%s', 'now')),
+    FOREIGN KEY (club_created_by) REFERENCES users(user_id) ON DELETE SET NULL
+);
