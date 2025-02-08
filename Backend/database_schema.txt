@@ -1,0 +1,25 @@
+Database Schema
+
+Table: users
+Stores registered users such as students, club admins, and organizers.
+
+- id
+- name → Full name of the user.
+- email → Email address for login.
+- password → Hashed password for security.
+- role → Defines user type; can be one of the following types:
+  - admin
+  - member
+  - organizer
+- created_at → Records when the user was registered.
+
+---
+
+Table: clubs
+Stores clubs created by students.
+
+- id
+- name → Name of the club.
+- description → Brief information about the club.
+- created_by (Foreign Key → `users.id`) → The user who created the club.
+- created_at → Records when the club was created.
