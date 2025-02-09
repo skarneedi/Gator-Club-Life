@@ -22,3 +22,26 @@ Stores clubs created by students.
 - description → Brief information about the club.
 - created_by (Foreign Key → `users.id`) → The user who created the club.
 - created_at → Records when the club was created.
+
+Table: events
+Stores events organized by clubs.
+
+id → Unique identifier for each event.
+name → Name of the event.
+description → Brief details about the event.
+date → Event date (stored as a UNIX timestamp).
+location → Venue of the event.
+organized_by (Foreign Key → users.id) → The user who is organizing the event.
+club_id (Foreign Key → clubs.id) → The club hosting the event.
+created_at → Records when the event was created.
+Table: bookings
+Stores bookings made by users for events.
+
+id → Unique identifier for each booking.
+user_id (Foreign Key → users.id) → The user making the booking.
+event_id (Foreign Key → events.id) → The event being booked.
+status → Status of the booking; can be one of the following:
+confirmed
+pending
+cancelled
+booked_at → Records when the booking was made.
