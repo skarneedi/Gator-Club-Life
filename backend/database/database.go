@@ -13,7 +13,6 @@ type User struct {
 	UserID        uint   `gorm:"column:user_id;primaryKey;autoIncrement" json:"user_id"`
 	UserName      string `gorm:"column:user_name;not null" json:"user_name"`
 	UserEmail     string `gorm:"column:user_email;unique;not null" json:"user_email"`
-	UserPassword  string `gorm:"column:user_password;not null" json:"user_password"`
 	UserRole      string `gorm:"column:user_role;not null;check:(user_role IN ('admin', 'member', 'organizer'))" json:"user_role"`
 	UserCreatedAt int64  `gorm:"column:user_created_at;default:(strftime('%s', 'now'))" json:"user_created_at"`
 }

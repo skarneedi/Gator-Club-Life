@@ -5,8 +5,7 @@ Stores registered users such as students, club admins, and organizers.
 
 - id
 - name → Full name of the user.
-- email → Email address for login.
-- password → Hashed password for security.
+- email → Email address.
 - role → Defines user type; can be one of the following types:
   - admin
   - member
