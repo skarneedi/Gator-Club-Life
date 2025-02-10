@@ -26,22 +26,22 @@ type Club struct {
 }
 
 type Event struct {
-	EventID       uint   `gorm:"column:event_id;primaryKey;autoIncrement" json:"event_id"`
-	EventName     string `gorm:"column:event_name;not null" json:"event_name"`
+	EventID          uint   `gorm:"column:event_id;primaryKey;autoIncrement" json:"event_id"`
+	EventName        string `gorm:"column:event_name;not null" json:"event_name"`
 	EventDescription string `gorm:"column:event_description;not null" json:"event_description"`
-	EventDate     int64  `gorm:"column:event_date;not null" json:"event_date"` // Stored as UNIX timestamp
-	EventLocation string `gorm:"column:event_location;not null" json:"event_location"`
-	OrganizedBy   *uint  `gorm:"column:organized_by" json:"organized_by"`
-	ClubID        *uint  `gorm:"column:club_id" json:"club_id"`
-	CreatedAt     int64  `gorm:"column:created_at;default:(strftime('%s', 'now'))" json:"created_at"`
+	EventDate        int64  `gorm:"column:event_date;not null" json:"event_date"` // Stored as UNIX timestamp
+	EventLocation    string `gorm:"column:event_location;not null" json:"event_location"`
+	OrganizedBy      *uint  `gorm:"column:organized_by" json:"organized_by"`
+	ClubID           *uint  `gorm:"column:club_id" json:"club_id"`
+	CreatedAt        int64  `gorm:"column:created_at;default:(strftime('%s', 'now'))" json:"created_at"`
 }
 
 type Booking struct {
-	BookingID  uint   `gorm:"column:booking_id;primaryKey;autoIncrement" json:"booking_id"`
-	UserID     uint   `gorm:"column:user_id" json:"user_id"`
-	EventID    uint   `gorm:"column:event_id" json:"event_id"`
-	Status     string `gorm:"column:booking_status;not null;check:(booking_status IN ('confirmed', 'pending', 'cancelled'))" json:"booking_status"`
-	BookedAt   int64  `gorm:"column:booked_at;default:(strftime('%s', 'now'))" json:"booked_at"`
+	BookingID uint   `gorm:"column:booking_id;primaryKey;autoIncrement" json:"booking_id"`
+	UserID    uint   `gorm:"column:user_id" json:"user_id"`
+	EventID   uint   `gorm:"column:event_id" json:"event_id"`
+	Status    string `gorm:"column:booking_status;not null;check:(booking_status IN ('confirmed', 'pending', 'cancelled'))" json:"booking_status"`
+	BookedAt  int64  `gorm:"column:booked_at;default:(strftime('%s', 'now'))" json:"booked_at"`
 }
 
 func (User) TableName() string {
@@ -67,5 +67,3 @@ func InitDB() {
 	fmt.Println("connected successfully")
 
 }
-
-
