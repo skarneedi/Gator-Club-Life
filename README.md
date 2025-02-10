@@ -14,7 +14,7 @@ University events are essential for fostering community, encouraging engagement,
 
 These challenges result in reduced participation, missed opportunities for students, and decreased overall impact of university events.
 
---
+---
 
 
 ## Overview
