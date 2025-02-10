@@ -4,11 +4,18 @@ import (
 	"backend/database"
 	"fmt"
 	"log"
+	"net/http"
 )
 
 func main() {
 	fmt.Println("Running Gator-Club-Life Backend")
 	database.InitDB()
 	fmt.Println("Database Connection Successful!")
-	log.Fatal()
+
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, "Welcome to Gator-Club-Life!")
+	})
+
+	fmt.Println("Server running on port 8080")
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
