@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "GatorClubLife": {
+    "abhi": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/gator-club-life",
+            "outputPath": "dist/abhi",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -29,7 +29,12 @@
             "styles": [
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [],
+            "server": "src/main.server.ts",
+            "prerender": true,
+            "ssr": {
+              "entry": "src/server.ts"
+            }
           },
           "configurations": {
             "production": {
@@ -59,10 +64,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "GatorClubLife:build:production"
+              "buildTarget": "abhi:build:production"
             },
             "development": {
-              "buildTarget": "GatorClubLife:build:development"
+              "buildTarget": "abhi:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -94,6 +99,6 @@
     }
   },
   "cli": {
-    "analytics": "a21da157-e8cf-4566-ac62-1909fd6af431"
+    "analytics": false
   }
 }

@@ -1,0 +1,16 @@
+<!-- src/app/events/events.component.html -->
+<div class="container">
+    <h1>Upcoming Events</h1>
+    <input type="text" [(ngModel)]="searchTerm" placeholder="Search events..." />
+  
+    <div class="event-grid">
+      <div *ngFor="let event of filteredEvents" class="event-card">
+        <h2>{{ event.title }}</h2>
+        <p><strong>Date:</strong> {{ event.date }}</p>
+        <p><strong>Time:</strong> {{ event.time }}</p>
+        <p><strong>Location:</strong> {{ event.location }}</p>
+        <p>{{ event.description }}</p>
+        <a href="{{ event.link }}">Learn more</a>
+      </div>
+    </div>
+  </div>
