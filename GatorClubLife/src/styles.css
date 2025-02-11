@@ -1,1 +1,62 @@
-/* You can add global styles to this file, and also import other style files */
+/* src/styles.css */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #efce8d;
+  }
+  
+  header {
+    background-color: #f0b73c;
+    color: white;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .navbar {
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .nav-links {
+    list-style-type: none;
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .nav-links li a {
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+  }
+  
+  .nav-links li a:hover {
+    background-color: #555;
+  }
+  
+  .login-btn {
+    margin-left: auto;
+  }
+  
+  .login-btn a {
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    background-color: #f38415;
+    transition: background-color 0.3s;
+  }
+  
+  .login-btn a:hover {
+    background-color: #45a049;
+  }
