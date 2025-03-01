@@ -11,7 +11,7 @@ Stores registered users such as students, club admins, and organizers.
   - member
   - organizer
 - created_at → Records when the user was registered.
-
+- password → Password chosen by the user.
 ---
 
 Table: clubs
