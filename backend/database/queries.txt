@@ -7,6 +7,8 @@ CREATE TABLE users (
     user_created_at INTEGER DEFAULT (strftime('%s', 'now'))
 );
 
+ALTER TABLE users ADD COLUMN user_password TEXT NOT NULL;
+
 2. Clubs Table
 CREATE TABLE clubs (
     club_id INTEGER PRIMARY KEY AUTOINCREMENT,
