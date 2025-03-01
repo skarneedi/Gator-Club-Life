@@ -5,7 +5,8 @@ import (
 	"backend/routes"
 	"fmt"
 	"log"
-	"net/http"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 func main() {
@@ -13,13 +14,15 @@ func main() {
 	database.InitDB()
 	fmt.Println("Database Connection Successful!")
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "Welcome to Gator-Club-Life!")
-	})
-	http.HandleFunc("/users", routes.GetUsers)
-	http.HandleFunc("/users/create", routes.CreateUser)
-	http.HandleFunc("/login", routes.Login)
+	app := fiber.New()
 
-	fmt.Println("Server running on port 8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.SendString("Welcome to Gator-Club-Life!")
+	})
+
+	app.Get("/users", routes.GetUsers)
+	app.Post("/users/create", routes.CreateUser)
+	app.Post("/login", routes.Login)
+
+	log.Fatal(app.Listen(":8080"))
 }
