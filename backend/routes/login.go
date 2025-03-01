@@ -2,10 +2,9 @@ package routes
 
 import (
 	"backend/database"
-	"encoding/json"
 	"fmt"
-	"net/http"
 
+	"github.com/gofiber/fiber/v2"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -18,44 +17,35 @@ type LoginResponse struct {
 	Message string `json:"message"`
 }
 
-func Login(w http.ResponseWriter, r *http.Request) {
+func Login(c *fiber.Ctx) error {
 	fmt.Println("Login API called")
 
 	var req LoginRequest
-	err := json.NewDecoder(r.Body).Decode(&req)
-	if err != nil {
-		fmt.Println("Error decoding login request:", err)
-		http.Error(w, "Invalid request: Unable to parse JSON", http.StatusBadRequest)
-		return
+	if err := c.BodyParser(&req); err != nil {
+		fmt.Println("Error parsing login request:", err)
+		return c.Status(fiber.StatusBadRequest).SendString("Invalid request: Unable to parse JSON")
 	}
 
 	if req.Email == "" || req.Password == "" {
-		http.Error(w, "Missing required fields: email and password", http.StatusBadRequest)
-		return
+		return c.Status(fiber.StatusBadRequest).SendString("Missing required fields: email and password")
 	}
 
 	var user database.User
 	result := database.DB.Where("user_email = ?", req.Email).First(&user)
 	if result.Error != nil {
 		fmt.Println("User not found or error:", result.Error)
-		http.Error(w, "Invalid email or password", http.StatusUnauthorized)
-		return
+		return c.Status(fiber.StatusUnauthorized).SendString("Invalid email or password")
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(user.UserPassword), []byte(req.Password))
+	err := bcrypt.CompareHashAndPassword([]byte(user.UserPassword), []byte(req.Password))
 	if err != nil {
 		fmt.Println("Password mismatch:", err)
-		http.Error(w, "Invalid email or password", http.StatusUnauthorized)
-		return
+		return c.Status(fiber.StatusUnauthorized).SendString("Invalid email or password")
 	}
 
 	resp := LoginResponse{
 		Message: "Login successful",
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	err = json.NewEncoder(w).Encode(resp)
-	if err != nil {
-		http.Error(w, "Error encoding response to JSON", http.StatusInternalServerError)
-	}
+	return c.JSON(resp)
 }
