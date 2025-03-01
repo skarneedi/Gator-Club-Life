@@ -18,6 +18,7 @@ func main() {
 	})
 	http.HandleFunc("/users", routes.GetUsers)
 	http.HandleFunc("/users/create", routes.CreateUser)
+	http.HandleFunc("/login", routes.Login)
 
 	fmt.Println("Server running on port 8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
