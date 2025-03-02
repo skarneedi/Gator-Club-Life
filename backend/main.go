@@ -9,6 +9,7 @@ import (
 	_ "backend/docs"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors" // Import CORS middleware
 	fiberSwagger "github.com/swaggo/fiber-swagger"
 )
 
@@ -18,6 +19,9 @@ func main() {
 	fmt.Println("Database Connection Successful!")
 
 	app := fiber.New()
+
+	// Enable CORS to allow requests from the Angular front-end.
+	app.Use(cors.New())
 
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Welcome to Gator-Club-Life!")
