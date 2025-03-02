@@ -8,15 +8,30 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// LoginRequest represents the expected JSON payload for login.
+// @Description Login credentials for the user.
 type LoginRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email    string `json:"email"`    // User's email address
+	Password string `json:"password"` // User's password
 }
 
+// LoginResponse represents the JSON response after a successful login.
+// @Description Response message after a successful login.
 type LoginResponse struct {
 	Message string `json:"message"`
 }
 
+// Login handles user login requests using Fiber's context.
+// @Summary Login a user
+// @Description Authenticate a user and return a success message.
+// @Tags Authentication
+// @Accept json
+// @Produce json
+// @Param login body LoginRequest true "Login credentials"
+// @Success 200 {object} LoginResponse "Login successful"
+// @Failure 400 {string} string "Invalid request: Unable to parse JSON or missing fields"
+// @Failure 401 {string} string "Invalid email or password"
+// @Router /login [post]
 func Login(c *fiber.Ctx) error {
 	fmt.Println("Login API called")
 

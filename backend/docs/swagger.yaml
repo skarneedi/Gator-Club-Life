@@ -1,0 +1,117 @@
+definitions:
+  database.User:
+    properties:
+      user_created_at:
+        type: integer
+      user_email:
+        type: string
+      user_id:
+        type: integer
+      user_name:
+        type: string
+      user_password:
+        type: string
+      user_role:
+        type: string
+    type: object
+  routes.LoginRequest:
+    description: Login credentials for the user.
+    properties:
+      email:
+        description: User's email address
+        type: string
+      password:
+        description: User's password
+        type: string
+    type: object
+  routes.LoginResponse:
+    description: Response message after a successful login.
+    properties:
+      message:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate a user and return a success message.
+      parameters:
+      - description: Login credentials
+        in: body
+        name: login
+        required: true
+        schema:
+          $ref: '#/definitions/routes.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Login successful
+          schema:
+            $ref: '#/definitions/routes.LoginResponse'
+        "400":
+          description: 'Invalid request: Unable to parse JSON or missing fields'
+          schema:
+            type: string
+        "401":
+          description: Invalid email or password
+          schema:
+            type: string
+      summary: Login a user
+      tags:
+      - Authentication
+  /users:
+    get:
+      description: Retrieves all users from the database.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of users
+          schema:
+            items:
+              $ref: '#/definitions/database.User'
+            type: array
+        "500":
+          description: Error retrieving users
+          schema:
+            type: string
+      summary: Get all users
+      tags:
+      - Users
+  /users/create:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user with the required fields, including password
+        hashing.
+      parameters:
+      - description: User data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/database.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User successfully added
+          schema:
+            $ref: '#/definitions/database.User'
+        "400":
+          description: 'Invalid request: Unable to parse JSON or missing required
+            fields'
+          schema:
+            type: string
+        "500":
+          description: Error processing password or saving user to database
+          schema:
+            type: string
+      summary: Create a new user
+      tags:
+      - Users
+swagger: "2.0"

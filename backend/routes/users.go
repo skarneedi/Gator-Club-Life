@@ -8,6 +8,14 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// GetUsers godoc
+// @Summary      Get all users
+// @Description  Retrieves all users from the database.
+// @Tags         Users
+// @Produce      json
+// @Success      200  {array}   database.User "List of users"
+// @Failure      500  {string}  string "Error retrieving users"
+// @Router       /users [get]
 func GetUsers(c *fiber.Ctx) error {
 	fmt.Println("GetUsers API called")
 
@@ -21,6 +29,17 @@ func GetUsers(c *fiber.Ctx) error {
 	return c.JSON(users)
 }
 
+// CreateUser godoc
+// @Summary      Create a new user
+// @Description  Create a new user with the required fields, including password hashing.
+// @Tags         Users
+// @Accept       json
+// @Produce      json
+// @Param        user  body      database.User  true  "User data"
+// @Success      200   {object}  database.User  "User successfully added"
+// @Failure      400   {string}  string         "Invalid request: Unable to parse JSON or missing required fields"
+// @Failure      500   {string}  string         "Error processing password or saving user to database"
+// @Router       /users/create [post]
 func CreateUser(c *fiber.Ctx) error {
 	fmt.Println("CreateUser API called")
 
@@ -49,6 +68,7 @@ func CreateUser(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).SendString("Error saving user to database")
 	}
 
+	// Clear password before sending the response
 	user.UserPassword = ""
 	fmt.Println("User successfully added:", user)
 	return c.JSON(user)
