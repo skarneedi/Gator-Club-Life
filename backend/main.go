@@ -6,7 +6,10 @@ import (
 	"fmt"
 	"log"
 
+	_ "backend/docs"
+
 	"github.com/gofiber/fiber/v2"
+	fiberSwagger "github.com/swaggo/fiber-swagger"
 )
 
 func main() {
@@ -23,6 +26,9 @@ func main() {
 	app.Get("/users", routes.GetUsers)
 	app.Post("/users/create", routes.CreateUser)
 	app.Post("/login", routes.Login)
+
+	// Swagger endpoint: Access documentation at http://localhost:8080/swagger/index.html
+	app.Get("/swagger/*", fiberSwagger.WrapHandler)
 
 	log.Fatal(app.Listen(":8080"))
 }
