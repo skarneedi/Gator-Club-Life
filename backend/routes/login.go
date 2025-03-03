@@ -29,8 +29,8 @@ type LoginResponse struct {
 // @Produce json
 // @Param login body LoginRequest true "Login credentials"
 // @Success 200 {object} LoginResponse "Login successful"
-// @Failure 400 {string} string "Invalid request: Unable to parse JSON or missing fields"
-// @Failure 401 {string} string "Invalid email or password"
+// @Failure 400 {object} map[string]string "Missing required fields"
+// @Failure 401 {object} map[string]string "Invalid email or password"
 // @Router /login [post]
 func Login(c *fiber.Ctx) error {
 	fmt.Println("Login API called")
@@ -38,24 +38,32 @@ func Login(c *fiber.Ctx) error {
 	var req LoginRequest
 	if err := c.BodyParser(&req); err != nil {
 		fmt.Println("Error parsing login request:", err)
-		return c.Status(fiber.StatusBadRequest).SendString("Invalid request: Unable to parse JSON")
+		return c.Status(fiber.StatusBadRequest).JSON(map[string]string{
+			"error": "Invalid request: Unable to parse JSON",
+		})
 	}
 
 	if req.Email == "" || req.Password == "" {
-		return c.Status(fiber.StatusBadRequest).SendString("Missing required fields: email and password")
+		return c.Status(fiber.StatusBadRequest).JSON(map[string]string{
+			"error": "Missing required fields: email and password",
+		})
 	}
 
 	var user database.User
 	result := database.DB.Where("user_email = ?", req.Email).First(&user)
 	if result.Error != nil {
 		fmt.Println("User not found or error:", result.Error)
-		return c.Status(fiber.StatusUnauthorized).SendString("Invalid email or password")
+		return c.Status(fiber.StatusUnauthorized).JSON(map[string]string{
+			"error": "Invalid email or password",
+		})
 	}
 
 	err := bcrypt.CompareHashAndPassword([]byte(user.UserPassword), []byte(req.Password))
 	if err != nil {
 		fmt.Println("Password mismatch:", err)
-		return c.Status(fiber.StatusUnauthorized).SendString("Invalid email or password")
+		return c.Status(fiber.StatusUnauthorized).JSON(map[string]string{
+			"error": "Invalid email or password",
+		})
 	}
 
 	resp := LoginResponse{
