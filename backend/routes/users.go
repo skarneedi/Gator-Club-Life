@@ -38,7 +38,7 @@ func GetUsers(c *fiber.Ctx) error {
 // @Accept       json
 // @Produce      json
 // @Param        user  body      database.User  true  "User data"
-// @Success      200   {object}  database.User  "User successfully added"
+// @Success      200   {object}  map[string]interface{}  "User successfully added"
 // @Failure      400   {object}  map[string]string "Invalid request: Unable to parse JSON or missing required fields"
 // @Failure      500   {object}  map[string]string "Error processing password or saving user to database"
 // @Router       /users/create [post]
@@ -78,8 +78,15 @@ func CreateUser(c *fiber.Ctx) error {
 		})
 	}
 
-	// Clear password before sending the response
-	user.UserPassword = ""
-	fmt.Println("User successfully added:", user)
-	return c.JSON(user)
+	// Build a response object that omits the password field
+	response := map[string]interface{}{
+		"user_id":         user.UserID,
+		"user_name":       user.UserName,
+		"user_email":      user.UserEmail,
+		"user_role":       user.UserRole,
+		"user_created_at": user.UserCreatedAt,
+	}
+
+	fmt.Println("User successfully added:", response)
+	return c.JSON(response)
 }
