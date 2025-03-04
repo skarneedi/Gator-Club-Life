@@ -1,7 +1,9 @@
 # Sprint 2 Report
 
 **Project:** Gator-Club-Life 
-**Frontend Team:** Abhigna Nimmagadda, Deekshita Kommi 
+
+**Frontend Team:** Abhigna Nimmagadda, Deekshita Kommi
+
 **Backend Team:** Sri Ashritha Appalchity, Sonali Karneedi
 
 ---
@@ -67,7 +69,7 @@
 
 ### BACKEND
 - Login API Unit Test Results
-![Unit Tests for Login API](ResultScreenshots/Screenshot 2025-03-03 at 10.54.01 PM.png)
+![Unit Tests for Login API](ResultScreenshots/LoginAPI_UnitTestResults.png)
 
 - Users API Unit Test Results
-![Unit Tests for Users API](ResultScreenshots/Screenshot 2025-03-03 at 10.58.27 PM.png)
+![Unit Tests for Users API](ResultScreenshots/UsersAPI_UnitTestResults.png)
