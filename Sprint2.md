@@ -76,3 +76,74 @@
 
 - Users API Unit Test Results
 ![Unit Tests for Users API](ResultScreenshots/UsersAPI_UnitTestResults.png)
+
+
+
+# Frontend Documentation for Sprint
+
+## Overview
+
+During this sprint, we have made significant progress in the frontend development of our application. The primary focus was on implementing the *Registration Component, **Organization Page, **API Integrations, and **Automated Testing* using Jasmine and Karma for Unit Testing.
+
+## Features Implemented
+
+### 1. Registration Component
+
+•⁠  ⁠Developed the *Registration Component* where users can create their accounts.
+•⁠  ⁠Linked the *Registration Page* to the *Login Page* for seamless user experience.
+•⁠  ⁠Form fields include:
+  - Name
+  - Email
+  - Username
+  - Password
+  - Confirm Password
+  - Role (Dropdown with options like *Member*)
+•⁠  ⁠Successful registration redirects users to the *Login Page*.
+•⁠  ⁠Minimum password length validation will be added in the next sprint.
+•⁠  ⁠Username availability check will be implemented in the next sprint.
+
+### 2. Organization Page
+
+•⁠  ⁠Created the *Organizations Page* to display a list of clubs that users can browse through.
+•⁠  ⁠Displayed club details in a structured layout and added a filter search.
+
+## API Integrations
+
+We have integrated the following API endpoints:
+
+| Page         | Endpoint         | Method |
+| ------------ | ---------------- | ------ |
+| Registration | ⁠ /users/create ⁠  | POST   |
+| Login        | ⁠ /login ⁠         | POST   |
+
+### API Integration Flow
+
+•⁠  ⁠Registration: Submits user data to the backend and handles success or error responses.
+•⁠  ⁠Login: Authenticates users and stores the *isLoggedIn* status in localStorage.
+
+## Cypress Testing
+
+We implemented *End-to-End Testing* using Cypress to ensure the functionality of our key components.
+
+### Cypress Test Cases
+
+#### Authentication Tests
+
+•⁠  ⁠Successful Registration
+•⁠  ⁠Login with Valid Credentials
+•⁠  ⁠Login with Invalid Credentials
+•⁠  ⁠Navigation to About Page after Login
+
+#### Code Reference
+
+Refer to the following Cypress test files:
+
+•⁠  ⁠⁠ cypress/e2e/spec.cy.ts ⁠
+•⁠  ⁠⁠ cypress/e2e/register_spec.cy.ts ⁠
+
+### Key Assertions
+
+•⁠  ⁠Successful registration redirects to */login*.
+•⁠  ⁠Invalid credentials display appropriate error messages.
+•⁠  ⁠Valid login credentials redirect to */home*.
+•⁠  ⁠Navigation to the *About Page* works correctly after login.
