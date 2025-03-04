@@ -11,6 +11,7 @@ import { AnnouncementsComponent } from './announcements/announcements.component'
   imports: [CommonModule, RouterModule, AnnouncementsComponent],
 })
 export class AppComponent {
+  title = 'GatorClubLife';
   isLoggedIn: boolean = false;
   showAnnouncements: boolean = false; // Default: Hide Announcements
 
