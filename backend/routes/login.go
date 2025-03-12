@@ -30,7 +30,7 @@ type LoginResponse struct {
 // @Param login body LoginRequest true "Login credentials"
 // @Success 200 {object} LoginResponse "Login successful"
 // @Failure 400 {object} map[string]string "Missing required fields"
-// @Failure 401 {object} map[string]string "Invalid email or password"
+// @Failure 401 {object} map[string]string "Invalid email or account not found or incorrect password"
 // @Router /login [post]
 func Login(c *fiber.Ctx) error {
 	fmt.Println("Login API called")
@@ -39,13 +39,13 @@ func Login(c *fiber.Ctx) error {
 	if err := c.BodyParser(&req); err != nil {
 		fmt.Println("Error parsing login request:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(map[string]string{
-			"error": "Invalid request: Unable to parse JSON",
+			"message": "Invalid request: Unable to parse JSON",
 		})
 	}
 
 	if req.Email == "" || req.Password == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(map[string]string{
-			"error": "Missing required fields: email and password",
+			"message": "Missing required fields: email and password",
 		})
 	}
 
@@ -54,7 +54,7 @@ func Login(c *fiber.Ctx) error {
 	if result.Error != nil {
 		fmt.Println("User not found or error:", result.Error)
 		return c.Status(fiber.StatusUnauthorized).JSON(map[string]string{
-			"error": "Invalid email or password",
+			"message": "Invalid email or account not found",
 		})
 	}
 
@@ -62,7 +62,7 @@ func Login(c *fiber.Ctx) error {
 	if err != nil {
 		fmt.Println("Password mismatch:", err)
 		return c.Status(fiber.StatusUnauthorized).JSON(map[string]string{
-			"error": "Invalid email or password",
+			"message": "Incorrect password",
 		})
 	}
 

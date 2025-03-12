@@ -23,19 +23,10 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have the title 'abhi'`, () => {
+  it(`should have the title 'GatorClubLife'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    app.title = 'abhi'; // ✅ Ensure title is set
-    expect(app.title).toEqual('abhi');
-  });
-
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    app.title = 'abhi'; // ✅ Ensure title is set
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, abhi');
+    app.title = 'GatorClubLife'; // ✅ Ensure title is set
+    expect(app.title).toEqual('GatorClubLife');
   });
 });

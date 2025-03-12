@@ -1,6 +1,7 @@
 <div class="login-container">
   <h2>Login</h2>
   <form (ngSubmit)="login()">
+    <!-- Email Input -->
     <div>
       <label for="username">Email:</label>
       <input
@@ -10,7 +11,11 @@
         name="username"
         required
       />
+      <!-- Display email-specific error -->
+      <div *ngIf="emailError" class="error">{{ emailError }}</div>
     </div>
+
+    <!-- Password Input -->
     <div>
       <label for="password">Password:</label>
       <input
@@ -20,17 +25,17 @@
         name="password"
         required
       />
+      <!-- Display password-specific error -->
+      <div *ngIf="passwordError" class="error">{{ passwordError }}</div>
     </div>
-    <!-- Display error message if exists -->
-    <div *ngIf="errorMessage" class="error">
-      {{ errorMessage }}
-    </div>
+
+    <!-- Login Button -->
     <button type="submit">Login</button>
   </form>
 
   <!-- Register Link -->
   <div class="register-link">
-    Don't have an account? 
+    Don't have an account?
     <button (click)="goToRegister()" class="register-btn">Register</button>
   </div>
 </div>
