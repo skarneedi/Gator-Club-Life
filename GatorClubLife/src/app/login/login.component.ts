@@ -27,10 +27,9 @@ export class LoginComponent {
     this.emailError = '';
     this.passwordError = '';
 
-    // Validate email format
+    // Validate email format and domain
     if (!this.isValidEmail(this.username)) {
-      this.emailError = 'Invalid email address';
-      return;
+      return; // Exit early if email is invalid
     }
 
     const payload = {
@@ -67,6 +66,19 @@ export class LoginComponent {
   }
 
   private isValidEmail(email: string): boolean {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // General email format validation
+    const ufEmailRegex = /^[^\s@]+@ufl\.edu$/; // Check for @ufl.edu domain
+
+    if (!emailRegex.test(email)) {
+      this.emailError = 'Invalid email address';
+      return false;
+    }
+
+    if (!ufEmailRegex.test(email)) {
+      this.emailError = 'Please use your UF mail (e.g., example@ufl.edu)';
+      return false;
+    }
+
+    return true; // Email is valid and matches @ufl.edu
   }
 }
