@@ -9,7 +9,8 @@ import (
 	_ "backend/docs"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors" // Import CORS middleware
+	"github.com/gofiber/fiber/v2/middleware/cors"    // Enable CORS for cross-origin requests
+	"github.com/gofiber/fiber/v2/middleware/session" // Session middleware
 	fiberSwagger "github.com/swaggo/fiber-swagger"
 )
 
@@ -22,6 +23,10 @@ func main() {
 
 	// Enable CORS to allow requests from the Angular front-end.
 	app.Use(cors.New())
+
+	// Initialize session store and pass it to the login endpoint.
+	store := session.New()
+	routes.SetStore(store)
 
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Welcome to Gator-Club-Life!")
