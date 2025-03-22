@@ -5,33 +5,30 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/session"
 	"golang.org/x/crypto/bcrypt"
 )
 
 // LoginRequest represents the expected JSON payload for login.
-// @Description Login credentials for the user.
 type LoginRequest struct {
 	Email    string `json:"email"`    // User's email address
 	Password string `json:"password"` // User's password
 }
 
 // LoginResponse represents the JSON response after a successful login.
-// @Description Response message after a successful login.
 type LoginResponse struct {
 	Message string `json:"message"`
 }
 
+// Session store variable.
+var Store *session.Store
+
+// SetStore allows setting the session store from main.go.
+func SetStore(s *session.Store) {
+	Store = s
+}
+
 // Login handles user login requests using Fiber's context.
-// @Summary Login a user
-// @Description Authenticate a user and return a success message.
-// @Tags Authentication
-// @Accept json
-// @Produce json
-// @Param login body LoginRequest true "Login credentials"
-// @Success 200 {object} LoginResponse "Login successful"
-// @Failure 400 {object} map[string]string "Missing required fields"
-// @Failure 401 {object} map[string]string "Invalid email or account not found or incorrect password"
-// @Router /login [post]
 func Login(c *fiber.Ctx) error {
 	fmt.Println("Login API called")
 
@@ -43,7 +40,10 @@ func Login(c *fiber.Ctx) error {
 		})
 	}
 
+	fmt.Printf("Login attempt for email: %s\n", req.Email)
+
 	if req.Email == "" || req.Password == "" {
+		fmt.Println("Missing required fields for email or password")
 		return c.Status(fiber.StatusBadRequest).JSON(map[string]string{
 			"message": "Missing required fields: email and password",
 		})
@@ -60,15 +60,37 @@ func Login(c *fiber.Ctx) error {
 
 	err := bcrypt.CompareHashAndPassword([]byte(user.UserPassword), []byte(req.Password))
 	if err != nil {
-		fmt.Println("Password mismatch:", err)
+		fmt.Printf("Password mismatch for email: %s, error: %v\n", req.Email, err)
 		return c.Status(fiber.StatusUnauthorized).JSON(map[string]string{
 			"message": "Incorrect password",
 		})
 	}
 
+	fmt.Println("User authenticated successfully:", req.Email)
+
+	// Create a new session for the user.
+	sess, err := Store.Get(c)
+	if err != nil {
+		fmt.Println("Error retrieving session for user:", req.Email, "Error:", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(map[string]string{
+			"message": "Could not create session",
+		})
+	}
+
+	sess.Set("user_id", user.UserID)
+	sess.Set("user_email", user.UserEmail)
+	sess.Set("user_role", user.UserRole)
+	if err := sess.Save(); err != nil {
+		fmt.Println("Error saving session for user:", req.Email, "Error:", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(map[string]string{
+			"message": "Could not save session",
+		})
+	}
+
+	fmt.Println("Session created successfully for user:", req.Email)
+
 	resp := LoginResponse{
 		Message: "Login successful",
 	}
-
 	return c.JSON(resp)
 }
