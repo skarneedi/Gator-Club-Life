@@ -1,34 +1,51 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root', // Makes the service available application-wide
+  providedIn: 'root',
 })
 export class AuthService {
-  // Dummy "database" to store registered users
-  private registeredUsers: { name: string; email: string; username: string; password: string; role: string }[] = [];
+  // BehaviorSubjects store the latest value and emit it to new subscribers.
+  private loggedInSubject = new BehaviorSubject<boolean>(false);
+  private userNameSubject = new BehaviorSubject<string>('');
 
-  constructor() {}
+  // Public observables for components to subscribe to.
+  isLoggedIn$ = this.loggedInSubject.asObservable();
+  userName$ = this.userNameSubject.asObservable();
 
-  // Method to register a new user
-  register(name: string, email: string, username: string, password: string, role: string): boolean {
-    // Check if the username is already taken
-    const userExists = this.registeredUsers.some((user) => user.username === username);
-    if (userExists) {
-      return false; // Username is already taken
+  constructor() {
+    if (typeof window !== 'undefined') {
+      const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+      const storedName = localStorage.getItem('userName') || '';
+      this.loggedInSubject.next(isLoggedIn);
+      this.userNameSubject.next(storedName);
+
+      console.log('[AuthService] Initialized with values:', {
+        isLoggedIn,
+        storedName,
+      });
     }
-
-    // Add the new user to the "database"
-    this.registeredUsers.push({ name, email, username, password, role });
-    console.log('Registered Users:', this.registeredUsers);
-    return true; // Registration successful
   }
-
-  // Method to validate login credentials
-  login(username: string, password: string): boolean {
-    // Check if the username and password match a registered user
-    const user = this.registeredUsers.find(
-      (user) => user.username === username && user.password === password
-    );
-    return !!user; // Return true if user exists, false otherwise
+  
+  // Call this method after a successful login to store the user's name.
+  setUser(userName: string): void {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('userName', userName);
+      console.log('[AuthService] Session created for user:', userName);
+    }
+    this.loggedInSubject.next(true);
+    this.userNameSubject.next(userName);
+  }
+  
+  // Call this on logout to clear the user session.
+  clearUser(): void {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('userName');
+      console.log('[AuthService] Session cleared (user logged out)');
+    }
+    this.loggedInSubject.next(false);
+    this.userNameSubject.next('');
   }
 }

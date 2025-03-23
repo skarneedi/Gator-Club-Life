@@ -9,13 +9,19 @@
       <li><a routerLink="/about">About</a></li>
     </ul>
     <div class="login-btn">
-      <a routerLink="/login">Student Login</a>
-    </div>
+      <ng-container *ngIf="(isLoggedIn$ | async); else loginLink">
+        <span>Hi, {{ (userName$ | async) }}!</span>
+        &nbsp;
+        <button (click)="logout()">Logout</button>
+      </ng-container>
+      <ng-template #loginLink>
+        <a routerLink="/login">Student Login</a>
+      </ng-template>
+    </div>  
   </nav>
 </header>
 
 <main>
   <router-outlet></router-outlet>
   <app-announcements *ngIf="showAnnouncements"></app-announcements>
-
 </main>

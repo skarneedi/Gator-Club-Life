@@ -1,84 +1,77 @@
+// login.component.ts
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
-import { FormsModule } from '@angular/forms'; // Import FormsModule
-import { HttpClientModule } from '@angular/common/http'; // Import HttpClientModule
-import { CommonModule } from '@angular/common'; // Import CommonModule
+import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
   standalone: true,
-  imports: [FormsModule, HttpClientModule, CommonModule], // Correctly import these modules
+  imports: [FormsModule, HttpClientModule, CommonModule],
 })
 export class LoginComponent {
   username: string = '';
   password: string = '';
-  emailError: string = ''; // Error for invalid email
-  passwordError: string = ''; // Error for incorrect password
+  emailError: string = '';
+  passwordError: string = '';
 
-  constructor(private router: Router, private http: HttpClient) {}
+  constructor(
+    private router: Router,
+    private http: HttpClient,
+    private authService: AuthService
+  ) {}
 
   login() {
-    // Clear previous errors
     this.emailError = '';
     this.passwordError = '';
-
-    // Validate email format and domain
-    if (!this.isValidEmail(this.username)) {
-      return; // Exit early if email is invalid
-    }
+    console.log('[LoginComponent] Attempting login with email:', this.username);
 
     const payload = {
       email: this.username,
       password: this.password,
     };
 
+    // The backend now returns { message: string; userName?: string }.
     this.http
-      .post<{ message: string }>('http://localhost:8080/login', payload)
+      .post<{ message: string; userName?: string }>('http://localhost:8080/login', payload)
       .pipe(
         catchError((error) => {
-          console.error('Login API error:', error); // Log the error for debugging
-
-          // Check the error message from the backend
+          console.error('[LoginComponent] Login API error:', error);
           if (error.error && error.error.message === 'Incorrect password') {
-            this.passwordError = 'Incorrect password'; // Set password error
+            this.passwordError = 'Incorrect password';
           } else if (error.error && error.error.message === 'Invalid email or account not found') {
-            this.emailError = 'Invalid email or account not found'; // Set email error
+            this.emailError = 'Invalid email or account not found';
           } else {
-            this.emailError = 'An unexpected error occurred'; // Generic error
+            this.emailError = 'An unexpected error occurred';
           }
           return throwError(() => error);
         })
       )
       .subscribe((response) => {
-        // On successful login, mark as logged in and navigate to home
-        localStorage.setItem('isLoggedIn', 'true');
+        console.log('[LoginComponent] Login successful, response:', response);
+
+        // Now we retrieve the userName from the backend's response.
+        // Fallback to this.username if userName is undefined.
+        const name = response.userName || this.username;
+
+        // Update AuthService with the user’s name (not just the email).
+        this.authService.setUser(name);
+        console.log('[LoginComponent] User stored in AuthService:', name);
+
+        // Navigate to home (or wherever you'd like after login).
         this.router.navigate(['/home']);
       });
   }
 
   goToRegister(): void {
-    this.router.navigate(['/register']); // Navigate to Register page
-  }
-
-  private isValidEmail(email: string): boolean {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // General email format validation
-    const ufEmailRegex = /^[^\s@]+@ufl\.edu$/; // Check for @ufl.edu domain
-
-    if (!emailRegex.test(email)) {
-      this.emailError = 'Invalid email address';
-      return false;
-    }
-
-    if (!ufEmailRegex.test(email)) {
-      this.emailError = 'Please use your UF mail (e.g., example@ufl.edu)';
-      return false;
-    }
-
-    return true; // Email is valid and matches @ufl.edu
+    console.log('[LoginComponent] Navigating to Register page');
+    this.router.navigate(['/register']);
   }
 }
