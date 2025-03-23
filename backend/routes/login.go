@@ -15,9 +15,10 @@ type LoginRequest struct {
 	Password string `json:"password"` // User's password
 }
 
-// LoginResponse represents the JSON response after a successful login.
+// LoginResponse now includes a userName field so the frontend can display the user’s name.
 type LoginResponse struct {
-	Message string `json:"message"`
+	Message  string `json:"message"`
+	UserName string `json:"userName"`
 }
 
 // Session store variable.
@@ -89,8 +90,10 @@ func Login(c *fiber.Ctx) error {
 
 	fmt.Println("Session created successfully for user:", req.Email)
 
+	// Return the user’s name in the response so the frontend can display it.
 	resp := LoginResponse{
-		Message: "Login successful",
+		Message:  "Login successful",
+		UserName: user.UserName, // from the database.User struct
 	}
 	return c.JSON(resp)
 }
