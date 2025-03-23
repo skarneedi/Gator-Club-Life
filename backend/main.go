@@ -9,8 +9,8 @@ import (
 	_ "backend/docs"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"    // Enable CORS for cross-origin requests
-	"github.com/gofiber/fiber/v2/middleware/session" // Session middleware
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/session"
 	fiberSwagger "github.com/swaggo/fiber-swagger"
 )
 
@@ -20,11 +20,9 @@ func main() {
 	fmt.Println("Database Connection Successful!")
 
 	app := fiber.New()
-
-	// Enable CORS to allow requests from the Angular front-end.
 	app.Use(cors.New())
 
-	// Initialize session store and pass it to the login endpoint.
+	// Initialize session store.
 	store := session.New()
 	routes.SetStore(store)
 
@@ -35,8 +33,7 @@ func main() {
 	app.Get("/users", routes.GetUsers)
 	app.Post("/users/create", routes.CreateUser)
 	app.Post("/login", routes.Login)
-
-	// Swagger endpoint: Access documentation at http://localhost:8080/swagger/index.html
+	app.Post("/logout", routes.Logout) // Added Logout endpoint.
 	app.Get("/swagger/*", fiberSwagger.WrapHandler)
 
 	log.Fatal(app.Listen(":8080"))
