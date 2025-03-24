@@ -24,13 +24,29 @@ type Club struct {
 	ClubDescription string `gorm:"column:club_description;not null" json:"club_description"`
 	ClubCreatedBy   *uint  `gorm:"column:club_created_by" json:"club_created_by"`
 	ClubCreatedAt   int64  `gorm:"column:club_created_at;default:(strftime('%s', 'now'))" json:"club_created_at"`
+	ClubCategory    string `gorm:"column:club_category;not null;check:(club_category IN (
+		'Academic & Research',
+		'Professional & Career',
+		'Cultural & International',
+		'Arts & Performance',
+		'Recreational & Hobbies',
+		'Service & Volunteering',
+		'Health & Wellness',
+		'Social & Special Interest',
+		'Faith & Spirituality',
+		'Entrepreneurship & Business',
+		'STEM & Innovation',
+		'Sports & Athletics',
+		'Government & Leadership',
+		'Others / Miscellaneous'
+	))" json:"club_category"`
 }
 
 type Event struct {
 	EventID          uint   `gorm:"column:event_id;primaryKey;autoIncrement" json:"event_id"`
 	EventName        string `gorm:"column:event_name;not null" json:"event_name"`
 	EventDescription string `gorm:"column:event_description;not null" json:"event_description"`
-	EventDate        int64  `gorm:"column:event_date;not null" json:"event_date"` // Stored as UNIX timestamp
+	EventDate        int64  `gorm:"column:event_date;not null" json:"event_date"`
 	EventLocation    string `gorm:"column:event_location;not null" json:"event_location"`
 	OrganizedBy      *uint  `gorm:"column:organized_by" json:"organized_by"`
 	ClubID           *uint  `gorm:"column:club_id" json:"club_id"`
@@ -66,5 +82,4 @@ func InitDB() {
 		return
 	}
 	fmt.Println("connected successfully")
-
 }
