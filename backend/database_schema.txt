@@ -22,6 +22,21 @@ Stores clubs created by students.
 - description → Brief information about the club.
 - created_by (Foreign Key → `users.id`) → The user who created the club.
 - created_at → Records when the club was created.
+- club_category → Categories for the clubs
+  - Academic & Research
+  - Professional & Career
+  - Cultural & International
+  - Arts & Performance
+  - Recreational & Hobbies
+  - Service & Volunteering
+  - Health & Wellness
+  - Social & Special Interest
+  - Faith & Spirituality
+  - Entrepreneurship & Business
+  - STEM & Innovation
+  - Sports & Athletics
+  - Government & Leadership
+  - Others / Miscellaneous
 
 Table: events
 Stores events organized by clubs.
