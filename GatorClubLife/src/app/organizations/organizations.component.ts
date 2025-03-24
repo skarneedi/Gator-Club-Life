@@ -1,46 +1,69 @@
-// organizations.component.ts
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-organizations',
+  standalone: true,
   templateUrl: './organizations.component.html',
   styleUrls: ['./organizations.component.css'],
-  standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, HttpClientModule],
 })
-export class OrganizationsComponent {
-  searchTerm = '';
-  selectedCategory: string | null = null; // Tracks the currently selected category
+export class OrganizationsComponent implements OnInit {
+  clubs: any[] = [];
+  filteredOrganizations: any[] = [];
+  categories: string[] = [];
+  selectedCategory: string = '';
+  searchTerm: string = '';
 
-  // Sort categories alphabetically
-  categories = [
-    'Academic/Research',
-    'Academic/Research-Nursing',
-    'Agricultural and Life Sciences',
-    'Construction, and Planning',
-    'Education',
-  ].sort(); // Sort the array alphabetically
+  constructor(private http: HttpClient) {}
 
-  organizations = [
-    { name: '360BHM', description: 'The purpose of the 360BHM...', viewPage: '#', category: 'Academic/Research' },
-    { name: '3D Printing Club', description: 'The 3D Printing Club is...', viewPage: '#', category: 'Education' },
-    { name: 'A Private Inn', description: 'A Private Inn is affiliated...', viewPage: '#', category: 'Agricultural and Life Sciences' },
-    { name: 'A Reason to Give', description: 'Our goal is to help serve...', viewPage: '#', category: 'Construction, and Planning' },
-  ];
-
-  // Method to select a category
-  selectCategory(category: string) {
-    this.selectedCategory = this.selectedCategory === category ? null : category;
+  ngOnInit() {
+    this.fetchClubs();
   }
 
-  // Get filtered organizations based on search term and selected category
-  get filteredOrganizations() {
-    return this.organizations.filter(org => {
-      const matchesSearch = org.name.toLowerCase().includes(this.searchTerm.toLowerCase());
-      const matchesCategory = this.selectedCategory ? org.category === this.selectedCategory : true;
-      return matchesSearch && matchesCategory;
+  fetchClubs() {
+    this.http.get<any[]>('http://localhost:8080/clubs').subscribe({
+      next: (data) => {
+        this.clubs = data;
+        this.extractCategories();
+        this.applyFilters();
+      },
+      error: (err) => {
+        console.error('Error fetching clubs:', err);
+      },
     });
   }
+
+  extractCategories() {
+    const categorySet = new Set<string>();
+    this.clubs.forEach((club) => {
+      if (club.club_category) {
+        categorySet.add(club.club_category);
+      }
+    });
+    this.categories = Array.from(categorySet);
+  }
+
+  selectCategory(category: string) {
+    this.selectedCategory = category;
+    this.applyFilters();
+  }
+
+  applyFilters() {
+    this.filteredOrganizations = this.clubs.filter((club) => {
+      const matchesCategory =
+        !this.selectedCategory || club.club_category === this.selectedCategory;
+  
+      const matchesSearch =
+        !this.searchTerm ||
+        club.club_name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        club.club_description.toLowerCase().includes(this.searchTerm.toLowerCase());
+  
+      return matchesCategory && matchesSearch;
+    });
+  
+    console.log('[Filtered Clubs]:', this.filteredOrganizations);
+  }  
 }
