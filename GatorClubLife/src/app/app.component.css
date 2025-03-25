@@ -1,11 +1,43 @@
-/* src/app/app.component.css */
-.navbar .logo a {
-  color: white; /* Adjust the color as needed */
-  text-decoration: none;
-  font-size: 1.5rem;
-  font-weight: bold;
+.navbar {
+  background-color: #ffffff;
+  padding: 15px 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-.navbar .logo a:hover {
-  text-decoration: underline;
+.logo a {
+  font-size: 24px;
+  color: #0021A5;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-links a {
+  color: #0021A5;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.login-btn button,
+.login-btn a {
+  background-color: #0021A5;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.login-btn button:hover,
+.login-btn a:hover {
+  background-color: #FA4616;
 }
