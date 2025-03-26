@@ -14,35 +14,68 @@ import { throwError } from 'rxjs';
   imports: [FormsModule, HttpClientModule, CommonModule],
 })
 export class RegisterComponent {
-  name: string = '';
-  email: string = '';
-  username: string = '';
-  password: string = '';
-  confirmPassword: string = '';
-  role: string = '';
-  errorMessage: string = '';
+  // Form fields
+  name = '';
+  email = '';
+  username = '';
+  password = '';
+  confirmPassword = '';
+  role = '';
+
+  // Error messages & flags
+  errorMessage = '';
+  submitted = false;
+  passwordNotStrong = false;
+
+  // Eye icon toggle for password
+  showPassword = false;
 
   constructor(private router: Router, private http: HttpClient) {}
 
-  register(): void {
-    // Clear any previous error message
-    this.errorMessage = '';
+  // Toggle password visibility
+  toggleShowPassword(): void {
+    this.showPassword = !this.showPassword;
+  }
 
-    // Validate all required fields are provided
+  // Check password strength while typing
+  onPasswordInput(): void {
+    if (this.password) {
+      this.passwordNotStrong = !this.isPasswordStrong(this.password);
+    } else {
+      this.passwordNotStrong = false;
+    }
+  }
+
+  // Regex check for strong password
+  private isPasswordStrong(password: string): boolean {
+    const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$/;
+    return strongPasswordRegex.test(password);
+  }
+
+  register(): void {
+    this.errorMessage = '';
+    this.submitted = true;
+
+    // Check for missing fields
     if (!this.name || !this.email || !this.username || !this.password || !this.confirmPassword || !this.role) {
-      this.errorMessage = 'All fields are required!';
       return;
     }
 
-    // Ensure the password fields match
+    // Check password match
     if (this.password !== this.confirmPassword) {
       this.errorMessage = 'Passwords do not match!';
       return;
     }
 
-    // Prepare the payload for the backend.
-    // Note: The backend expects a JSON payload with keys:
-    // user_name, user_email, user_role, user_password.
+    // Final password strength check
+    if (!this.isPasswordStrong(this.password)) {
+      this.errorMessage =
+        'Password must be at least 8 characters long and include uppercase, lowercase, digit, and special character.';
+      this.passwordNotStrong = true;
+      return;
+    }
+
+    // Prepare payload
     const payload = {
       user_name: this.username,
       user_email: this.email,
@@ -50,20 +83,19 @@ export class RegisterComponent {
       user_password: this.password,
     };
 
-    // Send POST request to the registration endpoint on the Fiber backend.
-    this.http.post<{ user_id: number }>('http://localhost:8080/users/create', payload)
+    // Send POST request
+    this.http
+      .post<{ user_id: number }>('http://localhost:8080/users/create', payload)
       .pipe(
         catchError((error) => {
-          // Set errorMessage to display in the UI if registration fails.
           this.errorMessage = error.error || 'Registration failed!';
           return throwError(() => error);
         })
       )
       .subscribe({
-        next: (response) => {
-          // On successful registration, navigate to the login page.
+        next: () => {
           this.router.navigate(['/login']);
-        }
+        },
       });
   }
 
