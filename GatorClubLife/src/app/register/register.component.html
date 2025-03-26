@@ -2,46 +2,98 @@
   <h2>Register</h2>
   <form (ngSubmit)="register()">
     <!-- Name Field -->
-    <div>
+    <div [ngClass]="{'field-error': submitted && !name}">
       <label for="name">Name:</label>
-      <input type="text" id="name" [(ngModel)]="name" name="name" required />
+      <input
+        type="text"
+        id="name"
+        [(ngModel)]="name"
+        name="name"
+        required
+      />
     </div>
 
     <!-- Email Field -->
-    <div>
+    <div [ngClass]="{'field-error': submitted && !email}">
       <label for="email">Email Address:</label>
-      <input type="email" id="email" [(ngModel)]="email" name="email" required />
+      <input
+        type="email"
+        id="email"
+        [(ngModel)]="email"
+        name="email"
+        required
+      />
     </div>
 
     <!-- Username Field -->
-    <div>
+    <div [ngClass]="{'field-error': submitted && !username}">
       <label for="username">Username:</label>
-      <input type="text" id="username" [(ngModel)]="username" name="username" required />
+      <input
+        type="text"
+        id="username"
+        [(ngModel)]="username"
+        name="username"
+        required
+      />
     </div>
 
-    <!-- Password Field -->
-    <div>
+    <!-- Password Field with Eye Icon and Strength Meter -->
+    <div [ngClass]="{'field-error': (submitted && !password) || (submitted && passwordNotStrong)}">
       <label for="password">Password:</label>
-      <input type="password" id="password" [(ngModel)]="password" name="password" required />
+      <div class="password-container">
+        <input
+          [type]="showPassword ? 'text' : 'password'"
+          id="password"
+          [(ngModel)]="password"
+          name="password"
+          required
+          (input)="onPasswordInput()"
+        />
+        <!-- The Font Awesome eye icon toggles password visibility -->
+        <i class="fa"
+           [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"
+           (click)="toggleShowPassword()"></i>
+      </div>
+
+      <!-- Password Strength Meter -->
+      <div class="password-rules" *ngIf="password.length > 0">
+        <p *ngIf="!passwordNotStrong" class="valid-message">
+          ✓ Your password meets the required strength.
+        </p>
+        <p *ngIf="passwordNotStrong" class="invalid-message">
+          Password must be at least 8 characters, including uppercase, lowercase, digit, and special character.
+        </p>
+      </div>
     </div>
 
     <!-- Confirm Password Field -->
-    <div>
+    <div [ngClass]="{'field-error': submitted && !confirmPassword}">
       <label for="confirm-password">Confirm Password:</label>
-      <input type="password" id="confirm-password" [(ngModel)]="confirmPassword" name="confirm-password" required />
+      <input
+        type="password"
+        id="confirm-password"
+        [(ngModel)]="confirmPassword"
+        name="confirm-password"
+        required
+      />
     </div>
 
     <!-- Role Dropdown -->
-    <div>
+    <div [ngClass]="{'field-error': submitted && !role}">
       <label for="role">Role:</label>
-      <select id="role" [(ngModel)]="role" name="role" required>
+      <select
+        id="role"
+        [(ngModel)]="role"
+        name="role"
+        required
+      >
         <option value="" disabled>Select Role</option>
         <option value="member">Member</option>
         <option value="admin">Admin</option>
       </select>
     </div>
 
-    <!-- Display error message if registration fails -->
+    <!-- Error Message Display -->
     <div *ngIf="errorMessage" class="error">
       {{ errorMessage }}
     </div>
