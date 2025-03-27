@@ -1,0 +1,108 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f5e6d3; /* Light yellow background */
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Header Section */
+header {
+  background-color: #003366; /* Dark blue header */
+  color: white;
+  padding: 20px;
+  text-align: left;
+}
+
+header h1 {
+  margin-top: 0;
+  margin-bottom: 15px; /* Add spacing below the heading */
+  font-size: 24px; /* Adjust heading size */
+}
+
+.welcome-text p {
+  margin: 0 0 10px 0; /* Consistent spacing between paragraphs */
+  line-height: 1.6; /* Improve readability */
+}
+
+.welcome-text strong {
+  font-weight: bold;
+}
+
+.welcome-text a {
+  color: #ffffff; /* White link color for contrast */
+  text-decoration: underline; /* Underline link for emphasis */
+}
+
+/* Content Wrapper */
+.content-wrapper {
+  display: flex; /* Use flexbox to align items side by side */
+  gap: 20px; /* Add spacing between the main content and sidebar */
+  margin-top: 50px; /* Move the content down by 50 pixels */
+}
+
+/* Main Content (Event Types) */
+.event-types {
+  flex: 3; /* Main content takes up 3 parts of the width */
+}
+
+.event-types h2 {
+  margin-top: 0;
+  margin-bottom: 15px; /* Add spacing below the heading */
+  font-size: 20px; /* Adjust heading size */
+}
+
+.event-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px; /* Add spacing between event options */
+}
+
+.event-option {
+  width: calc(30% - 20px); /* Three columns per row */
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: white;
+}
+
+.event-option h3 {
+  margin-top: 0;
+  margin-bottom: 10px; /* Add spacing below the heading */
+  font-size: 18px; /* Adjust heading size */
+}
+
+.event-option p {
+  margin: 0;
+  font-size: 14px; /* Adjust paragraph size */
+}
+
+/* Sidebar */
+.sidebar {
+  flex: 1; /* Sidebar takes up 1 part of the width */
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: white;
+}
+
+.sidebar h4 {
+  margin-top: 0;
+  margin-bottom: 15px; /* Add spacing below the heading */
+  font-size: 18px; /* Adjust heading size */
+}
+
+.sidebar ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.sidebar li {
+  margin-bottom: 10px; /* Add spacing between list items */
+  font-size: 14px; /* Adjust font size */
+}

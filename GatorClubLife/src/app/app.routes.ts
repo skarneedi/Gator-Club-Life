@@ -8,6 +8,7 @@ import { RegisterComponent } from './register/register.component';
 import { authGuard } from './auth.guard';
 import { EventsComponent } from './events/events.component'; // Import EventsComponent
 import { OrganizationsComponent } from './organizations/organizations.component'; // Import OrganizationsComponent
+import { PermitsComponent } from './permits/permits.component'; // Import PermitsComponent
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' }, // Default route redirects to login
@@ -18,4 +19,5 @@ export const routes: Routes = [
   { path: 'contact', component: ContactComponent, canActivate: [authGuard] },
   { path: 'events', component: EventsComponent, canActivate: [authGuard] }, // Route for EventsComponent
   { path: 'organizations', component: OrganizationsComponent, canActivate: [authGuard] }, // Route for OrganizationsComponent
+  { path: 'permits', component: PermitsComponent, canActivate: [authGuard] }, // Route for PermitsComponent
 ];
