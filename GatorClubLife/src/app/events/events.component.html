@@ -1,16 +1,45 @@
-<!-- src/app/events/events.component.html -->
-<div class="container">
-    <h1>Upcoming Events</h1>
-    <input type="text" [(ngModel)]="searchTerm" placeholder="Search events..." />
-  
-    <div class="event-grid">
-      <div *ngFor="let event of filteredEvents" class="event-card">
+<div class="events-container">
+  <!-- Header Title -->
+  <h1>Upcoming Events</h1>
+
+  <!-- Search Bar -->
+  <div class="search-bar">
+    <input
+      type="text"
+      [(ngModel)]="searchQuery"
+      placeholder="Search by organization, title, or location..."
+    />
+    <button (click)="applyFilters()">Search</button>
+    <button (click)="resetFilters()">Reset</button>
+  </div>
+
+  <!-- Main Content Layout -->
+  <div class="main-content">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <h2>Select a Date</h2>
+      <input type="date" [(ngModel)]="selectedDate" (change)="applyFilters()" />
+
+      <h2>Event Categories</h2>
+      <ul>
+        <li (click)="resetFilters()">All</li>
+        <li (click)="filterByCategory('Music/Concert')">Music/Concert</li>
+        <li (click)="filterByCategory('5k (Run/Walk)')">5k (Run/Walk)</li>
+        <li (click)="filterByCategory('Community Service')">Community Service</li>
+        <li (click)="filterByCategory('Lecture/Speaker')">Lecture/Speaker</li>
+      </ul>
+    </div>
+
+    <!-- Events Grid -->
+    <div class="events-grid">
+      <div class="event-card" *ngFor="let event of filteredEvents">
+        <h3>{{ event.organization }}</h3>
         <h2>{{ event.title }}</h2>
         <p><strong>Date:</strong> {{ event.date }}</p>
-        <p><strong>Time:</strong> {{ event.time }}</p>
         <p><strong>Location:</strong> {{ event.location }}</p>
         <p>{{ event.description }}</p>
-        <a href="{{ event.link }}">Learn more</a>
+        <a href="#">Learn more</a>
       </div>
     </div>
   </div>
+</div>
