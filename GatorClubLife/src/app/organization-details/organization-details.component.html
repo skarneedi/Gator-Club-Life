@@ -1,0 +1,35 @@
+<!-- organization-details.component.html -->
+<div class="container">
+  <div class="sidebar">
+    <header>
+      <h1>{{ organization.name }}</h1>
+    </header>
+
+    <button class="follow-btn">Follow this Organization</button>
+    <button class="contact-btn">Contact this Organization</button>
+
+    <h3>Officers & Advisors</h3>
+    <ul>
+      <li *ngFor="let officer of officers">
+        <span>{{ officer.name }}</span>
+        <span>{{ officer.role }}</span>
+      </ul>
+    </div>
+
+    <main class="main-content">
+      <section class="purpose">
+        <h2>Purpose</h2>
+        <p>{{ organization.description || 'No description available.' }}</p>
+      </section>
+
+      <section class="announcements">
+        <h2>Announcements</h2>
+        <p *ngIf="!announcements.length">There are no upcoming announcements.</p>
+      </section>
+
+      <section class="events">
+        <h2>Events</h2>
+        <p *ngIf="!events.length">There are no upcoming events.</p>
+      </section>
+    </main>
+</div>

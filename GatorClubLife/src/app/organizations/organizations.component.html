@@ -34,7 +34,13 @@
       >
         <h2>{{ org.club_name }}</h2>
         <p>{{ org.club_description }}</p>
-        <a href="#">View page</a>
+        <!-- Router link to the organization details page -->
+        <a
+          [routerLink]="['/organizations', org.id]"
+          class="view-page-link"
+        >
+          <i class="fas fa-arrow-right"></i> View page
+        </a>
       </div>
     </div>
   </div>
