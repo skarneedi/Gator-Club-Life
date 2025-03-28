@@ -36,6 +36,7 @@ func main() {
 	app.Post("/logout", routes.Logout) // Added Logout endpoint.
 	app.Get("/swagger/*", fiberSwagger.WrapHandler)
 	app.Get("/clubs", routes.GetClubs)
+	app.Get("/events", routes.GetEvents)
 
 	log.Fatal(app.Listen(":8080"))
 }
