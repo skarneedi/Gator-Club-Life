@@ -1,10 +1,11 @@
+/* Existing Styles */
 .navbar {
   background-color: #ffffff;
   padding: 15px 50px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .logo a {
@@ -40,4 +41,56 @@
 .login-btn button:hover,
 .login-btn a:hover {
   background-color: #FA4616;
+}
+
+/* New Styles for Dropdown Menu */
+.user-profile-dropdown {
+  position: relative;
+  cursor: pointer;
+}
+
+.user-info {
+  background-color: #0021A5; /* Dark blue background */
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  display: inline-block;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  list-style-type: none;
+  padding: 0;
+  margin: 10px 0 0 0;
+  width: 200px;
+  z-index: 1000;
+  display: none; /* Hidden by default */
+}
+
+.user-profile-dropdown:hover .dropdown-menu {
+  display: block; /* Show dropdown on hover */
+}
+
+.dropdown-menu li {
+  padding: 10px 20px;
+  border-bottom: 1px solid #ccc;
+}
+
+.dropdown-menu li:last-child {
+  border-bottom: none;
+}
+
+.dropdown-menu li a {
+  text-decoration: none;
+  color: #f9f9fb; /* Dark blue text */
+  display: block;
+}
+
+.dropdown-menu li:hover {
+  background-color: #f5e6d3; /* Light yellow hover background */
 }
