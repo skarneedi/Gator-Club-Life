@@ -47,6 +47,7 @@
 .user-profile-dropdown {
   position: relative;
   cursor: pointer;
+  display: inline-block; /* Ensure the container wraps its children */
 }
 
 .user-info {
@@ -59,21 +60,16 @@
 
 .dropdown-menu {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 5px); /* Add a small gap between user info and dropdown */
   right: 0;
   background-color: white;
   border: 1px solid #ccc;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   list-style-type: none;
   padding: 0;
-  margin: 10px 0 0 0;
+  margin: 0; /* Remove default margin */
   width: 200px;
   z-index: 1000;
-  display: none; /* Hidden by default */
-}
-
-.user-profile-dropdown:hover .dropdown-menu {
-  display: block; /* Show dropdown on hover */
 }
 
 .dropdown-menu li {
@@ -87,7 +83,7 @@
 
 .dropdown-menu li a {
   text-decoration: none;
-  color: #f9f9fb; /* Dark blue text */
+  color: #f6f6f8; 
   display: block;
 }
 

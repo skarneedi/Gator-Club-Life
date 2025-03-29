@@ -7,7 +7,7 @@ import { BehaviorSubject } from 'rxjs';
 export class AuthService {
   // BehaviorSubjects store the latest value and emit it to new subscribers.
   private loggedInSubject = new BehaviorSubject<boolean>(false);
-  private userNameSubject = new BehaviorSubject<string>('');
+  private userNameSubject = new BehaviorSubject<string | null>(null); // Use null for unauthenticated state
 
   // Public observables for components to subscribe to.
   isLoggedIn$ = this.loggedInSubject.asObservable();
@@ -16,7 +16,7 @@ export class AuthService {
   constructor() {
     if (typeof window !== 'undefined') {
       const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-      const storedName = localStorage.getItem('userName') || '';
+      const storedName = isLoggedIn ? localStorage.getItem('userName') || null : null; // Only use stored name if logged in
       this.loggedInSubject.next(isLoggedIn);
       this.userNameSubject.next(storedName);
 
@@ -26,7 +26,7 @@ export class AuthService {
       });
     }
   }
-  
+
   // Call this method after a successful login to store the user's name.
   setUser(userName: string): void {
     if (typeof window !== 'undefined') {
@@ -37,7 +37,7 @@ export class AuthService {
     this.loggedInSubject.next(true);
     this.userNameSubject.next(userName);
   }
-  
+
   // Call this on logout to clear the user session.
   clearUser(): void {
     if (typeof window !== 'undefined') {
@@ -46,6 +46,11 @@ export class AuthService {
       console.log('[AuthService] Session cleared (user logged out)');
     }
     this.loggedInSubject.next(false);
-    this.userNameSubject.next('');
+    this.userNameSubject.next(null); // Reset to null when logged out
+  }
+
+  // Add this method to handle logout logic
+  logout(): void {
+    this.clearUser(); // Reuse the existing clearUser method
   }
 }

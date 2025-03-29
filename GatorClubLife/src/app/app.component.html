@@ -14,11 +14,14 @@
     <!-- User Profile Dropdown -->
     <div class="login-btn">
       <ng-container *ngIf="(isLoggedIn$ | async); else loginLink">
-        <div class="user-profile-dropdown">
+        <div
+          class="user-profile-dropdown"
+          (click)="toggleDropdown($event)"
+        >
           <div class="user-info">
-            <span>Hi, {{ (userName$ | async) }}!</span>
+            <span>Hi, {{ (userName$ | async) || 'Guest' }}!</span> <!-- Fallback to "Guest" if userName is null -->
           </div>
-          <ul class="dropdown-menu">
+          <ul class="dropdown-menu" *ngIf="showDropdown">
             <li><a routerLink="/profile">Profile</a></li>
             <li><a routerLink="/involvement">Involvement</a></li>
             <li><a routerLink="/my-events">My Events</a></li>
