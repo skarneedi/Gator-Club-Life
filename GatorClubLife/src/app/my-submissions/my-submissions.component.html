@@ -1,0 +1,73 @@
+<div class="container">
+    <!-- Header Section -->
+    <header>
+      <h1>My Submissions</h1>
+    </header>
+  
+    <!-- Tabs for Navigation -->
+    <nav class="tabs">
+      <button
+        [class.active]="activeTab === 'org-registrations'"
+        (click)="setActiveTab('org-registrations')"
+      >
+        Org. Registrations
+      </button>
+      <button
+        [class.active]="activeTab === 'my-permits'"
+        (click)="setActiveTab('my-permits')"
+      >
+        <i class="fa-solid fa-calendar"></i> My Permits
+      </button>
+      <button
+        [class.active]="activeTab === 'application-submissions'"
+        (click)="setActiveTab('application-submissions')"
+      >
+        Application Submissions
+      </button>
+    </nav>
+  
+    <!-- Main Content -->
+    <main>
+      <!-- Org. Registrations Content -->
+      <section *ngIf="activeTab === 'org-registrations'">
+        <p>No registrations found!</p>
+      </section>
+  
+      <!-- My Permits Content -->
+      <section *ngIf="activeTab === 'my-permits'">
+        <h2>My Permits</h2>
+        <p>Want to check on the status of your permits? Look no further!</p>
+        <div class="permit-filter">
+          <input type="text" placeholder="Search and Filter Your Permits">
+          <button>Search</button>
+        </div>
+        <div class="permit-statuses">
+          <label><input type="checkbox" checked> Completed</label>
+          <label><input type="checkbox" checked> Incomplete</label>
+          <label><input type="checkbox" checked> Canceled</label>
+          <label><input type="checkbox" checked> Held</label>
+          <label><input type="checkbox" checked> Pending</label>
+          <label><input type="checkbox" checked> Denied</label>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Permit #</th>
+              <th>Event Name</th>
+              <th>Submitter</th>
+              <th>Number of Dates</th>
+              <th>Overall Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Add rows dynamically based on permit data -->
+          </tbody>
+        </table>
+      </section>
+  
+      <!-- Application Submissions Content -->
+      <section *ngIf="activeTab === 'application-submissions'">
+        <p>No submissions found!</p>
+      </section>
+    </main>
+  </div>
