@@ -8,8 +8,9 @@ import { RegisterComponent } from './register/register.component';
 import { authGuard } from './auth.guard';
 import { EventsComponent } from './events/events.component';
 import { OrganizationsComponent } from './organizations/organizations.component';
-import { OrganizationDetailsComponent } from './organization-details/organization-details.component'; // Import the new component
+import { OrganizationDetailsComponent } from './organization-details/organization-details.component';
 import { PermitsComponent } from './permits/permits.component';
+import { MySubmissionsComponent } from './my-submissions/my-submissions.component'; // Import the new component
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -30,4 +31,9 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   { path: 'permits', component: PermitsComponent, canActivate: [authGuard] },
+  {
+    path: 'my-submissions',
+    component: MySubmissionsComponent, // Add the new component here
+    canActivate: [authGuard],
+  },
 ];
