@@ -37,7 +37,7 @@ export class LoginComponent {
     };
 
     this.http
-      .post<{ message: string; userName?: string }>('http://localhost:8080/login', payload)
+    .post<any>('http://localhost:8080/login', payload)
       .pipe(
         catchError((error) => {
           if (error.error?.message === 'Incorrect password') {
@@ -51,12 +51,12 @@ export class LoginComponent {
         })
       )
       .subscribe((response) => {
-        const name = response.userName || this.username;
         const userInfo: UserInfo = {
-          name: name,
-          email: this.username,
-          role: 'Student',
-          joined: new Date().toISOString().split('T')[0],
+          id: response.user_id,
+          name: response.user_name || this.username,
+          email: response.user_email || this.username,
+          role: response.user_role || 'member',
+          joined: new Date(response.user_created_at * 1000).toISOString().split('T')[0] // convert UNIX timestamp
         };
 
         this.authService.setUser(userInfo);

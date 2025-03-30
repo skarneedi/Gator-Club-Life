@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 export interface UserInfo {
+  id: number;
   name: string;
   email: string;
   role: string;
