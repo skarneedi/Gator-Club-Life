@@ -1,72 +1,74 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AuthService, UserInfo } from '../auth.service';
 
 interface Announcement {
+  id: number;
   title: string;
   content: string;
   date: string;
-  priority?: string;
+  category: string;
+  expanded?: boolean;
 }
 
 @Component({
   selector: 'app-announcements',
-  standalone: true,
   templateUrl: './announcements.component.html',
   styleUrls: ['./announcements.component.css'],
-  imports: [CommonModule, FormsModule]
+  standalone: true,
+  imports: [CommonModule, FormsModule],
 })
 export class AnnouncementsComponent implements OnInit {
   announcements: Announcement[] = [];
-  user: UserInfo | null = null;
-  isAdmin = false;
+  filteredAnnouncements: Announcement[] = [];
 
-  newTitle = '';
-  newContent = '';
-  showAnnouncements = true;
-
-  constructor(
-    private http: HttpClient,
-    private authService: AuthService
-  ) {}
+  categories: string[] = ['All', 'Policy', 'Event', 'Reminder'];
+  selectedCategory = 'All';
+  searchTerm = '';
 
   ngOnInit(): void {
-    this.authService.userInfo$.subscribe(user => {
-      this.user = user;
-      this.isAdmin = user?.role === 'admin';
-    });
-
-    this.http.get<any[]>('http://localhost:8080/announcements').subscribe({
-      next: (data) => {
-        this.announcements = data.map(a => ({
-          title: a.announcement_title,
-          content: a.announcement_message,
-          date: a.announcement_created_at,
-          priority: 'NORMAL'
-        }));
+    this.announcements = [
+      {
+        id: 1,
+        title: 'Updating Officers 2024-2025',
+        content:
+          'For student organizations needing to update Presidents, VPs, and Treasurers for the academic year...',
+        date: 'Feb 05, 2025',
+        category: 'Policy',
       },
-      error: (err) => console.error('Error fetching announcements:', err)
+      {
+        id: 2,
+        title: 'AI Club',
+        content: 'Hackathon 3.0 in Reitz Union — join us for tech, teams, and prizes!',
+        date: 'Feb 04, 2025',
+        category: 'Event',
+      },
+      {
+        id: 3,
+        title: 'Room Booking Reminder',
+        content: 'All clubs must reserve rooms two weeks in advance via the portal.',
+        date: 'Mar 01, 2025',
+        category: 'Reminder',
+      },
+    ];
+    this.filterAnnouncements();
+  }
+
+  filterAnnouncements(): void {
+    this.filteredAnnouncements = this.announcements.filter((announcement) => {
+      const matchesCategory =
+        this.selectedCategory === 'All' || announcement.category === this.selectedCategory;
+      const matchesSearch = announcement.title
+        .toLowerCase()
+        .includes(this.searchTerm.toLowerCase());
+      return matchesCategory && matchesSearch;
     });
   }
 
-  submitAnnouncement(): void {
-    if (!this.user) return;
-
-    const payload = {
-      announcement_title: this.newTitle,
-      announcement_message: this.newContent,
-      announcement_created_by: this.user.id
-    };
-
-    this.http.post('http://localhost:8080/announcements/create', payload).subscribe({
-      next: () => {
-        this.ngOnInit(); // Refresh
-        this.newTitle = '';
-        this.newContent = '';
-      },
-      error: (err) => console.error('Failed to post announcement:', err)
-    });
+  toggleExpand(id: number): void {
+    const announcement = this.announcements.find((a) => a.id === id);
+    if (announcement) {
+      announcement.expanded = !announcement.expanded;
+    }
   }
 }
