@@ -8,6 +8,14 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// GetAnnouncements godoc
+// @Summary      Retrieve all announcements
+// @Description  Retrieves all announcements in descending order by creation date
+// @Tags         Announcements
+// @Produce      json
+// @Success      200  {array}   database.Announcement  "List of announcements"
+// @Failure      500  {string}  string                 "Error retrieving announcements"
+// @Router       /announcements [get]
 func GetAnnouncements(c *fiber.Ctx) error {
 	fmt.Println("GetAnnouncements API called")
 
@@ -21,6 +29,18 @@ func GetAnnouncements(c *fiber.Ctx) error {
 	return c.JSON(announcements)
 }
 
+// CreateAnnouncement godoc
+// @Summary      Create a new announcement
+// @Description  Allows an admin user to create a new announcement
+// @Tags         Announcements
+// @Accept       json
+// @Produce      json
+// @Param        announcement  body      database.Announcement  true  "Announcement data"
+// @Success      200  {object} database.Announcement "Successfully created announcement"
+// @Failure      400  {string} string   "Invalid request body or missing required fields"
+// @Failure      401  {string} string   "Only admins can post announcements"
+// @Failure      500  {string} string   "Error saving announcement"
+// @Router       /announcements/create [post]
 func CreateAnnouncement(c *fiber.Ctx) error {
 	fmt.Println("CreateAnnouncement API called")
 

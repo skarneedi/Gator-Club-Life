@@ -33,7 +33,18 @@ func SetStore(s *session.Store) {
 	Store = s
 }
 
-// Login handles user login requests using Fiber's context.
+// Login godoc
+// @Summary      User login
+// @Description  Authenticates a user and creates a session
+// @Tags         Authentication
+// @Accept       json
+// @Produce      json
+// @Param        credentials  body      LoginRequest       true  "User credentials"
+// @Success      200          {object}  LoginResponse      "Login successful"
+// @Failure      400          {object}  map[string]string  "Invalid request body or missing fields"
+// @Failure      401          {object}  map[string]string  "Invalid credentials (email not found or incorrect password)"
+// @Failure      500          {object}  map[string]string  "Error creating or saving session"
+// @Router       /login [post]
 func Login(c *fiber.Ctx) error {
 	fmt.Println("Login API called")
 

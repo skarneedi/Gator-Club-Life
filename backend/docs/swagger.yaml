@@ -1,4 +1,32 @@
 definitions:
+  database.Announcement:
+    properties:
+      announcement_created_at:
+        type: string
+      announcement_created_by:
+        type: integer
+      announcement_id:
+        type: integer
+      announcement_message:
+        type: string
+      announcement_title:
+        type: string
+    type: object
+  database.Club:
+    properties:
+      club_category:
+        type: string
+      club_created_at:
+        type: integer
+      club_created_by:
+        type: integer
+      club_description:
+        type: string
+      club_id:
+        type: integer
+      club_name:
+        type: string
+    type: object
   database.User:
     properties:
       user_created_at:
@@ -14,6 +42,30 @@ definitions:
       user_role:
         type: string
     type: object
+  routes.LoginRequest:
+    properties:
+      email:
+        description: User's email address
+        type: string
+      password:
+        description: User's password
+        type: string
+    type: object
+  routes.LoginResponse:
+    properties:
+      message:
+        type: string
+      user_created_at:
+        type: integer
+      user_email:
+        type: string
+      user_id:
+        type: integer
+      user_name:
+        type: string
+      user_role:
+        type: string
+    type: object
   routes.LogoutResponse:
     description: Response message after a successful logout.
     properties:
@@ -23,6 +75,126 @@ definitions:
 info:
   contact: {}
 paths:
+  /announcements:
+    get:
+      description: Retrieves all announcements in descending order by creation date
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of announcements
+          schema:
+            items:
+              $ref: '#/definitions/database.Announcement'
+            type: array
+        "500":
+          description: Error retrieving announcements
+          schema:
+            type: string
+      summary: Retrieve all announcements
+      tags:
+      - Announcements
+  /announcements/create:
+    post:
+      consumes:
+      - application/json
+      description: Allows an admin user to create a new announcement
+      parameters:
+      - description: Announcement data
+        in: body
+        name: announcement
+        required: true
+        schema:
+          $ref: '#/definitions/database.Announcement'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully created announcement
+          schema:
+            $ref: '#/definitions/database.Announcement'
+        "400":
+          description: Invalid request body or missing required fields
+          schema:
+            type: string
+        "401":
+          description: Only admins can post announcements
+          schema:
+            type: string
+        "500":
+          description: Error saving announcement
+          schema:
+            type: string
+      summary: Create a new announcement
+      tags:
+      - Announcements
+  /clubs:
+    get:
+      description: Retrieves all clubs or filters by category (case-insensitive) if
+        a query parameter is provided
+      parameters:
+      - description: Filter clubs by category
+        in: query
+        name: category
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of clubs
+          schema:
+            items:
+              $ref: '#/definitions/database.Club'
+            type: array
+        "500":
+          description: Error retrieving clubs
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Retrieve clubs
+      tags:
+      - Clubs
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticates a user and creates a session
+      parameters:
+      - description: User credentials
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/routes.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Login successful
+          schema:
+            $ref: '#/definitions/routes.LoginResponse'
+        "400":
+          description: Invalid request body or missing fields
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Invalid credentials (email not found or incorrect password)
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Error creating or saving session
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: User login
+      tags:
+      - Authentication
   /logout:
     post:
       description: Destroys the current session and logs out the user.
