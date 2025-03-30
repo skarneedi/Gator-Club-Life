@@ -17,7 +17,7 @@
   <div class="announcement-grid">
     <div class="card" *ngFor="let a of filteredAnnouncements">
       <h3>{{ a.title }}</h3>
-      <p class="date">{{ a.date }}</p>
+      <p class="date">Posted on: {{ a.date | date:'fullDate' }}</p>
       <p *ngIf="!a.expanded">{{ a.content | slice:0:80 }}...</p>
       <p *ngIf="a.expanded">{{ a.content }}</p>
       <button (click)="toggleExpand(a.id)">
