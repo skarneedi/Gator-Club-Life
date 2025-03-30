@@ -4,6 +4,7 @@ import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { AnnouncementsComponent } from './announcements/announcements.component';
 import { AuthService } from './auth.service';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators'; 
 
 @Component({
   selector: 'app-root',
@@ -11,27 +12,28 @@ import { Observable } from 'rxjs';
   styleUrls: ['./app.component.css'],
   standalone: true,
   imports: [
-    CommonModule, // For *ngIf and async pipe
-    RouterModule, // For router-outlet
-    AnnouncementsComponent, // For app-announcements
+    CommonModule,
+    RouterModule,
+    AnnouncementsComponent,
   ],
 })
 export class AppComponent implements OnInit {
-  isLoggedIn$!: Observable<boolean>; // Observable for login status
-  userName$!: Observable<string | null>; // Updated to match AuthService
-  showAnnouncements: boolean = false; // Controls visibility of announcements
-  showDropdown = false; // Flag to control dropdown visibility
+  isLoggedIn$!: Observable<boolean>;
+  userName$!: Observable<string>;
+  showAnnouncements: boolean = false;
+  showDropdown = false;
 
   constructor(private router: Router, private authService: AuthService) {}
 
   ngOnInit(): void {
-    // Subscribe to AuthService observables
     this.isLoggedIn$ = this.authService.isLoggedIn$;
-    this.userName$ = this.authService.userName$;
+
+    this.userName$ = this.authService.userInfo$.pipe(
+      map(user => user?.name || 'Guest')
+    );    
 
     console.log('[AppComponent] Subscribed to AuthService observables');
 
-    // Log changes in login status and user name
     this.isLoggedIn$.subscribe((loggedIn) => {
       console.log('[AppComponent] isLoggedIn changed to:', loggedIn);
     });
@@ -40,7 +42,6 @@ export class AppComponent implements OnInit {
       console.log('[AppComponent] userName changed to:', name);
     });
 
-    // Listen for route changes and update showAnnouncements
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.showAnnouncements = event.url === '/home' || event.url === '/home/';
@@ -50,7 +51,7 @@ export class AppComponent implements OnInit {
   }
 
   toggleDropdown(event: MouseEvent): void {
-    event.stopPropagation(); // Prevent the click from propagating to the document
+    event.stopPropagation();
     this.showDropdown = !this.showDropdown;
   }
 
@@ -58,13 +59,13 @@ export class AppComponent implements OnInit {
   onClickOutside(event: MouseEvent): void {
     const dropdownContainer = document.querySelector('.user-profile-dropdown');
     if (!dropdownContainer?.contains(event.target as Node)) {
-      this.showDropdown = false; // Close the dropdown if clicked outside
+      this.showDropdown = false;
     }
   }
 
   logout(): void {
     console.log('[AppComponent] Logging out user');
     this.authService.logout();
-    this.router.navigate(['/login']); // Redirect to login after logout
+    this.router.navigate(['/login']);
   }
 }
