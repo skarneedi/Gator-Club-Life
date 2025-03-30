@@ -12,6 +12,7 @@ import { OrganizationDetailsComponent } from './organization-details/organizatio
 import { PermitsComponent } from './permits/permits.component';
 import { MySubmissionsComponent } from './my-submissions/my-submissions.component';
 import { MyProfileComponent } from './my-profile/my-profile.component';
+import { MyEventsComponent } from './my-events/my-events.component';
 
 
 export const routes: Routes = [
@@ -23,6 +24,7 @@ export const routes: Routes = [
   { path: 'contact', component: ContactComponent, canActivate: [authGuard] },
   { path: 'events', component: EventsComponent, canActivate: [authGuard] },
   { path: 'profile', component: MyProfileComponent, canActivate: [authGuard] },
+  { path: 'my-events', component: MyEventsComponent },
   {
     path: 'organizations',
     component: OrganizationsComponent,
