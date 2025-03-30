@@ -15,47 +15,27 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/login": {
+        "/logout": {
             "post": {
-                "description": "Authenticate a user and return a success message.",
-                "consumes": [
-                    "application/json"
-                ],
+                "description": "Destroys the current session and logs out the user.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Authentication"
                 ],
-                "summary": "Login a user",
-                "parameters": [
-                    {
-                        "description": "Login credentials",
-                        "name": "login",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/routes.LoginRequest"
-                        }
-                    }
-                ],
+                "summary": "Logout a user",
                 "responses": {
                     "200": {
-                        "description": "Login successful",
+                        "description": "Logout successful",
                         "schema": {
-                            "$ref": "#/definitions/routes.LoginResponse"
+                            "$ref": "#/definitions/routes.LogoutResponse"
                         }
                     },
-                    "400": {
-                        "description": "Invalid request: Unable to parse JSON or missing fields",
+                    "500": {
+                        "description": "Error during logout",
                         "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "401": {
-                        "description": "Invalid email or password",
-                        "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/routes.LogoutResponse"
                         }
                     }
                 }
@@ -84,7 +64,10 @@ const docTemplate = `{
                     "500": {
                         "description": "Error retrieving users",
                         "schema": {
-                            "type": "string"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
@@ -118,19 +101,26 @@ const docTemplate = `{
                     "200": {
                         "description": "User successfully added",
                         "schema": {
-                            "$ref": "#/definitions/database.User"
+                            "type": "object",
+                            "additionalProperties": true
                         }
                     },
                     "400": {
                         "description": "Invalid request: Unable to parse JSON or missing required fields",
                         "schema": {
-                            "type": "string"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "500": {
                         "description": "Error processing password or saving user to database",
                         "schema": {
-                            "type": "string"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
@@ -161,22 +151,8 @@ const docTemplate = `{
                 }
             }
         },
-        "routes.LoginRequest": {
-            "description": "Login credentials for the user.",
-            "type": "object",
-            "properties": {
-                "email": {
-                    "description": "User's email address",
-                    "type": "string"
-                },
-                "password": {
-                    "description": "User's password",
-                    "type": "string"
-                }
-            }
-        },
-        "routes.LoginResponse": {
-            "description": "Response message after a successful login.",
+        "routes.LogoutResponse": {
+            "description": "Response message after a successful logout.",
             "type": "object",
             "properties": {
                 "message": {
