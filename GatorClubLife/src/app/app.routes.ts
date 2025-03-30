@@ -10,7 +10,9 @@ import { EventsComponent } from './events/events.component';
 import { OrganizationsComponent } from './organizations/organizations.component';
 import { OrganizationDetailsComponent } from './organization-details/organization-details.component';
 import { PermitsComponent } from './permits/permits.component';
-import { MySubmissionsComponent } from './my-submissions/my-submissions.component'; // Import the new component
+import { MySubmissionsComponent } from './my-submissions/my-submissions.component';
+import { MyProfileComponent } from './my-profile/my-profile.component';
+
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -20,20 +22,18 @@ export const routes: Routes = [
   { path: 'about', component: AboutComponent, canActivate: [authGuard] },
   { path: 'contact', component: ContactComponent, canActivate: [authGuard] },
   { path: 'events', component: EventsComponent, canActivate: [authGuard] },
+  { path: 'profile', component: MyProfileComponent, canActivate: [authGuard] },
   {
     path: 'organizations',
     component: OrganizationsComponent,
     canActivate: [authGuard],
   },
   {
-    path: 'organizations/:id', // Dynamic route for organization details
-    component: OrganizationDetailsComponent, // Use the new component
+    path: 'organizations/:id',
+    component: OrganizationDetailsComponent,
     canActivate: [authGuard],
   },
   { path: 'permits', component: PermitsComponent, canActivate: [authGuard] },
-  {
-    path: 'my-submissions',
-    component: MySubmissionsComponent, // Add the new component here
-    canActivate: [authGuard],
-  },
+  { path: 'my-submissions', component: MySubmissionsComponent, canActivate: [authGuard] },
+  { path: 'my-profile', component: MyProfileComponent, canActivate: [authGuard] } // NEW: My Profile Route
 ];
