@@ -1,89 +1,52 @@
-/* Apply gradient background to the announcements component */
-.announcements-container {
-  background: linear-gradient(to right, #ffafcc, #ffc3a0); /* Soft pink gradient */
-  padding: 30px;
-  border-radius: 10px; /* Rounded corners for container */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  margin-top: 20px;
-  max-width: 1200px;
-  margin: 30px auto;
+.announcement-section {
+  padding: 1rem 2rem;
+  background:  #6ab9f5;
 }
 
-/* Grid layout for announcement cards */
+.filters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.filters select,
+.filters input {
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
 .announcement-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
-/* Announcement card styling */
-.announcement-card {
-  background-color: #fff;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+.card {
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  width: 280px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
 }
 
-/* Hover effect for announcement cards */
-.announcement-card:hover {
-  transform: translateY(-5px); /* Slight lifting effect on hover */
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Darker shadow on hover */
+.card:hover {
+  transform: translateY(-5px);
 }
 
-/* Announcement heading styling */
-.announcement-card h2 {
-  margin-top: 0;
-  color: #ff69b4; /* Soft pink color for titles */
-  font-size: 1.4rem;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 10px;
+.date {
+  color: gray;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
 }
 
-/* Paragraph styling inside announcement cards */
-.announcement-card p {
-  color: #333;
-  font-size: 1rem;
-  margin: 5px 0;
-  line-height: 1.6;
-}
-
-/* Small text (for dates or other info) */
-.announcement-card small {
-  color: #888;
-  font-size: 0.9rem;
-  display: block;
-  text-align: right;
-  margin-top: 10px;
-}
-
-/* High-priority announcements */
-.high-priority {
-  border-left: 5px solid rgb(228, 166, 22); /* Orange border for priority */
-  padding-left: 10px;
-  background-color: #cbe2f6; /* Light yellow background */
-  box-shadow: 0 4px 8px rgba(231, 172, 63, 0.2);
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-/* Hover effect for high-priority cards */
-.high-priority:hover {
-  background-color: #ffeb3b; /* Brighter yellow on hover */
-  box-shadow: 0 8px 16px rgba(255, 166, 0, 0.3); /* Darker orange shadow on hover */
-}
-
-/* Responsive styling for smaller screens */
-@media (max-width: 768px) {
-  .announcement-card {
-    padding: 15px;
-  }
-
-  .announcement-card h2 {
-    font-size: 1.2rem;
-  }
-
-  .announcement-card p {
-    font-size: 0.95rem;
-  }
+button {
+  margin-top: 0.5rem;
+  background: #0021a5;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
 }
