@@ -37,6 +37,8 @@ func main() {
 	app.Get("/swagger/*", fiberSwagger.WrapHandler)
 	app.Get("/clubs", routes.GetClubs)
 	app.Get("/events", routes.GetEvents)
+	app.Get("/announcements", routes.GetAnnouncements)
+	app.Post("/announcements/create", routes.CreateAnnouncement)
 
 	log.Fatal(app.Listen(":8080"))
 }
