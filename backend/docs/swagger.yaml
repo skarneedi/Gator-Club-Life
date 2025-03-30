@@ -14,18 +14,8 @@ definitions:
       user_role:
         type: string
     type: object
-  routes.LoginRequest:
-    description: Login credentials for the user.
-    properties:
-      email:
-        description: User's email address
-        type: string
-      password:
-        description: User's password
-        type: string
-    type: object
-  routes.LoginResponse:
-    description: Response message after a successful login.
+  routes.LogoutResponse:
+    description: Response message after a successful logout.
     properties:
       message:
         type: string
@@ -33,34 +23,21 @@ definitions:
 info:
   contact: {}
 paths:
-  /login:
+  /logout:
     post:
-      consumes:
-      - application/json
-      description: Authenticate a user and return a success message.
-      parameters:
-      - description: Login credentials
-        in: body
-        name: login
-        required: true
-        schema:
-          $ref: '#/definitions/routes.LoginRequest'
+      description: Destroys the current session and logs out the user.
       produces:
       - application/json
       responses:
         "200":
-          description: Login successful
+          description: Logout successful
           schema:
-            $ref: '#/definitions/routes.LoginResponse'
-        "400":
-          description: 'Invalid request: Unable to parse JSON or missing fields'
+            $ref: '#/definitions/routes.LogoutResponse'
+        "500":
+          description: Error during logout
           schema:
-            type: string
-        "401":
-          description: Invalid email or password
-          schema:
-            type: string
-      summary: Login a user
+            $ref: '#/definitions/routes.LogoutResponse'
+      summary: Logout a user
       tags:
       - Authentication
   /users:
@@ -78,7 +55,9 @@ paths:
         "500":
           description: Error retrieving users
           schema:
-            type: string
+            additionalProperties:
+              type: string
+            type: object
       summary: Get all users
       tags:
       - Users
@@ -101,16 +80,21 @@ paths:
         "200":
           description: User successfully added
           schema:
-            $ref: '#/definitions/database.User'
+            additionalProperties: true
+            type: object
         "400":
           description: 'Invalid request: Unable to parse JSON or missing required
             fields'
           schema:
-            type: string
+            additionalProperties:
+              type: string
+            type: object
         "500":
           description: Error processing password or saving user to database
           schema:
-            type: string
+            additionalProperties:
+              type: string
+            type: object
       summary: Create a new user
       tags:
       - Users

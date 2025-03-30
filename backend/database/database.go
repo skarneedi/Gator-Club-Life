@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+	"time"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -61,6 +62,14 @@ type Booking struct {
 	BookedAt  int64  `gorm:"column:booked_at;default:(strftime('%s', 'now'))" json:"booked_at"`
 }
 
+type Announcement struct {
+	AnnouncementID        uint      `gorm:"column:announcement_id;primaryKey;autoIncrement" json:"announcement_id"`
+	AnnouncementTitle     string    `gorm:"column:announcement_title;not null" json:"announcement_title"`
+	AnnouncementMessage   string    `gorm:"column:announcement_message;not null" json:"announcement_message"`
+	AnnouncementCreatedBy uint      `gorm:"column:announcement_created_by;not null" json:"announcement_created_by"`
+	AnnouncementCreatedAt time.Time `gorm:"column:announcement_created_at;autoCreateTime" json:"announcement_created_at"`
+}
+
 func (User) TableName() string {
 	return "users"
 }
@@ -72,6 +81,9 @@ func (Event) TableName() string {
 }
 func (Booking) TableName() string {
 	return "bookings"
+}
+func (Announcement) TableName() string {
+	return "announcements"
 }
 
 func InitDB() {
