@@ -1,13 +1,23 @@
-<!-- src/app/announcements/announcements.component.html -->
 <div class="announcements-container">
-    <h1>Announcements</h1>
-    <div class="announcement-grid">
-      <div *ngFor="let announcement of announcements" class="announcement-card">
-        <div [ngClass]="{'high-priority': announcement.priority === 'HIGH_PRIORITY'}">
-          <h2>{{ announcement.title }}</h2>
-          <p>{{ announcement.content }}</p>
-          <small>{{ announcement.date }}</small>
-        </div>
+  <h1>Announcements</h1>
+
+  <!-- Admin-only form -->
+  <div *ngIf="isAdmin" class="announcement-form">
+    <h2>Create Announcement</h2>
+    <form (ngSubmit)="submitAnnouncement()">
+      <input type="text" [(ngModel)]="newTitle" name="title" placeholder="Title" required />
+      <textarea [(ngModel)]="newContent" name="content" placeholder="Message" required></textarea>
+      <button type="submit">Post</button>
+    </form>
+  </div>
+
+  <div class="announcement-grid">
+    <div *ngFor="let announcement of announcements" class="announcement-card">
+      <div [ngClass]="{'high-priority': announcement.priority === 'HIGH_PRIORITY'}">
+        <h2>{{ announcement.title }}</h2>
+        <p>{{ announcement.content }}</p>
+        <small>{{ announcement.date | date:'fullDate' }}</small>
       </div>
     </div>
   </div>
+</div>
