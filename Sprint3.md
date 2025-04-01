@@ -76,4 +76,99 @@ We wrote and executed unit tests for all major backend features.
 - `TestDuplicateUserRegistration` — verifies that registering with an existing email is blocked.
 ![Unit Tests for Users API](ResultScreenshots/UsersAPI_UnitTestResults.png)
 
+---
+# Frontend Doc:
+
+## 1. Login Page Error Handling
+
+- **Developed specific error messages** for login issues:
+  - **'Invalid email address'** for incorrect email formats.
+  - **'Invalid email or account not found'** for non-existent emails.
+  - **'Incorrect password'** for wrong passwords.
+- **Added email domain validation** to accept only **@ufl.edu** emails.
+- **Updated the database** to remove non-UF emails and reset sequential user IDs for consistency.
+
+---
+
+## 2. Permits Component
+
+- **Developed the Permits Component** to streamline the event permit submission process.
+- **Features**:
+  - A **welcome section** with instructions for users.
+  - A **list of event types** for easy selection.
+  - A **sidebar** to track progress through various permit stages (e.g., **Basic Information**, **Event Dates**).
+
+---
+
+## 3. Organization Details Page
+
+- **Created the Organization Details Page** to display important information about an organization.
+- **Features**:
+  - A **sidebar** with the organization name, officers, and advisors.
+  - A **main content section** with the organization’s purpose, announcements, and events.
+- **Integrated dynamic data fetching** using Angular’s HttpClient service based on route parameters.
+
+---
+
+## 4. Dropdown Menu for Logged-In Users
+
+- **Developed a dropdown menu** for logged-in users to access features like **Profile**, **Involvement**, **My Events**, **My Submissions**, and **Sign Out**.
+- **Bug Fix**: Modified the mouseleave event to prevent the dropdown from closing prematurely, allowing it to stay open while interacting with the menu.
+
+---
+
+## 5. My Submissions Component
+
+- **Developed the My Submissions Component** with three tabs:
+  - **Org. Registrations**
+  - **My Permits**
+  - **Application Submissions**
+- **Features**:
+  - A **search/filter interface** in the **My Permits** tab for better organization of submissions.
+
+---
+
+## Testing
+
+In addition to the development of core features, we performed unit testing for various components to ensure they function correctly in isolation.
+
+### Unit Testing:
+- **Login Page**: Validated error handling and email validation.
+- **Permits Component**: Verified form submission and event type selection.
+- **Organization Details Page**: Ensured dynamic data loading worked as expected.
+- **Dropdown Menu**: Validated that the dropdown remained open while interacting with menu items.
+
+### Tools Used:
+- **Jasmine and Karma**: For unit testing individual components.
+
+### Test Results:
+- **25 test cases passed successfully**.
+- All tests were conducted with **zero failures**.
+
+Here’s a screenshot of the test results:
+
+<img width="1512" alt="Screenshot 2025-03-31 at 11 30 35 PM" src="https://github.com/user-attachments/assets/7d168eae-9b61-4e09-8027-624da1920847" />
+
+
+---
+
+## Next Steps
+
+- **UI/UX Enhancements**: Improve the design and responsiveness of the **Organization Details Page**.
+- **Improve the UI/UX of Permits and Organizations**
+- **Work on Issues in the next sprint**: resolve the step wise permit stage on My Permits Page.
+- **Enhance Registration Form Validation**: Add input validation for more complex fields.
+
+---
+
+### **Sprint 4 Overview**
+
+In Sprint 4, I will be focusing on improving and fixing a few issues in the **Permits Page** and enhancing the **layout of the Organizations View Page**. These tasks will ensure that the application is more intuitive and functional for users.
+
+---
+
+## Conclusion
+
+With the addition of the **Login Page Error Handling**, **Permits Component**, and **My Submissions Component**, along with dynamic data fetching and bug fixes, we have significantly improved the user experience in this sprint. The successful completion of testing ensures the stability of the application, allowing us to confidently move forward with additional features in Sprint 4.
+
 
