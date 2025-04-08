@@ -4,37 +4,41 @@ import (
 	"backend/database"
 
 	"github.com/gofiber/fiber/v2"
-	"gorm.io/gorm"
 )
 
-// GetBookings retrieves all bookings or filters by user_id
+// GetBookings retrieves bookings with optional filters
 func GetBookings(c *fiber.Ctx) error {
 	userID := c.Query("user_id")
-	var bookings []database.Booking
-	var result *gorm.DB
+	eventID := c.Query("event_id")
+	bookingStatus := c.Query("booking_status")
 
-	// If user_id is provided, filter the bookings
+	var bookings []database.Booking
+	query := database.DB
+
 	if userID != "" {
-		result = database.DB.Where("user_id = ?", userID).Find(&bookings)
-	} else {
-		result = database.DB.Find(&bookings)
+		query = query.Where("user_id = ?", userID)
+	}
+	if eventID != "" {
+		query = query.Where("event_id = ?", eventID)
+	}
+	if bookingStatus != "" {
+		query = query.Where("booking_status = ?", bookingStatus)
 	}
 
-	// If there's an error retrieving bookings
-	if result.Error != nil {
+	if err := query.Find(&bookings).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "Error retrieving bookings",
+			"error":   err.Error(),
 		})
 	}
 
 	return c.JSON(bookings)
 }
 
-// CreateBooking creates a new booking in the system
+// CreateBooking creates a new booking
 func CreateBooking(c *fiber.Ctx) error {
 	var booking database.Booking
 
-	// Parse the request body into the booking struct
 	if err := c.BodyParser(&booking); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Invalid request data",
@@ -42,7 +46,6 @@ func CreateBooking(c *fiber.Ctx) error {
 		})
 	}
 
-	// Save the booking to the database
 	if err := database.DB.Create(&booking).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "Error creating booking",

@@ -38,6 +38,7 @@ func main() {
 	app.Get("/clubs", routes.GetClubs)
 	app.Get("/events", routes.GetEvents)
 	app.Get("/bookings", routes.GetBookings)
+	app.Post("/bookings/create", routes.CreateBooking)
 
 	log.Fatal(app.Listen(":8080"))
 }
