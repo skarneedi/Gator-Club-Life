@@ -15,9 +15,130 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/announcements": {
+            "get": {
+                "description": "Retrieves all announcements in descending order by creation date",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Announcements"
+                ],
+                "summary": "Retrieve all announcements",
+                "responses": {
+                    "200": {
+                        "description": "List of announcements",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/database.Announcement"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error retrieving announcements",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/announcements/create": {
+            "post": {
+                "description": "Allows an admin user to create a new announcement",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Announcements"
+                ],
+                "summary": "Create a new announcement",
+                "parameters": [
+                    {
+                        "description": "Announcement data",
+                        "name": "announcement",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/database.Announcement"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully created announcement",
+                        "schema": {
+                            "$ref": "#/definitions/database.Announcement"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body or missing required fields",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Only admins can post announcements",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Error saving announcement",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/clubs": {
+            "get": {
+                "description": "Retrieves all clubs or filters by category (case-insensitive) if a query parameter is provided",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Clubs"
+                ],
+                "summary": "Retrieve clubs",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Filter clubs by category",
+                        "name": "category",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of clubs",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/database.Club"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error retrieving clubs",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/login": {
             "post": {
-                "description": "Authenticate a user and return a success message.",
+                "description": "Authenticates a user and creates a session",
                 "consumes": [
                     "application/json"
                 ],
@@ -27,11 +148,11 @@ const docTemplate = `{
                 "tags": [
                     "Authentication"
                 ],
-                "summary": "Login a user",
+                "summary": "User login",
                 "parameters": [
                     {
-                        "description": "Login credentials",
-                        "name": "login",
+                        "description": "User credentials",
+                        "name": "credentials",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -47,15 +168,56 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Invalid request: Unable to parse JSON or missing fields",
+                        "description": "Invalid request body or missing fields",
                         "schema": {
-                            "type": "string"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "401": {
-                        "description": "Invalid email or password",
+                        "description": "Invalid credentials (email not found or incorrect password)",
                         "schema": {
-                            "type": "string"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error creating or saving session",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/logout": {
+            "post": {
+                "description": "Destroys the current session and logs out the user.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Logout a user",
+                "responses": {
+                    "200": {
+                        "description": "Logout successful",
+                        "schema": {
+                            "$ref": "#/definitions/routes.LogoutResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Error during logout",
+                        "schema": {
+                            "$ref": "#/definitions/routes.LogoutResponse"
                         }
                     }
                 }
@@ -84,7 +246,10 @@ const docTemplate = `{
                     "500": {
                         "description": "Error retrieving users",
                         "schema": {
-                            "type": "string"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
@@ -118,19 +283,26 @@ const docTemplate = `{
                     "200": {
                         "description": "User successfully added",
                         "schema": {
-                            "$ref": "#/definitions/database.User"
+                            "type": "object",
+                            "additionalProperties": true
                         }
                     },
                     "400": {
                         "description": "Invalid request: Unable to parse JSON or missing required fields",
                         "schema": {
-                            "type": "string"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "500": {
                         "description": "Error processing password or saving user to database",
                         "schema": {
-                            "type": "string"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
@@ -138,6 +310,49 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "database.Announcement": {
+            "type": "object",
+            "properties": {
+                "announcement_created_at": {
+                    "type": "string"
+                },
+                "announcement_created_by": {
+                    "type": "integer"
+                },
+                "announcement_id": {
+                    "type": "integer"
+                },
+                "announcement_message": {
+                    "type": "string"
+                },
+                "announcement_title": {
+                    "type": "string"
+                }
+            }
+        },
+        "database.Club": {
+            "type": "object",
+            "properties": {
+                "club_category": {
+                    "type": "string"
+                },
+                "club_created_at": {
+                    "type": "integer"
+                },
+                "club_created_by": {
+                    "type": "integer"
+                },
+                "club_description": {
+                    "type": "string"
+                },
+                "club_id": {
+                    "type": "integer"
+                },
+                "club_name": {
+                    "type": "string"
+                }
+            }
+        },
         "database.User": {
             "type": "object",
             "properties": {
@@ -162,7 +377,6 @@ const docTemplate = `{
             }
         },
         "routes.LoginRequest": {
-            "description": "Login credentials for the user.",
             "type": "object",
             "properties": {
                 "email": {
@@ -176,7 +390,30 @@ const docTemplate = `{
             }
         },
         "routes.LoginResponse": {
-            "description": "Response message after a successful login.",
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "user_created_at": {
+                    "type": "integer"
+                },
+                "user_email": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "user_name": {
+                    "type": "string"
+                },
+                "user_role": {
+                    "type": "string"
+                }
+            }
+        },
+        "routes.LogoutResponse": {
+            "description": "Response message after a successful logout.",
             "type": "object",
             "properties": {
                 "message": {

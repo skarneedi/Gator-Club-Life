@@ -60,3 +60,12 @@ confirmed
 pending
 cancelled
 booked_at → Records when the booking was made.
+---
+
+Table: Announcements
+Stores announcements made by admin users.
+announcement_id →	Unique identifier for each announcement.
+announcement_title → Title of the announcement.
+announcement_message → Content/body of the announcement.
+announcement_created_by	→ (Foreign Key → users.id).
+announcement_created_at → Timestamp recording when the announcement was posted.

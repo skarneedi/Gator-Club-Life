@@ -6,18 +6,36 @@ import { ContactComponent } from './contact/contact.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { authGuard } from './auth.guard';
-import { EventsComponent } from './events/events.component'; // Import EventsComponent
-import { OrganizationsComponent } from './organizations/organizations.component'; // Import OrganizationsComponent
-import { PermitsComponent } from './permits/permits.component'; // Import PermitsComponent
+import { EventsComponent } from './events/events.component';
+import { OrganizationsComponent } from './organizations/organizations.component';
+import { OrganizationDetailsComponent } from './organization-details/organization-details.component';
+import { PermitsComponent } from './permits/permits.component';
+import { MySubmissionsComponent } from './my-submissions/my-submissions.component';
+import { MyProfileComponent } from './my-profile/my-profile.component';
+import { MyEventsComponent } from './my-events/my-events.component';
+
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/login', pathMatch: 'full' }, // Default route redirects to login
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent }, // Add the /register route
+  { path: 'register', component: RegisterComponent },
   { path: 'home', component: HomeComponent, canActivate: [authGuard] },
   { path: 'about', component: AboutComponent, canActivate: [authGuard] },
   { path: 'contact', component: ContactComponent, canActivate: [authGuard] },
-  { path: 'events', component: EventsComponent, canActivate: [authGuard] }, // Route for EventsComponent
-  { path: 'organizations', component: OrganizationsComponent, canActivate: [authGuard] }, // Route for OrganizationsComponent
-  { path: 'permits', component: PermitsComponent, canActivate: [authGuard] }, // Route for PermitsComponent
+  { path: 'events', component: EventsComponent, canActivate: [authGuard] },
+  { path: 'profile', component: MyProfileComponent, canActivate: [authGuard] },
+  { path: 'my-events', component: MyEventsComponent },
+  {
+    path: 'organizations',
+    component: OrganizationsComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'organizations/:id',
+    component: OrganizationDetailsComponent,
+    canActivate: [authGuard],
+  },
+  { path: 'permits', component: PermitsComponent, canActivate: [authGuard] },
+  { path: 'my-submissions', component: MySubmissionsComponent, canActivate: [authGuard] },
+  { path: 'my-profile', component: MyProfileComponent, canActivate: [authGuard] } // NEW: My Profile Route
 ];

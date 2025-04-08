@@ -1,51 +1,64 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
+export interface UserInfo {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  joined: string;
+  phone?: string; 
+  photo?: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  // BehaviorSubjects store the latest value and emit it to new subscribers.
   private loggedInSubject = new BehaviorSubject<boolean>(false);
-  private userNameSubject = new BehaviorSubject<string>('');
+  private userInfoSubject = new BehaviorSubject<UserInfo | null>(null);
 
-  // Public observables for components to subscribe to.
   isLoggedIn$ = this.loggedInSubject.asObservable();
-  userName$ = this.userNameSubject.asObservable();
+  userInfo$ = this.userInfoSubject.asObservable();
 
   constructor() {
-    if (typeof window !== 'undefined') {
+    if (this.isBrowser()) {
       const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-      const storedName = localStorage.getItem('userName') || '';
-      this.loggedInSubject.next(isLoggedIn);
-      this.userNameSubject.next(storedName);
+      const storedUser = localStorage.getItem('userInfo');
+      const userInfo = storedUser ? JSON.parse(storedUser) : null;
 
-      console.log('[AuthService] Initialized with values:', {
-        isLoggedIn,
-        storedName,
-      });
+      this.loggedInSubject.next(isLoggedIn);
+      this.userInfoSubject.next(userInfo);
     }
   }
-  
-  // Call this method after a successful login to store the user's name.
-  setUser(userName: string): void {
-    if (typeof window !== 'undefined') {
+
+  setUser(user: UserInfo): void {
+    if (this.isBrowser()) {
       localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('userName', userName);
-      console.log('[AuthService] Session created for user:', userName);
+      localStorage.setItem('userInfo', JSON.stringify(user));
     }
     this.loggedInSubject.next(true);
-    this.userNameSubject.next(userName);
+    this.userInfoSubject.next(user);
   }
-  
-  // Call this on logout to clear the user session.
-  clearUser(): void {
-    if (typeof window !== 'undefined') {
+
+  getUserDetails(): UserInfo | null {
+    if (this.isBrowser()) {
+      const storedUser = localStorage.getItem('userInfo');
+      return storedUser ? JSON.parse(storedUser) : null;
+    }
+    return null;
+  }
+
+  logout(): void {
+    if (this.isBrowser()) {
       localStorage.removeItem('isLoggedIn');
-      localStorage.removeItem('userName');
-      console.log('[AuthService] Session cleared (user logged out)');
+      localStorage.removeItem('userInfo');
     }
     this.loggedInSubject.next(false);
-    this.userNameSubject.next('');
+    this.userInfoSubject.next(null);
+  }
+
+  private isBrowser(): boolean {
+    return typeof window !== 'undefined' && typeof localStorage !== 'undefined';
   }
 }

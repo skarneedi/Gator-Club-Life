@@ -15,10 +15,14 @@ type LoginRequest struct {
 	Password string `json:"password"` // User's password
 }
 
-// LoginResponse now includes a userName field so the frontend can display the user’s name.
+// LoginResponse includes full user details for frontend session setup.
 type LoginResponse struct {
-	Message  string `json:"message"`
-	UserName string `json:"userName"`
+	Message       string `json:"message"`
+	UserID        uint   `json:"user_id"`
+	UserName      string `json:"user_name"`
+	UserEmail     string `json:"user_email"`
+	UserRole      string `json:"user_role"`
+	UserCreatedAt int64  `json:"user_created_at"`
 }
 
 // Session store variable.
@@ -29,7 +33,18 @@ func SetStore(s *session.Store) {
 	Store = s
 }
 
-// Login handles user login requests using Fiber's context.
+// Login godoc
+// @Summary      User login
+// @Description  Authenticates a user and creates a session
+// @Tags         Authentication
+// @Accept       json
+// @Produce      json
+// @Param        credentials  body      LoginRequest       true  "User credentials"
+// @Success      200          {object}  LoginResponse      "Login successful"
+// @Failure      400          {object}  map[string]string  "Invalid request body or missing fields"
+// @Failure      401          {object}  map[string]string  "Invalid credentials (email not found or incorrect password)"
+// @Failure      500          {object}  map[string]string  "Error creating or saving session"
+// @Router       /login [post]
 func Login(c *fiber.Ctx) error {
 	fmt.Println("Login API called")
 
@@ -90,10 +105,14 @@ func Login(c *fiber.Ctx) error {
 
 	fmt.Println("Session created successfully for user:", req.Email)
 
-	// Return the user’s name in the response so the frontend can display it.
+	// Return full user data for frontend
 	resp := LoginResponse{
-		Message:  "Login successful",
-		UserName: user.UserName, // from the database.User struct
+		Message:       "Login successful",
+		UserID:        user.UserID,
+		UserName:      user.UserName,
+		UserEmail:     user.UserEmail,
+		UserRole:      user.UserRole,
+		UserCreatedAt: user.UserCreatedAt,
 	}
 	return c.JSON(resp)
 }

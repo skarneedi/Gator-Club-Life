@@ -36,3 +36,12 @@ CREATE TABLE clubs (
     ),
     FOREIGN KEY (club_created_by) REFERENCES users(user_id) ON DELETE SET NULL
 );
+
+3. CREATE TABLE announcements (
+    announcement_id SERIAL PRIMARY KEY,
+    announcement_title VARCHAR(255) NOT NULL,
+    announcement_message TEXT NOT NULL,
+    announcement_created_by INTEGER NOT NULL,
+    announcement_created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (announcement_created_by) REFERENCES users(user_id)
+);
