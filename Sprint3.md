@@ -76,7 +76,7 @@ We wrote and executed unit tests for all major backend features.
 - `TestDuplicateUserRegistration` — verifies that registering with an existing email is blocked.
 ![Unit Tests for Users API](ResultScreenshots/UsersAPI_UnitTestResults.png)
 
-# Bookings API
+### Bookings API
 - Created a new `/bookings` endpoint:
   - `GET /bookings`: Retrieves all bookings.
     - Supports optional filters: `user_id`, `event_id`, `booking_status`.
@@ -85,7 +85,7 @@ We wrote and executed unit tests for all major backend features.
 - Added input validation and error handling.
 - Covered with unit tests for edge cases and success responses.
 
-# Events API
+### Events API
 - Built new routes:
   - `GET /events`: Returns all events, or filters by `club_id`.
   - `POST /events`: Allows new event creation.
