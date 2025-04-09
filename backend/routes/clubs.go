@@ -2,40 +2,46 @@ package routes
 
 import (
 	"backend/database"
-	"fmt"
-	"strings"
 
 	"github.com/gofiber/fiber/v2"
-	"gorm.io/gorm"
 )
 
-// GetClubs godoc
-// @Summary      Retrieve clubs
-// @Description  Retrieves all clubs or filters by category (case-insensitive) if a query parameter is provided
-// @Tags         Clubs
+// CreateBooking godoc
+// @Summary      Create a new booking
+// @Description  Creates a booking with user ID, event ID, and booking status
+// @Tags         Bookings
+// @Accept       json
 // @Produce      json
-// @Param        category  query     string  false  "Filter clubs by category"
-// @Success      200  {array}   database.Club  "List of clubs"
-// @Failure      500  {object}  map[string]string "Error retrieving clubs"
-// @Router       /clubs [get]
-func GetClubs(c *fiber.Ctx) error {
-	category := c.Query("category")
-	var clubs []database.Club
-	var result *gorm.DB
+// @Param        booking  body      database.Booking  true  "Booking details"
+// @Success      201      {object}  database.Booking
+// @Failure      400      {object}  map[string]string "Invalid request data"
+// @Failure      500      {object}  map[string]string "Error creating booking"
+// @Router       /bookings [post]
+func CreateBooking(c *fiber.Ctx) error {
+	var booking database.Booking
 
-	if category != "" {
-		normalizedCategory := "%" + strings.ToLower(category) + "%"
-		fmt.Println("Filtering clubs by category:", normalizedCategory)
-		result = database.DB.Where("LOWER(club_category) LIKE ?", normalizedCategory).Find(&clubs)
-	} else {
-		result = database.DB.Find(&clubs)
-	}
-
-	if result.Error != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "Error retrieving clubs",
+	// Parse JSON body into booking struct
+	if err := c.BodyParser(&booking); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid request data",
+			"error":   err.Error(),
 		})
 	}
 
-	return c.JSON(clubs)
+	// Basic validation
+	if booking.UserID == 0 || booking.EventID == 0 || booking.BookingStatus == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Missing required fields: user_id, event_id, or booking_status",
+		})
+	}
+
+	// Insert booking into DB
+	if err := database.DB.Create(&booking).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Error creating booking",
+			"error":   err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(booking)
 }

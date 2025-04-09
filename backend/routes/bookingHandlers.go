@@ -6,39 +6,21 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// GetBookings retrieves bookings with optional filters
-func GetBookings(c *fiber.Ctx) error {
-	userID := c.Query("user_id")
-	eventID := c.Query("event_id")
-	bookingStatus := c.Query("booking_status")
-
-	var bookings []database.Booking
-	query := database.DB
-
-	if userID != "" {
-		query = query.Where("user_id = ?", userID)
-	}
-	if eventID != "" {
-		query = query.Where("event_id = ?", eventID)
-	}
-	if bookingStatus != "" {
-		query = query.Where("booking_status = ?", bookingStatus)
-	}
-
-	if err := query.Find(&bookings).Error; err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "Error retrieving bookings",
-			"error":   err.Error(),
-		})
-	}
-
-	return c.JSON(bookings)
-}
-
-// CreateBooking creates a new booking
+// CreateBooking godoc
+// @Summary      Create a new booking
+// @Description  Creates a booking with user ID, event ID, and booking status
+// @Tags         Bookings
+// @Accept       json
+// @Produce      json
+// @Param        booking  body      database.Booking  true  "Booking details"
+// @Success      201      {object}  database.Booking
+// @Failure      400      {object}  map[string]string "Invalid request data"
+// @Failure      500      {object}  map[string]string "Error creating booking"
+// @Router       /bookings [post]
 func CreateBooking(c *fiber.Ctx) error {
 	var booking database.Booking
 
+	// Parse JSON body into booking struct
 	if err := c.BodyParser(&booking); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Invalid request data",
@@ -46,6 +28,14 @@ func CreateBooking(c *fiber.Ctx) error {
 		})
 	}
 
+	// Basic validation
+	if booking.UserID == 0 || booking.EventID == 0 || booking.BookingStatus == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Missing required fields: user_id, event_id, or booking_status",
+		})
+	}
+
+	// Insert booking into DB
 	if err := database.DB.Create(&booking).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "Error creating booking",
