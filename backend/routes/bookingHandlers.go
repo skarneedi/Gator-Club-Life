@@ -29,7 +29,7 @@ func CreateBooking(c *fiber.Ctx) error {
 	}
 
 	// Basic validation
-	if booking.UserID == 0 || booking.EventID == 0 || booking.BookingStatus == "" {
+	if booking.UserID == 0 || booking.EventID == 0 || booking.Status == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Missing required fields: user_id, event_id, or booking_status",
 		})
