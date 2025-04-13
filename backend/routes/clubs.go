@@ -10,6 +10,7 @@ import (
 )
 
 func GetClubs(c *fiber.Ctx) error {
+	fmt.Println("GetClubs API called")
 	category := c.Query("category")
 	var clubs []database.Club
 	var result *gorm.DB
@@ -29,4 +30,20 @@ func GetClubs(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(clubs)
+}
+
+// GetClubByID handles GET /clubs/:id
+func GetClubByID(c *fiber.Ctx) error {
+	fmt.Println("GetClubByID API called")
+	clubID := c.Params("id")
+	var club database.Club
+
+	if err := database.DB.First(&club, clubID).Error; err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"message": "Club not found",
+			"error":   err.Error(),
+		})
+	}
+
+	return c.JSON(club)
 }
