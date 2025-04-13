@@ -22,8 +22,8 @@ func GetAnnouncements(c *fiber.Ctx) error {
 
 	clubID := c.Query("club_id")
 	var announcements []database.Announcement
-
 	var result *gorm.DB
+
 	if clubID != "" {
 		// Filter by club_id if query param exists
 		result = database.DB.Where("club_id = ?", clubID).Order("announcement_created_at desc").Find(&announcements)

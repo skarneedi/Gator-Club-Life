@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { CommonModule } from '@angular/common'; // For *ngIf and *ngFor
+import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
@@ -8,7 +8,7 @@ import { HttpClient } from '@angular/common/http';
   templateUrl: './organization-details.component.html',
   styleUrls: ['./organization-details.component.css'],
   standalone: true,
-  imports: [CommonModule], // Import required modules
+  imports: [CommonModule],
 })
 export class OrganizationDetailsComponent implements OnInit {
   organizationId: string | null = null;
@@ -20,14 +20,50 @@ export class OrganizationDetailsComponent implements OnInit {
   constructor(private route: ActivatedRoute, private http: HttpClient) {}
 
   ngOnInit(): void {
-    this.route.params.subscribe(params => {
-      this.organizationId = params['id'];
-      if (this.organizationId) {
-        this.http.get(`http://localhost:8080/organizations/${this.organizationId}`)
-          .subscribe((data: any) => {
-            this.organization = data;
-          });
-      }
-    });
+    const orgId = this.route.snapshot.paramMap.get('id');
+    const baseUrl = 'http://localhost:8080'; // ✅ set base URL
+    console.log("📌 Organization ID from route:", orgId);
+
+    if (orgId) {
+      this.http.get(`${baseUrl}/clubs/${orgId}`).subscribe({
+        next: (data: any) => {
+          console.log("✅ Organization Data:", data);
+          this.organization = {
+            name: data.club_name,
+            description: data.club_description
+          };
+        },
+        error: (err) => console.error("❌ Error fetching organization:", err)
+      });
+
+      this.http.get(`${baseUrl}/clubs/${orgId}/officers`).subscribe({
+        next: (data: any) => {
+          console.log("✅ Officers Data:", data);
+          this.officers = data.map((officer: any) => ({
+            name: officer.officer_name,
+            role: officer.officer_role
+          }));
+        },
+        error: (err) => console.error("❌ Error fetching officers:", err)
+      });
+
+      this.http.get(`${baseUrl}/announcements?club_id=${orgId}`).subscribe({
+        next: (data: any) => {
+          console.log("✅ Announcements Data:", data);
+          this.announcements = data;
+        },
+        error: (err) => console.error("❌ Error fetching announcements:", err)
+      });
+
+      this.http.get(`${baseUrl}/events?club_id=${orgId}`).subscribe({
+        next: (data: any) => {
+          console.log("✅ Events Data:", data);
+          this.events = data;
+        },
+        error: (err) => console.error("❌ Error fetching events:", err)
+      });
+    } else {
+      console.error("❌ No organization ID found in route.");
+    }
   }
 }
