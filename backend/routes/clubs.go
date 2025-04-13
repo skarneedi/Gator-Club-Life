@@ -66,5 +66,6 @@ func GetOfficersByClubID(c *fiber.Ctx) error {
 		})
 	}
 
+	fmt.Printf("Found %d officers for club_id = %d\n", len(officers), clubID)
 	return c.JSON(officers)
 }

@@ -20,9 +20,16 @@ func GetAnnouncements(c *fiber.Ctx) error {
 	fmt.Println("GetAnnouncements API called")
 
 	var announcements []database.Announcement
-	result := database.DB.Order("announcement_created_at desc").Find(&announcements)
-	if result.Error != nil {
-		fmt.Println("Error fetching announcements:", result.Error)
+
+	clubID := c.Query("club_id")
+	query := database.DB.Order("announcement_created_at desc")
+
+	if clubID != "" {
+		query = query.Where("club_id = ?", clubID)
+	}
+
+	if err := query.Find(&announcements).Error; err != nil {
+		fmt.Println("Error fetching announcements:", err)
 		return c.Status(fiber.StatusInternalServerError).SendString("Error retrieving announcements")
 	}
 
