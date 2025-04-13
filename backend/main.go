@@ -41,6 +41,7 @@ func main() {
 	app.Post("/announcements/create", routes.CreateAnnouncement)
 	routes.RegisterBookingRoutes(app)
 	app.Get("/clubs/:id", routes.GetClubByID)
+	app.Get("/clubs/:id/officers", routes.GetOfficersByClubID)
 
 	log.Fatal(app.Listen(":8080"))
 }

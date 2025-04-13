@@ -3,6 +3,7 @@ package routes
 import (
 	"backend/database"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
@@ -46,4 +47,24 @@ func GetClubByID(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(club)
+}
+
+func GetOfficersByClubID(c *fiber.Ctx) error {
+	clubIDParam := c.Params("id")
+	clubID, err := strconv.Atoi(clubIDParam)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid club ID",
+		})
+	}
+
+	var officers []database.Officer
+	if err := database.DB.Where("club_id = ?", clubID).Find(&officers).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Error fetching officers",
+			"error":   err.Error(),
+		})
+	}
+
+	return c.JSON(officers)
 }

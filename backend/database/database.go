@@ -70,6 +70,13 @@ type Announcement struct {
 	AnnouncementCreatedAt time.Time `gorm:"column:announcement_created_at;autoCreateTime" json:"announcement_created_at"`
 }
 
+type Officer struct {
+	OfficerID   uint   `gorm:"column:officer_id;primaryKey;autoIncrement" json:"officer_id"`
+	OfficerName string `gorm:"column:officer_name;not null" json:"officer_name"`
+	OfficerRole string `gorm:"column:officer_role;not null" json:"officer_role"`
+	ClubID      uint   `gorm:"column:club_id;not null" json:"club_id"`
+}
+
 func (User) TableName() string {
 	return "users"
 }
@@ -84,6 +91,10 @@ func (Booking) TableName() string {
 }
 func (Announcement) TableName() string {
 	return "announcements"
+}
+
+func (Officer) TableName() string {
+	return "officers"
 }
 
 func InitDB() {
