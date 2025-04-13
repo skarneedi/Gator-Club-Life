@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm"
 )
 
 // GetAnnouncements godoc
@@ -19,8 +20,17 @@ import (
 func GetAnnouncements(c *fiber.Ctx) error {
 	fmt.Println("GetAnnouncements API called")
 
+	clubID := c.Query("club_id")
 	var announcements []database.Announcement
-	result := database.DB.Order("announcement_created_at desc").Find(&announcements)
+
+	var result *gorm.DB
+	if clubID != "" {
+		// Filter by club_id if query param exists
+		result = database.DB.Where("club_id = ?", clubID).Order("announcement_created_at desc").Find(&announcements)
+	} else {
+		result = database.DB.Order("announcement_created_at desc").Find(&announcements)
+	}
+
 	if result.Error != nil {
 		fmt.Println("Error fetching announcements:", result.Error)
 		return c.Status(fiber.StatusInternalServerError).SendString("Error retrieving announcements")
