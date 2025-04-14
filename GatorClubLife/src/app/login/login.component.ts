@@ -27,9 +27,20 @@ export class LoginComponent {
     private authService: AuthService
   ) {}
 
+  // Method to validate email format
+  validateEmail(): boolean {
+    return this.username.endsWith('@ufl.edu'); // Check if email ends with @ufl.edu
+  }
+
   login() {
-    this.emailError = '';
-    this.passwordError = '';
+    this.emailError = ''; // Reset email error
+    this.passwordError = ''; // Reset password error
+
+    // Validate email format
+    if (!this.validateEmail()) {
+      this.emailError = 'Please use a valid UF email (e.g., user@ufl.edu).';
+      return; // Stop further execution if email is invalid
+    }
 
     const payload = {
       email: this.username,
@@ -37,7 +48,7 @@ export class LoginComponent {
     };
 
     this.http
-    .post<any>('http://localhost:8080/login', payload)
+      .post<any>('http://localhost:8080/login', payload)
       .pipe(
         catchError((error) => {
           if (error.error?.message === 'Incorrect password') {
@@ -56,7 +67,9 @@ export class LoginComponent {
           name: response.user_name || this.username,
           email: response.user_email || this.username,
           role: response.user_role || 'member',
-          joined: new Date(response.user_created_at * 1000).toISOString().split('T')[0] // convert UNIX timestamp
+          joined: new Date(response.user_created_at * 1000)
+            .toISOString()
+            .split('T')[0], // Convert UNIX timestamp
         };
 
         this.authService.setUser(userInfo);
