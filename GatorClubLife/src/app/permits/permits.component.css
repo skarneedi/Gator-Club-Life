@@ -1,8 +1,9 @@
+/* Global Styles */
 body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f5e6d3; /* Light yellow background */
+  background-color: #f5e6d3; /* Light yellow background from second image */
 }
 
 .container {
@@ -13,7 +14,7 @@ body {
 
 /* Header Section */
 header {
-  background-color: #003366; /* Dark blue header */
+  background-color: #003366; /* Dark blue header from second image */
   color: white;
   padding: 20px;
   text-align: left;
@@ -41,14 +42,14 @@ header h1 {
 
 /* Content Wrapper */
 .content-wrapper {
-  display: flex; /* Use flexbox to align items side by side */
-  gap: 20px; /* Add spacing between the main content and sidebar */
-  margin-top: 50px; /* Move the content down by 50 pixels */
+  display: flex;
+  gap: 20px; /* Add spacing between main content and sidebar */
+  margin-top: 50px; /* Move content down by 50 pixels */
 }
 
-/* Main Content (Event Types) */
+/* Event Types Section */
 .event-types {
-  flex: 3; /* Main content takes up 3 parts of the width */
+  flex-grow: 3; /* Allow the main content to occupy available space */
 }
 
 .event-types h2 {
@@ -58,17 +59,24 @@ header h1 {
 }
 
 .event-options {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px; /* Add spacing between event options */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px; /* Add spacing between event cards */
 }
 
 .event-option {
-  width: calc(30% - 20px); /* Three columns per row */
   padding: 15px;
   border: 1px solid #ccc;
   border-radius: 8px;
-  background-color: white;
+  background-color: #F9E6D3; /* Light yellow background from second image */
+  cursor: pointer; /* Indicate that the card is clickable */
+  transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth hover effect */
+}
+
+.event-option:hover {
+  background-color: #FFA500; /* Orange background on hover */
+  color: white; /* White text on orange background */
+  transform: scale(1.05); /* Slightly enlarge the card on hover */
 }
 
 .event-option h3 {
@@ -82,13 +90,15 @@ header h1 {
   font-size: 14px; /* Adjust paragraph size */
 }
 
-/* Sidebar */
+/* Sidebar Styles */
 .sidebar {
-  flex: 1; /* Sidebar takes up 1 part of the width */
+  width: 300px; /* Fixed width for the sidebar */
+  position: sticky;
+  top: 100px; /* Keep the sidebar fixed relative to the viewport */
   padding: 20px;
+  background-color: white;
   border: 1px solid #ccc;
   border-radius: 8px;
-  background-color: white;
 }
 
 .sidebar h4 {
