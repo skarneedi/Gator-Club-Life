@@ -1,0 +1,63 @@
+<div class="container">
+    <!-- Header Section -->
+    <header>
+      <h2>Basic Event Information</h2>
+    </header>
+  
+    <!-- Instruction Text -->
+    <div class="instruction-text">
+      <p>
+        Now that you have chosen the type of event, please provide some basic information about the event.
+      </p>
+    </div>
+  
+    <!-- Content Wrapper -->
+    <div class="content-wrapper">
+      <!-- Main Content -->
+      <section class="main-content">
+        <div class="form-section">
+          <h3>Event Information - Vendor</h3>
+          <form>
+            <div class="form-group">
+              <label for="eventName">Name of the event</label>
+              <input type="text" id="eventName" placeholder="Enter event name" required />
+              <span class="required">*Required</span>
+            </div>
+            <div class="form-group">
+              <label for="eventPurpose">The purpose of the event</label>
+              <textarea id="eventPurpose" rows="4" placeholder="Describe your event"></textarea>
+              <span class="required">*Required</span>
+            </div>
+            <div class="form-group">
+              <label for="expectedAttendance">Expected attendance</label>
+              <input type="number" id="expectedAttendance" placeholder="0" required />
+              <span class="required">*Required</span>
+            </div>
+          </form>
+        </div>
+  
+        <div class="form-section">
+          <h3>Event Categories</h3>
+          <p>Please select at least 1 but no more than 3 for this event.</p>
+          <ul>
+            <li><a href="#">BANNERS</a></li>
+            <li><a href="#">CENTURY TOWER LIGHTING</a></li>
+            <li><a href="#">GENERAL</a></li>
+            <li><a href="#">RUN/WALK</a></li>
+            <li><a href="#">TABLING</a></li>
+          </ul>
+        </div>
+      </section>
+  
+      <!-- Sidebar for Type of Permit -->
+      <aside class="sidebar">
+        <h4>Type of Permit</h4>
+        <ul>
+          <li><input type="radio" name="permitType" value="basicInfo" checked> Basic Information</li>
+          <li><input type="radio" name="permitType" value="eventDates"> Event Dates</li>
+          <li><input type="radio" name="permitType" value="additionalForms"> Additional Forms</li>
+          <li><input type="radio" name="permitType" value="review"> Review</li>
+        </ul>
+      </aside>
+    </div>
+  </div>

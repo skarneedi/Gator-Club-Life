@@ -13,10 +13,10 @@ import { PermitsComponent } from './permits/permits.component';
 import { MySubmissionsComponent } from './my-submissions/my-submissions.component';
 import { MyProfileComponent } from './my-profile/my-profile.component';
 import { MyEventsComponent } from './my-events/my-events.component';
-
+import { EventsFormComponent } from './events-form/events-form.component'; // Import the new component
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: '', redirectTo: '/login', pathMatch: 'full' }, // Default route
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'home', component: HomeComponent, canActivate: [authGuard] },
@@ -37,5 +37,7 @@ export const routes: Routes = [
   },
   { path: 'permits', component: PermitsComponent, canActivate: [authGuard] },
   { path: 'my-submissions', component: MySubmissionsComponent, canActivate: [authGuard] },
-  { path: 'my-profile', component: MyProfileComponent, canActivate: [authGuard] } // NEW: My Profile Route
+  { path: 'my-profile', component: MyProfileComponent, canActivate: [authGuard] },
+  // NEW: Route for permit forms
+  { path: 'forms/:permitType', component: EventsFormComponent, canActivate: [authGuard] }, // Dynamic route for form pages
 ];
