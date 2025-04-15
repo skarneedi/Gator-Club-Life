@@ -1,4 +1,5 @@
 <div class="container">
+  <!-- Header Section -->
   <header>
     <h1>Welcome!</h1>
     <div class="welcome-text">
@@ -8,40 +9,51 @@
     </div>
   </header>
 
+  <!-- Content Wrapper -->
   <div class="content-wrapper">
+    <!-- Event Types Section -->
     <section class="event-types">
       <h2>Choose the type of event</h2>
       <div class="event-options">
-        <div class="event-option">
+        <!-- Banner Permit -->
+        <div class="event-option" (click)="navigateToForm('banner-permit')">
           <h3>Banner Permit - BA</h3>
           <p>This form is required for placing banners on campus.</p>
         </div>
-        <div class="event-option">
+        <!-- Century Tower Lighting -->
+        <div class="event-option" (click)="navigateToForm('century-tower-lighting')">
           <h3>Century Tower Lighting - BA</h3>
           <p>This form is required for lighting Century Tower.</p>
         </div>
-        <div class="event-option">
+        <!-- General Events -->
+        <div class="event-option" (click)="navigateToForm('general-events')">
           <h3>General Events - BA</h3>
           <p>This form is required for general events and requests to serve alcohol at events ON campus.</p>
         </div>
-        <div class="event-option">
+        <!-- Run/Walk -->
+        <div class="event-option" (click)="navigateToForm('run-walk')">
           <h3>Run/Walk - BA</h3>
           <p>This form is required for runs, walks, and biking events on campus.</p>
         </div>
-        <div class="event-option">
+        <!-- Select Spaces -->
+        <div class="event-option" (click)="navigateToForm('select-spaces')">
           <h3>Select Spaces: Request to Serve Alcoholic Beverages - BA</h3>
           <p>This form is for requests to alcoholic beverages in Select Spaces. Unless your event occurs in a Select Space, please complete the General Events form.</p>
         </div>
-        <div class="event-option">
+        <!-- Tabling -->
+        <div class="event-option" (click)="navigateToForm('tabling')">
           <h3>Tabling - BA</h3>
           <p>This form is required for tabling events.</p>
         </div>
-        <div class="event-option">
+        <!-- Yard Sign and Feather Banner -->
+        <div class="event-option" (click)="navigateToForm('yard-sign')">
           <h3>Yard Sign and Feather Banner Permit - BA</h3>
+          <p>This form is required for placing yard signs and feather banners on campus.</p>
         </div>
       </div>
     </section>
 
+    <!-- Sidebar for Type of Permit -->
     <aside class="sidebar">
       <h4>Type of Permit</h4>
       <ul>
