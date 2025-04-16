@@ -1,112 +1,132 @@
 /* Global Styles */
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f5e6d3; /* Light yellow background from first image */
-  }
-  
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-  
-  /* Header Section */
-  header {
-    background-color: #003366; /* Dark blue background */
-    color: white;
-    padding: 20px;
-    text-align: left;
-  }
-  
-  header h2 {
-    margin-top: 0;
-    margin-bottom: 15px; /* Add spacing below the heading */
-    font-size: 20px; /* Adjust heading size */
-  }
-  
-  /* Instruction Text */
-  .instruction-text {
-    background-color: #003366; /* Match the header's dark blue background */
-    color: white; /* White text for contrast */
-    padding: 10px 20px; /* Add padding for spacing */
-    margin-top: -20px; /* Overlap slightly with the header for continuity */
-    border-radius: 0 0 8px 8px; /* Rounded bottom corners */
-    font-size: 14px; /* Adjust paragraph size */
-    line-height: 1.6; /* Improve readability */
-  }
-  
-  /* Content Wrapper */
-  .content-wrapper {
-    display: flex;
-    gap: 20px; /* Add spacing between main content and sidebar */
-    margin-top: 50px; /* Move content down by 50 pixels */
-  }
-  
-  /* Main Content */
-  .main-content {
-    flex-grow: 1; /* Allow the main content to occupy available space */
-  }
-  
-  .form-section {
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 20px;
-    background-color: white; /* Add background to form sections */
-  }
-  
-  .form-section:first-child {
-    margin-top: -10px; /* Bring the first .form-section up slightly */
-  }
-  
-  .form-group {
-    margin-bottom: 15px; /* Add spacing between form groups */
-  }
-  
-  .form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-  }
-  
-  .form-group input,
-  .form-group textarea {
-    width: 100%;
-    padding: 10px;
-    box-sizing: border-box;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  .required {
-    color: #FF0000; /* Change required text color to red */
-    font-size: 12px;
-  }
-  
-  /* Sidebar Styles */
-  .sidebar {
-    width: fit-content; /* Adjust sidebar width to fit content */
-    min-width: 200px; /* Minimum width for better readability */
-    position: sticky;
-    top: 100px; /* Keep the sidebar fixed relative to the viewport */
-    padding: 20px;
-    background-color: transparent; /* Ensure no background color */
-  }
-  
-  .sidebar h4 {
-    margin-top: 0;
-    margin-bottom: 15px; /* Add spacing below the heading */
-    font-size: 18px; /* Adjust heading size */
-  }
-  
-  .sidebar ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  .sidebar li {
-    margin-bottom: 10px; /* Add spacing between list items */
-    font-size: 14px; /* Adjust font size */
-  }
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f5e6d3; /* Light yellow background from first image */
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  position: relative; /* Ensure the container is a reference for absolute positioning */
+}
+
+/* Header Section */
+header {
+  background-color: #003366; /* Dark blue background */
+  color: white;
+  padding: 20px;
+  text-align: left;
+}
+
+header h2 {
+  margin-top: 0;
+  margin-bottom: 15px; /* Add spacing below the heading */
+  font-size: 20px; /* Adjust heading size */
+}
+
+/* Instruction Text */
+.instruction-text {
+  background-color: #003366; /* Match the header's dark blue background */
+  color: white; /* White text for contrast */
+  padding: 10px 20px; /* Add padding for spacing */
+  margin-top: -20px; /* Overlap slightly with the header for continuity */
+  border-radius: 0 0 8px 8px; /* Rounded bottom corners */
+  font-size: 14px; /* Adjust paragraph size */
+  line-height: 1.6; /* Improve readability */
+}
+
+/* Content Wrapper */
+.content-wrapper {
+  display: flex;
+  gap: 20px; /* Add spacing between main content and sidebar */
+  margin-top: 50px; /* Move content down by 50 pixels */
+}
+
+/* Main Content */
+.main-content {
+  flex-grow: 1; /* Allow the main content to occupy available space */
+}
+
+.form-section {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  background-color: white; /* Add background to form sections */
+}
+
+.form-section:first-child {
+  margin-top: -10px; /* Bring the first .form-section up slightly */
+}
+
+.form-group {
+  margin-bottom: 15px; /* Add spacing between form groups */
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.required {
+  color: #FF0000; /* Change required text color to red */
+  font-size: 12px;
+}
+
+/* Sidebar Styles */
+.sidebar {
+  width: fit-content; /* Adjust sidebar width to fit content */
+  min-width: 200px; /* Minimum width for better readability */
+  position: sticky;
+  top: 100px; /* Keep the sidebar fixed relative to the viewport */
+  padding: 20px;
+  background-color: transparent; /* Ensure no background color */
+}
+
+.sidebar h4 {
+  margin-top: 0;
+  margin-bottom: 15px; /* Add spacing below the heading */
+  font-size: 18px; /* Adjust heading size */
+}
+
+.sidebar ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.sidebar li {
+  margin-bottom: 10px; /* Add spacing between list items */
+  font-size: 14px; /* Adjust font size */
+}
+
+/* Next Button */
+.next-button {
+  position: absolute;
+  bottom: 50px; /* Adjusted from 20px to 50px to move the button up */
+  right: 20px;
+  background-color: #009900; /* Green button */
+  color: white; /* White text */
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.next-button:hover {
+  background-color: #007A00; /* Slightly darker green on hover */
+}
