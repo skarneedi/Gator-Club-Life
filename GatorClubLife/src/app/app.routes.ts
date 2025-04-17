@@ -1,4 +1,3 @@
-// app.routes.ts
 import { Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { AboutComponent } from './about/about.component';
@@ -13,7 +12,8 @@ import { PermitsComponent } from './permits/permits.component';
 import { MySubmissionsComponent } from './my-submissions/my-submissions.component';
 import { MyProfileComponent } from './my-profile/my-profile.component';
 import { MyEventsComponent } from './my-events/my-events.component';
-import { EventsFormComponent } from './events-form/events-form.component'; // Import the new component
+import { EventsFormComponent } from './events-form/events-form.component'; // Import the existing form component
+import { EventDatesComponent } from './event-dates/event-dates.component'; // Import the new component
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' }, // Default route
@@ -38,6 +38,7 @@ export const routes: Routes = [
   { path: 'permits', component: PermitsComponent, canActivate: [authGuard] },
   { path: 'my-submissions', component: MySubmissionsComponent, canActivate: [authGuard] },
   { path: 'my-profile', component: MyProfileComponent, canActivate: [authGuard] },
-  // NEW: Route for permit forms
+  // Route for permit forms
   { path: 'forms/:permitType', component: EventsFormComponent, canActivate: [authGuard] }, // Dynamic route for form pages
+  { path: 'dates', component: EventDatesComponent, canActivate: [authGuard] }, // New route for event dates page
 ];

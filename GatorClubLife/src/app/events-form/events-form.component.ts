@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-events-form',
@@ -9,7 +9,10 @@ import { ActivatedRoute } from '@angular/router';
 export class EventsFormComponent implements OnInit {
   pageTitle: string = ''; // Dynamic page title
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(
+    private route: ActivatedRoute, // To access route parameters
+    private router: Router // To handle navigation
+  ) {}
 
   ngOnInit(): void {
     // Get the permit type from the route parameter
@@ -24,5 +27,10 @@ export class EventsFormComponent implements OnInit {
       .split('-') // Split by hyphen
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize each word
       .join(' ') + ' Form';
+  }
+
+  // Method to navigate to the next page (Event Dates)
+  goToEventDates(): void {
+    this.router.navigate(['/dates']); // Navigate to the event dates page
   }
 }
