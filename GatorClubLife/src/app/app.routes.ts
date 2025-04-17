@@ -14,7 +14,8 @@ import { MyProfileComponent } from './my-profile/my-profile.component';
 import { MyEventsComponent } from './my-events/my-events.component';
 import { EventsFormComponent } from './events-form/events-form.component';
 import { EventDatesComponent } from './event-dates/event-dates.component';
-import { AdditionalFormsComponent } from './additional-forms/additional-forms.component'; // ✅ New import
+import { AdditionalFormsComponent } from './additional-forms/additional-forms.component'; 
+import { EventReviewComponent } from './event-review/event-review.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -39,9 +40,8 @@ export const routes: Routes = [
   { path: 'permits', component: PermitsComponent, canActivate: [authGuard] },
   { path: 'my-submissions', component: MySubmissionsComponent, canActivate: [authGuard] },
   { path: 'my-profile', component: MyProfileComponent, canActivate: [authGuard] },
-
-  // ✅ Form Pages
   { path: 'forms/:permitType', component: EventsFormComponent, canActivate: [authGuard] },
   { path: 'dates', component: EventDatesComponent, canActivate: [authGuard] },
-  { path: 'additional-forms', component: AdditionalFormsComponent, canActivate: [authGuard] } // ✅ New route
+  { path: 'additional-forms', component: AdditionalFormsComponent, canActivate: [authGuard] },
+  { path: 'review', component: EventReviewComponent, canActivate: [authGuard] }
 ];
