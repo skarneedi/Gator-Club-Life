@@ -12,11 +12,12 @@ import { PermitsComponent } from './permits/permits.component';
 import { MySubmissionsComponent } from './my-submissions/my-submissions.component';
 import { MyProfileComponent } from './my-profile/my-profile.component';
 import { MyEventsComponent } from './my-events/my-events.component';
-import { EventsFormComponent } from './events-form/events-form.component'; // Import the existing form component
-import { EventDatesComponent } from './event-dates/event-dates.component'; // Import the new component
+import { EventsFormComponent } from './events-form/events-form.component';
+import { EventDatesComponent } from './event-dates/event-dates.component';
+import { AdditionalFormsComponent } from './additional-forms/additional-forms.component'; // ✅ New import
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/login', pathMatch: 'full' }, // Default route
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'home', component: HomeComponent, canActivate: [authGuard] },
@@ -38,7 +39,9 @@ export const routes: Routes = [
   { path: 'permits', component: PermitsComponent, canActivate: [authGuard] },
   { path: 'my-submissions', component: MySubmissionsComponent, canActivate: [authGuard] },
   { path: 'my-profile', component: MyProfileComponent, canActivate: [authGuard] },
-  // Route for permit forms
-  { path: 'forms/:permitType', component: EventsFormComponent, canActivate: [authGuard] }, // Dynamic route for form pages
-  { path: 'dates', component: EventDatesComponent, canActivate: [authGuard] }, // New route for event dates page
+
+  // ✅ Form Pages
+  { path: 'forms/:permitType', component: EventsFormComponent, canActivate: [authGuard] },
+  { path: 'dates', component: EventDatesComponent, canActivate: [authGuard] },
+  { path: 'additional-forms', component: AdditionalFormsComponent, canActivate: [authGuard] } // ✅ New route
 ];
