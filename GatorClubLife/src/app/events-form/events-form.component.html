@@ -32,14 +32,17 @@
 
       <div class="form-section">
         <h3>Event Categories</h3>
-        <p>Please select at least 1 but no more than 3 for this event.</p>
-        <ul>
-          <li><a href="#">BANNERS</a></li>
-          <li><a href="#">CENTURY TOWER LIGHTING</a></li>
-          <li><a href="#">GENERAL</a></li>
-          <li><a href="#">RUN/WALK</a></li>
-          <li><a href="#">TABLING</a></li>
-        </ul>
+        <p>Please select the relevant categories for your event.</p>
+        <div class="category-buttons">
+          <button 
+            *ngFor="let category of categories" 
+            (click)="toggleCategory(category)"
+            [ngClass]="{ 'selected': isSelected(category) }"
+            type="button"
+          >
+            {{ category }}
+          </button>
+        </div>
       </div>
     </section>
 
@@ -47,10 +50,10 @@
     <aside class="sidebar">
       <h4>Type of Permit</h4>
       <ul>
-        <li><input type="radio" name="permitType" value="basicInfo" checked> Basic Information</li>
-        <li><input type="radio" name="permitType" value="eventDates"> Event Dates</li>
-        <li><input type="radio" name="permitType" value="additionalForms"> Additional Forms</li>
-        <li><input type="radio" name="permitType" value="review"> Review</li>
+        <li><input type="radio" name="permitType" checked disabled /> Basic Information</li>
+        <li><input type="radio" name="permitType" disabled /> Event Dates</li>
+        <li><input type="radio" name="permitType" disabled /> Additional Forms</li>
+        <li><input type="radio" name="permitType" disabled /> Review</li>
       </ul>
     </aside>
   </div>

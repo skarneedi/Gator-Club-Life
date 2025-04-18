@@ -1,36 +1,41 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { NgClass, CommonModule } from '@angular/common'; // ✅ Add NgClass here
 
 @Component({
   selector: 'app-events-form',
+  standalone: true,
+  imports: [CommonModule, NgClass], // ✅ Include NgClass
   templateUrl: './events-form.component.html',
-  styleUrls: ['./events-form.component.css'],
+  styleUrls: ['./events-form.component.css']
 })
-export class EventsFormComponent implements OnInit {
-  pageTitle: string = ''; // Dynamic page title
+export class EventsFormComponent {
+  categories = [
+    'BANNERS',
+    'CENTURY TOWER LIGHTING',
+    'GENERAL',
+    'RUN/WALK',
+    'TABLING'
+  ];
 
-  constructor(
-    private route: ActivatedRoute, // To access route parameters
-    private router: Router // To handle navigation
-  ) {}
+  selectedCategories: string[] = [];
 
-  ngOnInit(): void {
-    // Get the permit type from the route parameter
-    const permitType = this.route.snapshot.paramMap.get('permitType');
-    this.pageTitle = this.formatPageTitle(permitType);
+  constructor(private router: Router) {}
+
+  toggleCategory(category: string): void {
+    const index = this.selectedCategories.indexOf(category);
+    if (index > -1) {
+      this.selectedCategories.splice(index, 1);
+    } else {
+      this.selectedCategories.push(category);
+    }
   }
 
-  // Method to format the page title
-  private formatPageTitle(permitType: string | null): string {
-    if (!permitType) return 'Unknown Permit Type';
-    return permitType
-      .split('-') // Split by hyphen
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize each word
-      .join(' ') + ' Form';
+  isSelected(category: string): boolean {
+    return this.selectedCategories.includes(category);
   }
 
-  // Method to navigate to the next page (Event Dates)
   goToEventDates(): void {
-    this.router.navigate(['/dates']); // Navigate to the event dates page
+    this.router.navigate(['/dates']);
   }
 }
