@@ -14,17 +14,17 @@
         <form>
           <div class="form-group">
             <label for="eventName">Name of the event</label>
-            <input type="text" id="eventName" placeholder="Enter event name" required />
+            <input type="text" id="eventName" [(ngModel)]="eventName" name="eventName" placeholder="Enter event name" required />
             <span class="required">*Required</span>
           </div>
           <div class="form-group">
             <label for="eventPurpose">The purpose of the event</label>
-            <textarea id="eventPurpose" rows="4" placeholder="Describe your event"></textarea>
+            <textarea id="eventPurpose" [(ngModel)]="eventPurpose" name="eventPurpose" rows="4" placeholder="Describe your event"></textarea>
             <span class="required">*Required</span>
           </div>
           <div class="form-group">
             <label for="expectedAttendance">Expected attendance</label>
-            <input type="number" id="expectedAttendance" placeholder="0" required />
+            <input type="number" id="expectedAttendance" [(ngModel)]="expectedAttendance" name="expectedAttendance" placeholder="0" required />
             <span class="required">*Required</span>
           </div>
         </form>
