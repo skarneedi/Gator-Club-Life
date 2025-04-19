@@ -77,6 +77,36 @@ type Officer struct {
 	ClubID      uint   `gorm:"column:club_id;not null" json:"club_id"`
 }
 
+type EventPermit struct {
+	EventPermitID      uint   `gorm:"column:event_permit_id;primaryKey;autoIncrement" json:"event_permit_id"`
+	EventName          string `gorm:"column:event_name;not null" json:"event_name"`
+	PermitType         string `gorm:"column:permit_type;not null" json:"permit_type"`
+	EventDescription   string `gorm:"column:event_description;not null" json:"event_description"`
+	ExpectedAttendance int    `gorm:"column:expected_attendance;not null" json:"expected_attendance"`
+	EventCategories    string `gorm:"column:event_categories;not null" json:"event_categories"`
+	AdditionalNotes    string `gorm:"column:additional_notes" json:"additional_notes"`
+	Status             string `gorm:"column:status;default:'draft'" json:"status"`
+	CreatedAt          int64  `gorm:"column:created_at;default:(strftime('%s', 'now'))" json:"created_at"`
+
+	Slots     []EventSlot     `gorm:"foreignKey:EventID"`
+	Documents []EventDocument `gorm:"foreignKey:EventID"`
+}
+
+type EventSlot struct {
+	EventSlotID uint   `gorm:"column:event_slot_id;primaryKey;autoIncrement" json:"event_slot_id"`
+	EventID     uint   `gorm:"column:event_id;not null" json:"event_id"`
+	StartTime   string `gorm:"column:start_time;not null" json:"start_time"`
+	EndTime     string `gorm:"column:end_time;not null" json:"end_time"`
+}
+
+type EventDocument struct {
+	EventDocumentID uint   `gorm:"column:event_document_id;primaryKey;autoIncrement" json:"event_document_id"`
+	EventID         uint   `gorm:"column:event_id;not null" json:"event_id"`
+	FileName        string `gorm:"column:file_name;not null" json:"file_name"`
+	FileURL         string `gorm:"column:file_url;not null" json:"file_url"`
+	UploadedAt      int64  `gorm:"column:uploaded_at;default:(strftime('%s', 'now'))" json:"uploaded_at"`
+}
+
 func (User) TableName() string {
 	return "users"
 }
@@ -95,6 +125,18 @@ func (Announcement) TableName() string {
 
 func (Officer) TableName() string {
 	return "officers"
+}
+
+func (EventPermit) TableName() string {
+	return "event_permits"
+}
+
+func (EventSlot) TableName() string {
+	return "event_slots"
+}
+
+func (EventDocument) TableName() string {
+	return "event_documents"
 }
 
 func InitDB() {
