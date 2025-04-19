@@ -2,6 +2,7 @@ package routes
 
 import (
 	"backend/database"
+	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -16,21 +17,27 @@ type PermitSummary struct {
 }
 
 func GetUserSubmissions(c *fiber.Ctx) error {
-	email := c.Query("email")
-	if email == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Missing email query parameter",
+	fmt.Println("📬 My Submissions API called")
+
+	// ✅ Get email from session context (middleware set c.Locals)
+	email := c.Locals("user_email")
+	if email == nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "User not logged in or session missing",
 		})
 	}
+	userEmail := email.(string)
 
+	// ✅ Fetch all permits submitted by this user
 	var permits []database.EventPermit
-	err := database.DB.Preload("Slots").Where("submitted_by = ?", email).Find(&permits).Error
+	err := database.DB.Preload("Slots").Where("submitted_by = ?", userEmail).Find(&permits).Error
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Failed to fetch submissions",
 		})
 	}
 
+	// ✅ Transform into PermitSummary format
 	var summaries []PermitSummary
 	for _, p := range permits {
 		summary := PermitSummary{
