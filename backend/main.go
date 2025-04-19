@@ -42,6 +42,7 @@ func main() {
 	routes.RegisterBookingRoutes(app)
 	app.Get("/clubs/:id", routes.GetClubByID)
 	app.Get("/clubs/:id/officers", routes.GetOfficersByClubID)
+	app.Post("/event-permits/submit", routes.SubmitFullEventPermit)
 
 	log.Fatal(app.Listen(":8080"))
 }
