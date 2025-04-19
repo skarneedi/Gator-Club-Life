@@ -8,10 +8,15 @@
     <!-- Main Content -->
     <div class="form-section">
       <label for="fileUpload">Upload Supporting Documents</label>
-      <input type="file" id="fileUpload" multiple>
+      <input type="file" id="fileUpload" (change)="handleFileUpload($event)" multiple />
 
       <label for="notes">Additional Notes</label>
-      <textarea id="notes" rows="5" placeholder="Any extra details about your event..."></textarea>
+      <textarea
+        id="notes"
+        rows="5"
+        placeholder="Any extra details about your event..."
+        [(ngModel)]="notes"
+      ></textarea>
     </div>
 
     <!-- Sidebar -->
