@@ -22,22 +22,21 @@ export class RegisterComponent {
   confirmPassword = '';
   role = '';
 
-  // Error messages & flags
+  // Flags and messages
   errorMessage = '';
   submitted = false;
   passwordNotStrong = false;
+  invalidEmail = false;
 
-  // Eye icon toggle for password
+  // Password eye icon
   showPassword = false;
 
   constructor(private router: Router, private http: HttpClient) {}
 
-  // Toggle password visibility
   toggleShowPassword(): void {
     this.showPassword = !this.showPassword;
   }
 
-  // Check password strength while typing
   onPasswordInput(): void {
     if (this.password) {
       this.passwordNotStrong = !this.isPasswordStrong(this.password);
@@ -46,7 +45,6 @@ export class RegisterComponent {
     }
   }
 
-  // Regex check for strong password
   private isPasswordStrong(password: string): boolean {
     const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$/;
     return strongPasswordRegex.test(password);
@@ -56,18 +54,24 @@ export class RegisterComponent {
     this.errorMessage = '';
     this.submitted = true;
 
-    // Check for missing fields
     if (!this.name || !this.email || !this.username || !this.password || !this.confirmPassword || !this.role) {
       return;
     }
 
-    // Check password match
+    const uflEmailRegex = /^[a-zA-Z0-9._%+-]+@ufl\.edu$/;
+    if (!uflEmailRegex.test(this.email)) {
+      this.invalidEmail = true;
+      this.errorMessage = 'Please use a valid @ufl.edu email address.';
+      return;
+    } else {
+      this.invalidEmail = false;
+    }
+
     if (this.password !== this.confirmPassword) {
       this.errorMessage = 'Passwords do not match!';
       return;
     }
 
-    // Final password strength check
     if (!this.isPasswordStrong(this.password)) {
       this.errorMessage =
         'Password must be at least 8 characters long and include uppercase, lowercase, digit, and special character.';
@@ -75,7 +79,6 @@ export class RegisterComponent {
       return;
     }
 
-    // Prepare payload
     const payload = {
       user_name: this.username,
       user_email: this.email,
@@ -83,7 +86,6 @@ export class RegisterComponent {
       user_password: this.password,
     };
 
-    // Send POST request
     this.http
       .post<{ user_id: number }>('http://localhost:8080/users/create', payload)
       .pipe(

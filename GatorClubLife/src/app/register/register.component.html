@@ -14,7 +14,7 @@
     </div>
 
     <!-- Email Field -->
-    <div [ngClass]="{'field-error': submitted && !email}">
+    <div [ngClass]="{'field-error': submitted && (!email || invalidEmail)}">
       <label for="email">Email Address:</label>
       <input
         type="email"
@@ -49,7 +49,6 @@
           required
           (input)="onPasswordInput()"
         />
-        <!-- The Font Awesome eye icon toggles password visibility -->
         <i class="fa"
            [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"
            (click)="toggleShowPassword()"></i>
