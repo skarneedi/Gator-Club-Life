@@ -86,11 +86,12 @@ type EventPermit struct {
 	EventCategories    string `gorm:"column:event_categories;not null" json:"event_categories"`
 	AdditionalNotes    string `gorm:"column:additional_notes" json:"additional_notes"`
 	Status             string `gorm:"column:status;default:'draft'" json:"status"`
+	SubmittedBy        string `gorm:"column:submitted_by;not null" json:"submitted_by"` // 👈 NEW
 	CreatedAt          int64  `gorm:"column:created_at;default:(strftime('%s', 'now'))" json:"created_at"`
-
+  
 	Slots     []EventSlot     `gorm:"foreignKey:EventID"`
 	Documents []EventDocument `gorm:"foreignKey:EventID"`
-}
+  }  
 
 type EventSlot struct {
 	EventSlotID uint   `gorm:"column:event_slot_id;primaryKey;autoIncrement" json:"event_slot_id"`
