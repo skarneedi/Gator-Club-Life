@@ -34,7 +34,7 @@ func Login(c *fiber.Ctx) error {
 
 	var req LoginRequest
 	if err := c.BodyParser(&req); err != nil {
-		fmt.Println("❌ JSON parse error:", err)
+		fmt.Println("JSON parse error:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Invalid request format",
 		})
@@ -43,14 +43,14 @@ func Login(c *fiber.Ctx) error {
 	var user database.User
 	result := database.DB.Where("user_email = ?", req.Email).First(&user)
 	if result.Error != nil {
-		fmt.Println("❌ User not found:", result.Error)
+		fmt.Println("User not found:", result.Error)
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"message": "Email not found",
 		})
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.UserPassword), []byte(req.Password)); err != nil {
-		fmt.Println("❌ Incorrect password")
+		fmt.Println("Incorrect password")
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"message": "Incorrect password",
 		})
@@ -61,7 +61,7 @@ func Login(c *fiber.Ctx) error {
 	// 🧠 Create new session and save details
 	sess, err := Store.Get(c)
 	if err != nil {
-		fmt.Println("❌ Failed to create session:", err)
+		fmt.Println("Failed to create session:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "Could not create session",
 		})
@@ -72,7 +72,7 @@ func Login(c *fiber.Ctx) error {
 	sess.Set("user_role", user.UserRole)
 
 	if err := sess.Save(); err != nil {
-		fmt.Println("❌ Failed to save session:", err)
+		fmt.Println("Failed to save session:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "Session save failed",
 		})
