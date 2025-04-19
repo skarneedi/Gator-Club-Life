@@ -19,7 +19,7 @@
     </div>
 
     <!-- Email Field -->
-    <div [ngClass]="{'field-error': submitted && (!email || invalidEmail)}">
+    <div [ngClass]="{'field-error': submitted && (!email || invalidEmail || emailAvailable === false)}">
       <label for="email">Email Address:</label>
       <input
         type="email"
@@ -27,12 +27,16 @@
         [(ngModel)]="email"
         name="email"
         autocomplete="off"
+        (ngModelChange)="checkEmailAvailability()"
         required
       />
+      <span *ngIf="checkingEmail" class="checking-msg">Checking...</span>
+      <span *ngIf="emailAvailable === false && !checkingEmail" class="unavailable-msg">This email is already in use.</span>
+      <span *ngIf="emailAvailable === true && !checkingEmail" class="available-msg">Email is available!</span>
     </div>
 
     <!-- Username Field -->
-    <div [ngClass]="{'field-error': submitted && !username}">
+    <div [ngClass]="{'field-error': submitted && (!username || usernameAvailable === false)}">
       <label for="username">Username:</label>
       <input
         type="text"
@@ -40,8 +44,12 @@
         [(ngModel)]="username"
         name="username"
         autocomplete="off"
+        (ngModelChange)="checkUsernameAvailability()"
         required
       />
+      <span *ngIf="checkingUsername" class="checking-msg">Checking...</span>
+      <span *ngIf="usernameAvailable === false && !checkingUsername" class="unavailable-msg">Username is already taken.</span>
+      <span *ngIf="usernameAvailable === true && !checkingUsername" class="available-msg">Username is available!</span>
     </div>
 
     <!-- Password Field with Toggle -->
