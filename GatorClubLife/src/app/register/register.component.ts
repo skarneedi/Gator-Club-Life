@@ -22,21 +22,29 @@ export class RegisterComponent {
   confirmPassword = '';
   role = '';
 
-  // Flags and messages
+  // Error messages & flags
   errorMessage = '';
   submitted = false;
   passwordNotStrong = false;
   invalidEmail = false;
 
-  // Password eye icon
+  // Password visibility toggles
   showPassword = false;
+  showConfirmPassword = false;
 
   constructor(private router: Router, private http: HttpClient) {}
 
+  // Toggle visibility for password
   toggleShowPassword(): void {
     this.showPassword = !this.showPassword;
   }
 
+  // Toggle visibility for confirm password
+  toggleConfirmPassword(): void {
+    this.showConfirmPassword = !this.showConfirmPassword;
+  }
+
+  // Validate password strength
   onPasswordInput(): void {
     if (this.password) {
       this.passwordNotStrong = !this.isPasswordStrong(this.password);
@@ -45,11 +53,13 @@ export class RegisterComponent {
     }
   }
 
+  // Password strength checker
   private isPasswordStrong(password: string): boolean {
     const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$/;
     return strongPasswordRegex.test(password);
   }
 
+  // Form submission
   register(): void {
     this.errorMessage = '';
     this.submitted = true;

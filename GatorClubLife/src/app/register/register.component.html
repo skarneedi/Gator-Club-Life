@@ -1,6 +1,10 @@
 <div class="login-container">
   <h2>Register</h2>
-  <form (ngSubmit)="register()">
+  <form (ngSubmit)="register()" autocomplete="off">
+    <!-- 🔒 Hidden dummy fields to trick browser autofill -->
+    <input type="text" name="fake-username" style="display: none" autocomplete="off" />
+    <input type="password" name="fake-password" style="display: none" autocomplete="off" />
+
     <!-- Name Field -->
     <div [ngClass]="{'field-error': submitted && !name}">
       <label for="name">Name:</label>
@@ -9,6 +13,7 @@
         id="name"
         [(ngModel)]="name"
         name="name"
+        autocomplete="off"
         required
       />
     </div>
@@ -21,6 +26,7 @@
         id="email"
         [(ngModel)]="email"
         name="email"
+        autocomplete="off"
         required
       />
     </div>
@@ -33,11 +39,12 @@
         id="username"
         [(ngModel)]="username"
         name="username"
+        autocomplete="off"
         required
       />
     </div>
 
-    <!-- Password Field with Eye Icon and Strength Meter -->
+    <!-- Password Field with Toggle -->
     <div [ngClass]="{'field-error': (submitted && !password) || (submitted && passwordNotStrong)}">
       <label for="password">Password:</label>
       <div class="password-container">
@@ -46,15 +53,16 @@
           id="password"
           [(ngModel)]="password"
           name="password"
+          autocomplete="new-password"
           required
           (input)="onPasswordInput()"
         />
         <i class="fa"
            [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"
-           (click)="toggleShowPassword()"></i>
+           (click)="toggleShowPassword()"
+           title="{{ showPassword ? 'Hide Password' : 'Show Password' }}"></i>
       </div>
 
-      <!-- Password Strength Meter -->
       <div class="password-rules" *ngIf="password.length > 0">
         <p *ngIf="!passwordNotStrong" class="valid-message">
           ✓ Your password meets the required strength.
@@ -65,16 +73,23 @@
       </div>
     </div>
 
-    <!-- Confirm Password Field -->
+    <!-- Confirm Password Field with Toggle -->
     <div [ngClass]="{'field-error': submitted && !confirmPassword}">
       <label for="confirm-password">Confirm Password:</label>
-      <input
-        type="password"
-        id="confirm-password"
-        [(ngModel)]="confirmPassword"
-        name="confirm-password"
-        required
-      />
+      <div class="password-container">
+        <input
+          [type]="showConfirmPassword ? 'text' : 'password'"
+          id="confirm-password"
+          [(ngModel)]="confirmPassword"
+          name="confirm-password"
+          autocomplete="new-password"
+          required
+        />
+        <i class="fa"
+           [ngClass]="showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'"
+           (click)="toggleConfirmPassword()"
+           title="{{ showConfirmPassword ? 'Hide Password' : 'Show Password' }}"></i>
+      </div>
     </div>
 
     <!-- Role Dropdown -->
@@ -92,7 +107,7 @@
       </select>
     </div>
 
-    <!-- Error Message Display -->
+    <!-- Error Message -->
     <div *ngIf="errorMessage" class="error">
       {{ errorMessage }}
     </div>
@@ -101,7 +116,7 @@
     <button type="submit">Register</button>
   </form>
 
-  <!-- Link to Login Page -->
+  <!-- Already have account link -->
   <div class="register-link">
     Already have an account?
     <button (click)="goToLogin()" class="register-btn">Login</button>
