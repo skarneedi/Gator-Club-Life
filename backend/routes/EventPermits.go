@@ -23,6 +23,15 @@ func SubmitFullEventPermit(c *fiber.Ctx) error {
 		})
 	}
 
+	// 🆕 Get submitted_by from session
+	submittedBy := c.Locals("user_email")
+	if submittedBy == nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "User not logged in or session missing",
+		})
+	}
+	payload.EventPermit.SubmittedBy = submittedBy.(string)
+
 	// Insert Event Permit
 	if err := database.DB.Create(&payload.EventPermit).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{

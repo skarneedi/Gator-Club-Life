@@ -88,10 +88,10 @@ type EventPermit struct {
 	Status             string `gorm:"column:status;default:'draft'" json:"status"`
 	SubmittedBy        string `gorm:"column:submitted_by;not null" json:"submitted_by"` // 👈 NEW
 	CreatedAt          int64  `gorm:"column:created_at;default:(strftime('%s', 'now'))" json:"created_at"`
-  
+
 	Slots     []EventSlot     `gorm:"foreignKey:EventID"`
 	Documents []EventDocument `gorm:"foreignKey:EventID"`
-  }  
+}
 
 type EventSlot struct {
 	EventSlotID uint   `gorm:"column:event_slot_id;primaryKey;autoIncrement" json:"event_slot_id"`

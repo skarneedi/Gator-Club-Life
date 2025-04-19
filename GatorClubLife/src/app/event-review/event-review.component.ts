@@ -22,16 +22,23 @@ export class EventReviewComponent {
   submitForm() {
     const payload = this.permitService.getFinalPayload();
 
-    this.http.post('http://localhost:8080/event-permits/submit', payload).subscribe({
+    this.http.post(
+      'http://localhost:8080/event-permits/submit',
+      payload,
+      {
+        withCredentials: true  // ✅ this sends the session cookie
+      }
+    )
+    .subscribe({
       next: () => {
         alert('Event permit submitted successfully!');
-        this.permitService.reset(); // Clear stored data
-        this.router.navigate(['/home']); // or '/thank-you'
+        this.permitService.reset();
+        this.router.navigate(['/home']);
       },
       error: (err) => {
         console.error('Submission failed:', err);
         alert('Something went wrong. Please try again.');
       }
-    });
+    });    
   }
 }

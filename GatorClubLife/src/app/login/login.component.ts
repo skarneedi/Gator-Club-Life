@@ -48,33 +48,36 @@ export class LoginComponent {
     };
 
     this.http
-      .post<any>('http://localhost:8080/login', payload)
-      .pipe(
-        catchError((error) => {
-          if (error.error?.message === 'Incorrect password') {
-            this.passwordError = 'Incorrect password';
-          } else if (error.error?.message === 'Invalid email or account not found') {
-            this.emailError = 'Invalid email or account not found';
-          } else {
-            this.emailError = 'An unexpected error occurred';
-          }
-          return throwError(() => error);
-        })
-      )
-      .subscribe((response) => {
-        const userInfo: UserInfo = {
-          id: response.user_id,
-          name: response.user_name || this.username,
-          email: response.user_email || this.username,
-          role: response.user_role || 'member',
-          joined: new Date(response.user_created_at * 1000)
-            .toISOString()
-            .split('T')[0], // Convert UNIX timestamp
-        };
+  .post<any>('http://localhost:8080/login', payload, {
+    withCredentials: true  // ✅ IMPORTANT: include credentials (session cookie)
+  })
+  .pipe(
+    catchError((error) => {
+      if (error.error?.message === 'Incorrect password') {
+        this.passwordError = 'Incorrect password';
+      } else if (error.error?.message === 'Invalid email or account not found') {
+        this.emailError = 'Invalid email or account not found';
+      } else {
+        this.emailError = 'An unexpected error occurred';
+      }
+      return throwError(() => error);
+    })
+  )
+  .subscribe((response) => {
+    const userInfo: UserInfo = {
+      id: response.user_id,
+      name: response.user_name || this.username,
+      email: response.user_email || this.username,
+      role: response.user_role || 'member',
+      joined: new Date(response.user_created_at * 1000)
+        .toISOString()
+        .split('T')[0],
+    };
 
-        this.authService.setUser(userInfo);
-        this.router.navigate(['/home']);
-      });
+    this.authService.setUser(userInfo);
+    this.router.navigate(['/home']);
+  });
+
   }
 
   goToRegister(): void {
