@@ -78,7 +78,7 @@ select {
 /* Submit button */
 button {
   padding: 10px 15px;
-  background-color: #4CAF50; /* Green */
+  background-color: #4CAF50;
   color: white;
   border: none;
   border-radius: 4px;
@@ -97,7 +97,7 @@ button:hover {
 
 /* Login button */
 .register-btn {
-  background-color: #007BFF; /* Blue */
+  background-color: #007BFF;
   color: white;
   border: none;
   padding: 5px 10px;
@@ -127,4 +127,26 @@ button:hover {
 input::-ms-reveal,
 input::-ms-clear {
   display: none;
+}
+
+/* NEW: Email & Username availability feedback styles */
+.available-msg {
+  color: green;
+  font-size: 0.85rem;
+  margin-top: 5px;
+  display: block;
+}
+
+.unavailable-msg {
+  color: red;
+  font-size: 0.85rem;
+  margin-top: 5px;
+  display: block;
+}
+
+.checking-msg {
+  color: #007bff;
+  font-size: 0.85rem;
+  margin-top: 5px;
+  display: block;
 }
