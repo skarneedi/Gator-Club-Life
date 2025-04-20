@@ -1,67 +1,56 @@
 import { Injectable } from '@angular/core';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class EventPermitService {
-  private permitType: string = '';
   private basicInfo: any = {};
-  private slots: any[] = [];
-  private documents: any[] = [];
+  private eventDates: any[] = [];
+  private uploadedFiles: File[] = [];
   private notes: string = '';
-
-  setPermitType(type: string) {
-    this.permitType = type;
-  }
-  getPermitType() {
-    return this.permitType;
-  }
+  private permitType: string = ''; // ✅ Optional but required if used
 
   setBasicInfo(info: any) {
     this.basicInfo = info;
   }
+
   getBasicInfo() {
     return this.basicInfo;
   }
 
-  setSlots(slots: any[]) {
-    this.slots = slots;
-  }
-  getSlots() {
-    return this.slots;
+  setEventDates(dates: any[]) {
+    this.eventDates = dates;
   }
 
-  setDocuments(docs: any[]) {
-    this.documents = docs;
-  }
-  getDocuments() {
-    return this.documents;
+  getEventDates() {
+    return this.eventDates;
   }
 
-  setAdditionalNotes(notes: string) {
+  setUploadedFiles(files: File[]) {
+    this.uploadedFiles = files;
+  }
+
+  getUploadedFiles() {
+    return this.uploadedFiles;
+  }
+
+  setNotes(notes: string) {
     this.notes = notes;
   }
-  getAdditionalNotes() {
+
+  getNotes() {
     return this.notes;
   }
 
-  getFinalPayload() {
-    return {
-      event_permit: {
-        ...this.basicInfo,
-        permit_type: this.permitType,
-        additional_notes: this.notes
-      },
-      slots: this.slots,
-      documents: this.documents
-    };
+  // ✅ NEW: Alias for setSlots()
+  setSlots(slots: any[]) {
+    this.setEventDates(slots);
   }
 
-  reset() {
-    this.permitType = '';
-    this.basicInfo = {};
-    this.slots = [];
-    this.documents = [];
-    this.notes = '';
+  // ✅ NEW: Support for optional setPermitType()
+  setPermitType(type: string) {
+    this.permitType = type;
+  }
+
+  getPermitType(): string {
+    return this.permitType;
   }
 }

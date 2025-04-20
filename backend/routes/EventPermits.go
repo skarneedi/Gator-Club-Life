@@ -2,21 +2,27 @@ package routes
 
 import (
 	"backend/database"
+	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 func SubmitFullEventPermit(c *fiber.Ctx) error {
+	fmt.Println("Permits Submission API called")
+
+	// 🆕 Updated: Define struct to include top-level notes
 	type FullPermitPayload struct {
 		EventPermit database.EventPermit     `json:"event_permit"`
 		Slots       []database.EventSlot     `json:"slots"`
 		Documents   []database.EventDocument `json:"documents"`
+		Notes       string                   `json:"notes"` // capture top-level notes
 	}
 
 	var payload FullPermitPayload
 
 	// Parse JSON body
 	if err := c.BodyParser(&payload); err != nil {
+		fmt.Printf("❌ Error parsing body: %v\n", err)
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Invalid input data",
 			"error":   err.Error(),
@@ -26,6 +32,7 @@ func SubmitFullEventPermit(c *fiber.Ctx) error {
 	// 🆕 Get submitted_by from session
 	submittedBy := c.Locals("user_email")
 	if submittedBy == nil {
+		fmt.Println("⚠️ User not authenticated")
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"message": "User not logged in or session missing",
 		})
@@ -34,6 +41,7 @@ func SubmitFullEventPermit(c *fiber.Ctx) error {
 
 	// Insert Event Permit
 	if err := database.DB.Create(&payload.EventPermit).Error; err != nil {
+		fmt.Printf("❌ DB Insert Error: %v\n", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "Error saving permit",
 			"error":   err.Error(),
@@ -66,7 +74,7 @@ func SubmitFullEventPermit(c *fiber.Ctx) error {
 		}
 	}
 
-	// Success Response
+	// ✅ Final response
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"message": "Event permit submitted successfully",
 		"id":      payload.EventPermit.EventPermitID,

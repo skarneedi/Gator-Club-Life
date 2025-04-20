@@ -6,10 +6,34 @@
 
   <div class="main-layout">
     <div class="review-content">
-      <p><strong>Basic Info:</strong> Sample Title</p>
-      <p><strong>Event Date:</strong> April 16, 2025</p>
-      <p><strong>Files Uploaded:</strong> 2 documents</p>
-      <p><strong>Notes:</strong> Event details go here...</p>
+      <h3>Basic Information</h3>
+      <p><strong>Event Name:</strong> {{ permitService.getBasicInfo()?.event_name }}</p>
+      <p><strong>Purpose:</strong> {{ permitService.getBasicInfo()?.event_description }}</p>
+      <p><strong>Expected Attendance:</strong> {{ permitService.getBasicInfo()?.expected_attendance }}</p>
+      <p><strong>Categories:</strong> {{ permitService.getBasicInfo()?.event_categories }}</p>
+
+      <hr>
+
+      <h3>Event Dates</h3>
+      <ul *ngIf="eventDates.length > 0; else noDates">
+        <li *ngFor="let date of eventDates">
+          From <strong>{{ date.start_time }}</strong> to <strong>{{ date.end_time }}</strong>
+        </li>
+      </ul>
+      <ng-template #noDates><p>No event dates provided.</p></ng-template>
+
+      <hr>
+
+      <h3>Uploaded Files</h3>
+      <ul *ngIf="uploadedFiles.length > 0; else noFiles">
+        <li *ngFor="let file of uploadedFiles">{{ file.name }}</li>
+      </ul>
+      <ng-template #noFiles><p>No files uploaded.</p></ng-template>
+
+      <hr>
+
+      <h3>Additional Notes</h3>
+      <p>{{ permitService.getNotes() || 'None provided.' }}</p>
     </div>
 
     <div class="sidebar-panel">
