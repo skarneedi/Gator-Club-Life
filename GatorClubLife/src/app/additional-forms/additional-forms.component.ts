@@ -13,22 +13,18 @@ import { EventPermitService } from '../services/event-permit.service';
 })
 export class AdditionalFormsComponent {
   notes: string = '';
-  processedFiles: any[] = [];
 
   constructor(
     private router: Router,
     private permitService: EventPermitService
   ) {}
 
-  handleFileUpload(event: any) {
-    const files = event.target.files;
-    this.processedFiles = [];
-
-    for (let file of files) {
-      this.processedFiles.push({
-        file_name: file.name,
-        file_url: `/uploads/${file.name}` // Simulated placeholder
-      });
+  handleFileUpload(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files) {
+      const fileList = Array.from(input.files);
+      this.permitService.setUploadedFiles(fileList);
+      console.log("📁 Uploaded files set:", fileList);
     }
   }
 
@@ -37,8 +33,7 @@ export class AdditionalFormsComponent {
   }
 
   goToNextPage() {
-    this.permitService.setDocuments(this.processedFiles);
-    this.permitService.setAdditionalNotes(this.notes);
+    this.permitService.setNotes(this.notes);
     this.router.navigate(['/review']);
   }
 }

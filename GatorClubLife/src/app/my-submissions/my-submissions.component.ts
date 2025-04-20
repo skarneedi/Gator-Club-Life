@@ -10,7 +10,6 @@ import { AuthService } from '../auth.service';
   standalone: true,
   imports: [
     CommonModule,
-    NgIf,
     NgFor,
     NgClass,
     TitleCasePipe

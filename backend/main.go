@@ -17,15 +17,15 @@ import (
 
 // ✅ Shared session store across routes and middleware
 var store = session.New(session.Config{
-	CookieSecure:   false,            // allow HTTP for local dev
-	CookieHTTPOnly: true,             // prevent JavaScript access
-	CookieSameSite: "Lax",            // allow cookie on cross-origin form submits
+	CookieSecure:   false, // allow HTTP for local dev
+	CookieHTTPOnly: true,  // prevent JavaScript access
+	CookieSameSite: "Lax", // allow cookie on cross-origin form submits
 })
 
 func main() {
-	fmt.Println("🚀 Starting Gator-Club-Life Backend...")
+	fmt.Println("Starting Gator-Club-Life Backend...")
 	database.InitDB()
-	fmt.Println("✅ Database Connection Successful!")
+	fmt.Println("Database Connection Successful!")
 
 	app := fiber.New()
 
