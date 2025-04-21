@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -9,7 +10,7 @@ import { EventPermitService } from '../services/event-permit.service';
 @Component({
   selector: 'app-event-dates',
   standalone: true,
-  imports: [CommonModule, FullCalendarModule],
+  imports: [CommonModule, RouterModule, FullCalendarModule],
   templateUrl: './event-dates.component.html',
   styleUrls: ['./event-dates.component.css']
 })
@@ -56,7 +57,7 @@ export class EventDatesComponent {
   }
 
   goBack(): void {
-    this.router.navigate(['/events-form']);
+    this.router.navigate(['/forms', this.permitService.getPermitType()]);
   }
 
   goToNextPage(): void {
