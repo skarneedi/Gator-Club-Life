@@ -6,7 +6,8 @@ import { RouterModule } from '@angular/router';
 interface EventItem {
   organization: string;
   title: string;
-  date: string;
+  startDate: string;
+  endDate: string;
   location: string;
   description: string;
   category: string;
@@ -23,81 +24,30 @@ export class EventsComponent implements OnInit {
   searchQuery = '';
   selectedDate: string = '';
   selectedCategory: string = 'All';
+  showModal = false;
+  selectedEvent: EventItem | null = null;
 
   events: EventItem[] = [
     {
-      organization: 'FRIENDS FOR LIFE OF AMERICA',
-      title: 'Tabling',
-      date: '2025-03-26',
-      location: 'Turlington Plaza',
-      description: 'Increase membership and raise awareness of pediatric cancer.',
-      category: 'Community Service',
+      organization: 'Diversity Affirmations and Awareness Committee',
+      title: 'DAAC Steps Toward Zero Discrimination',
+      startDate: 'Apr 20, 2025 @ 7:00 AM',
+      endDate: 'Apr 20, 2025 @ 9:00 AM',
+      location: 'Stadium Route',
+      description:
+        'The purpose of this event is to raise awareness for zero discrimination day on March 1st and to promote our fundraiser collaboration with Chipotle to create a scholarship to send psychology graduate students to conferences.',
+      category: 'Social Event/Special Interest'
     },
     {
-      organization: 'ZETA PHI BETA',
-      title: 'Reproductive Health Talk',
-      date: '2025-03-26',
-      location: 'Shands Auditorium',
-      description: 'Raises awareness of female reproductive health.',
-      category: 'Health/Wellness',
-    },
-    {
-      organization: 'GATOR BAND',
-      title: 'Gator Band 5K Permit',
-      date: '2025-03-30',
-      location: 'Fraternity Row Route',
-      description: 'Annual 5K run for alumni and students.',
-      category: '5k (Run/Walk)',
-    },
-    {
-      organization: 'PHI KAPPA TAU',
-      title: 'Top 10 Singer Competition',
-      date: '2025-03-28',
-      location: 'University Auditorium',
-      description: 'An event showcasing vocal talent.',
-      category: 'Music/Concert',
-    },
-    {
-      organization: 'PHI KAPPA TAU',
-      title: 'Top 10 Singer Competition',
-      date: '2025-03-28',
-      location: 'University Auditorium',
-      description: 'An event showcasing vocal talent.',
-      category: 'Music/Concert',
-    },
-    {
-      organization: 'PHI KAPPA TAU',
-      title: 'Top 10 Singer Competition',
-      date: '2025-03-28',
-      location: 'University Auditorium',
-      description: 'An event showcasing vocal talent.',
-      category: 'Music/Concert',
-    },
-    {
-      organization: 'PHI KAPPA TAU',
-      title: 'Top 10 Singer Competition',
-      date: '2025-03-28',
-      location: 'University Auditorium',
-      description: 'An event showcasing vocal talent.',
-      category: 'Music/Concert',
-    },
-    {
-      organization: 'Bouquet Making Event',
-      title: 'Top 10 Singer Competition',
-      date: '2025-03-28',
-      location: 'University Auditorium',
-      description: 'An event showcasing vocal talent.',
-      category: 'Music/Concert',
-    },
-    {
-      organization: 'Bouquet Making Event',
-      title: 'Top 10 Singer Competition',
-      date: '2025-03-28',
-      location: 'University Auditorium',
-      description: 'An event showcasing vocal talent.',
-      category: 'Music/Concert',
-    },
-    
+      organization: 'Nepalese Student Association',
+      title: 'Nepali Night and New Year Celebration',
+      startDate: 'Apr 20, 2025 @ 1:00 PM',
+      endDate: 'Apr 20, 2025 @ 10:15 PM',
+      location: 'Rion Ballroom',
+      description:
+        'To celebrate the Nepali New Year with all the Nepalese associated with the UF. The Nepali Night and New Year Celebration is more than a cultural event...',
+      category: 'Cultural'
+    }
   ];
 
   filteredEvents: EventItem[] = [];
@@ -114,7 +64,7 @@ export class EventsComponent implements OnInit {
         event.location.toLowerCase().includes(this.searchQuery.toLowerCase());
 
       const matchesDate = this.selectedDate === '' ||
-        event.date === this.selectedDate;
+        event.startDate.includes(this.selectedDate);
 
       const matchesCategory = this.selectedCategory === 'All' ||
         event.category === this.selectedCategory;
@@ -130,13 +80,17 @@ export class EventsComponent implements OnInit {
     this.filteredEvents = [...this.events];
   }
 
-  selectDate(date: string): void {
-    this.selectedDate = date;
-    this.applyFilters();
-  }
-
   filterByCategory(category: string): void {
     this.selectedCategory = category;
     this.applyFilters();
+  }
+
+  openModal(event: EventItem): void {
+    this.selectedEvent = event;
+    this.showModal = true;
+  }
+
+  closeModal(): void {
+    this.showModal = false;
   }
 }

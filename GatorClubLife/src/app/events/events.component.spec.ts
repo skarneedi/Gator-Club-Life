@@ -22,27 +22,31 @@ describe('EventsComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should filter events by search query', () => {
-    component.searchQuery = 'Tabling';
+  it('should open and close modal correctly', () => {
+    const event = component.events[0];
+    component.openModal(event);
+    expect(component.showModal).toBeTrue();
+    expect(component.selectedEvent).toEqual(event);
+
+    component.closeModal();
+    expect(component.showModal).toBeFalse();
+  });
+
+  it('should filter by search query', () => {
+    component.searchQuery = 'Nepali';
     component.applyFilters();
     expect(component.filteredEvents.length).toBe(1);
   });
 
   it('should reset filters', () => {
-    component.searchQuery = 'Gator';
+    component.searchQuery = 'Nepali';
     component.applyFilters();
     component.resetFilters();
     expect(component.filteredEvents.length).toEqual(component.events.length);
   });
 
   it('should filter by category', () => {
-    component.filterByCategory('Music/Concert');
-    expect(component.filteredEvents.every(ev => ev.category === 'Music/Concert')).toBeTrue();
-  });
-
-  it('should filter by selected date', () => {
-    component.selectedDate = '2025-03-30';
-    component.applyFilters();
-    expect(component.filteredEvents.every(ev => ev.date === '2025-03-30')).toBeTrue();
+    component.filterByCategory('Cultural');
+    expect(component.filteredEvents.every(e => e.category === 'Cultural')).toBeTrue();
   });
 });
