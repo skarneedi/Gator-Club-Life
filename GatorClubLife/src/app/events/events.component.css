@@ -289,3 +289,71 @@ h1 {
   border-radius: 4px;
   cursor: pointer;
 }
+
+/* RSVP Styles */
+.rsvp-btn {
+  margin-top: 15px;
+  padding: 10px 15px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.rsvp-btn:hover {
+  background-color: #388e3c;
+}
+
+.undo-btn {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background-color: #e53935;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.undo-btn:hover {
+  background-color: #c62828;
+}
+
+.rsvp-confirmed {
+  color: green;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.email-status {
+  font-size: 0.85rem;
+  margin-top: 8px;
+  color: #007bff;
+}
+.rsvp-btn, .undo-btn {
+  background-color: #0057B8;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  margin-top: 20px;
+  cursor: pointer;
+}
+
+.rsvp-btn:hover {
+  background-color: #004199;
+}
+
+.undo-btn {
+  background-color: #f44336;
+}
+
+.undo-btn:hover {
+  background-color: #c62828;
+}
+
+.rsvp-message {
+  margin-top: 15px;
+  color: #4caf50;
+  font-weight: bold;
+}

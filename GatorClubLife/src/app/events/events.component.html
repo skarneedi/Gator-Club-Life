@@ -48,9 +48,7 @@
 
     <div class="modal-row">
       <div class="modal-box-row">
-        <div class="modal-icon teal">
-          <i class="fa fa-users"></i>
-        </div>
+        <div class="modal-icon teal"><i class="fa fa-users"></i></div>
         <div class="modal-text">
           <p class="label">Organization</p>
           <p class="value">{{ selectedEvent?.organization }}</p>
@@ -58,9 +56,7 @@
       </div>
 
       <div class="modal-box-row">
-        <div class="modal-icon orange">
-          <i class="fa fa-map-marker"></i>
-        </div>
+        <div class="modal-icon orange"><i class="fa fa-map-marker"></i></div>
         <div class="modal-text">
           <p class="label">Event Location</p>
           <p class="value">{{ selectedEvent?.location }}</p>
@@ -70,9 +66,7 @@
 
     <div class="modal-row">
       <div class="modal-box-row">
-        <div class="modal-icon green">
-          <i class="fa fa-calendar-plus-o"></i>
-        </div>
+        <div class="modal-icon green"><i class="fa fa-calendar-plus-o"></i></div>
         <div class="modal-text">
           <p class="label">Starts</p>
           <p class="value">{{ selectedEvent?.startDate }}</p>
@@ -80,9 +74,7 @@
       </div>
 
       <div class="modal-box-row">
-        <div class="modal-icon red">
-          <i class="fa fa-calendar-times-o"></i>
-        </div>
+        <div class="modal-icon red"><i class="fa fa-calendar-times-o"></i></div>
         <div class="modal-text">
           <p class="label">Ends</p>
           <p class="value">{{ selectedEvent?.endDate }}</p>
@@ -91,14 +83,24 @@
     </div>
 
     <div class="modal-box-row full-width">
-      <div class="modal-icon blue">
-        <i class="fa fa-info-circle"></i>
-      </div>
+      <div class="modal-icon blue"><i class="fa fa-info-circle"></i></div>
       <div class="modal-text">
         <p class="label">Details</p>
         <p class="description">{{ selectedEvent?.description }}</p>
       </div>
     </div>
+
+    <p><strong>Email:</strong> {{ userEmail }}</p>
+
+    <div *ngIf="!selectedEvent?.rsvped">
+      <button class="rsvp-btn" (click)="rsvpToEvent()">RSVP</button>
+    </div>
+
+    <div *ngIf="selectedEvent?.rsvped">
+      <button class="undo-btn" (click)="undoRSVP()">Undo RSVP</button>
+    </div>
+
+    <div *ngIf="rsvpMessage" class="rsvp-message">{{ rsvpMessage }}</div>
 
     <button class="close-btn" (click)="closeModal()">Close</button>
   </div>
