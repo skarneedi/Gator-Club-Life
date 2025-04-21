@@ -10,6 +10,15 @@ import (
 	"gorm.io/gorm"
 )
 
+// GetClubs godoc
+// @Summary      List all clubs
+// @Description  Returns clubs, optionally filtered by category
+// @Tags         Clubs
+// @Produce      json
+// @Param        category  query     string  false  "Filter by category"
+// @Success      200       {array}   database.Club
+// @Failure      500       {object}  map[string]string
+// @Router       /clubs [get]
 func GetClubs(c *fiber.Ctx) error {
 	fmt.Println("GetClubs API called")
 	category := c.Query("category")
@@ -33,7 +42,15 @@ func GetClubs(c *fiber.Ctx) error {
 	return c.JSON(clubs)
 }
 
-// GetClubByID handles GET /clubs/:id
+// GetClubByID godoc
+// @Summary      Get club by ID
+// @Description  Returns details of a specific club
+// @Tags         Clubs
+// @Produce      json
+// @Param        id  path      int  true  "Club ID"
+// @Success      200  {object}  database.Club
+// @Failure      404  {object}  map[string]string
+// @Router       /clubs/{id} [get]
 func GetClubByID(c *fiber.Ctx) error {
 	fmt.Println("GetClubByID API called")
 	clubID := c.Params("id")
@@ -49,6 +66,16 @@ func GetClubByID(c *fiber.Ctx) error {
 	return c.JSON(club)
 }
 
+// GetOfficersByClubID godoc
+// @Summary      List officers in a club
+// @Description  Returns officer list by club ID
+// @Tags         Clubs
+// @Produce      json
+// @Param        id  path      int  true  "Club ID"
+// @Success      200  {array}   database.Officer
+// @Failure      400  {object}  map[string]string
+// @Failure      500  {object}  map[string]string
+// @Router       /clubs/{id}/officers [get]
 func GetOfficersByClubID(c *fiber.Ctx) error {
 	clubIDParam := c.Params("id")
 	clubID, err := strconv.Atoi(clubIDParam)

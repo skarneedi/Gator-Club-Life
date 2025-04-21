@@ -12,6 +12,19 @@ definitions:
       announcement_title:
         type: string
     type: object
+  database.Booking:
+    properties:
+      booked_at:
+        type: integer
+      booking_id:
+        type: integer
+      booking_status:
+        type: string
+      event_id:
+        type: integer
+      user_id:
+        type: integer
+    type: object
   database.Club:
     properties:
       club_category:
@@ -25,6 +38,73 @@ definitions:
       club_id:
         type: integer
       club_name:
+        type: string
+    type: object
+  database.EventDocument:
+    properties:
+      event_document_id:
+        type: integer
+      event_id:
+        type: integer
+      file_name:
+        type: string
+      file_url:
+        type: string
+      uploaded_at:
+        type: integer
+    type: object
+  database.EventPermit:
+    properties:
+      additional_notes:
+        type: string
+      created_at:
+        type: integer
+      documents:
+        items:
+          $ref: '#/definitions/database.EventDocument'
+        type: array
+      event_categories:
+        type: string
+      event_description:
+        type: string
+      event_name:
+        type: string
+      event_permit_id:
+        type: integer
+      expected_attendance:
+        type: integer
+      permit_type:
+        type: string
+      slots:
+        items:
+          $ref: '#/definitions/database.EventSlot'
+        type: array
+      status:
+        type: string
+      submitted_by:
+        description: "\U0001F448 NEW"
+        type: string
+    type: object
+  database.EventSlot:
+    properties:
+      end_time:
+        type: string
+      event_id:
+        type: integer
+      event_slot_id:
+        type: integer
+      start_time:
+        type: string
+    type: object
+  database.Officer:
+    properties:
+      club_id:
+        type: integer
+      officer_id:
+        type: integer
+      officer_name:
+        type: string
+      officer_role:
         type: string
     type: object
   database.User:
@@ -42,13 +122,27 @@ definitions:
       user_role:
         type: string
     type: object
+  routes.FullPermitPayload:
+    properties:
+      documents:
+        items:
+          $ref: '#/definitions/database.EventDocument'
+        type: array
+      event_permit:
+        $ref: '#/definitions/database.EventPermit'
+      notes:
+        description: Optional notes
+        type: string
+      slots:
+        items:
+          $ref: '#/definitions/database.EventSlot'
+        type: array
+    type: object
   routes.LoginRequest:
     properties:
       email:
-        description: User's email address
         type: string
       password:
-        description: User's password
         type: string
     type: object
   routes.LoginResponse:
@@ -72,35 +166,53 @@ definitions:
       message:
         type: string
     type: object
+  routes.PermitSummary:
+    properties:
+      event_name:
+        type: string
+      id:
+        type: integer
+      slot_count:
+        type: integer
+      status:
+        type: string
+      submitted_by:
+        type: string
+    type: object
 info:
   contact: {}
 paths:
   /announcements:
     get:
-      description: Retrieves all announcements in descending order by creation date
+      description: Retrieves all announcements or by club_id
+      parameters:
+      - description: Filter by club ID
+        in: query
+        name: club_id
+        type: string
       produces:
       - application/json
       responses:
         "200":
-          description: List of announcements
+          description: OK
           schema:
             items:
               $ref: '#/definitions/database.Announcement'
             type: array
         "500":
-          description: Error retrieving announcements
+          description: Internal Server Error
           schema:
             type: string
-      summary: Retrieve all announcements
+      summary: Get announcements
       tags:
       - Announcements
   /announcements/create:
     post:
       consumes:
       - application/json
-      description: Allows an admin user to create a new announcement
+      description: Allows an admin to create a new announcement
       parameters:
-      - description: Announcement data
+      - description: Announcement content
         in: body
         name: announcement
         required: true
@@ -110,30 +222,59 @@ paths:
       - application/json
       responses:
         "200":
-          description: Successfully created announcement
+          description: OK
           schema:
             $ref: '#/definitions/database.Announcement'
         "400":
-          description: Invalid request body or missing required fields
+          description: Bad Request
           schema:
             type: string
         "401":
-          description: Only admins can post announcements
+          description: Unauthorized
           schema:
             type: string
-        "500":
-          description: Error saving announcement
-          schema:
-            type: string
-      summary: Create a new announcement
+      summary: Create an announcement
       tags:
       - Announcements
+  /bookings:
+    post:
+      consumes:
+      - application/json
+      description: Creates a booking with user ID, event ID, and booking status
+      parameters:
+      - description: Booking details
+        in: body
+        name: booking
+        required: true
+        schema:
+          $ref: '#/definitions/database.Booking'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/database.Booking'
+        "400":
+          description: Invalid request data
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Error creating booking
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new booking
+      tags:
+      - Bookings
   /clubs:
     get:
-      description: Retrieves all clubs or filters by category (case-insensitive) if
-        a query parameter is provided
+      description: Returns clubs, optionally filtered by category
       parameters:
-      - description: Filter clubs by category
+      - description: Filter by category
         in: query
         name: category
         type: string
@@ -141,27 +282,127 @@ paths:
       - application/json
       responses:
         "200":
-          description: List of clubs
+          description: OK
           schema:
             items:
               $ref: '#/definitions/database.Club'
             type: array
         "500":
-          description: Error retrieving clubs
+          description: Internal Server Error
           schema:
             additionalProperties:
               type: string
             type: object
-      summary: Retrieve clubs
+      summary: List all clubs
       tags:
       - Clubs
+  /clubs/{id}:
+    get:
+      description: Returns details of a specific club
+      parameters:
+      - description: Club ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/database.Club'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get club by ID
+      tags:
+      - Clubs
+  /clubs/{id}/officers:
+    get:
+      description: Returns officer list by club ID
+      parameters:
+      - description: Club ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/database.Officer'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List officers in a club
+      tags:
+      - Clubs
+  /event-permits/submit:
+    post:
+      consumes:
+      - application/json
+      description: Accepts event, slots, documents, and notes. User must be logged
+        in.
+      parameters:
+      - description: Full permit payload
+        in: body
+        name: permit
+        required: true
+        schema:
+          $ref: '#/definitions/routes.FullPermitPayload'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Submit full event permit
+      tags:
+      - Event Permits
   /login:
     post:
       consumes:
       - application/json
-      description: Authenticates a user and creates a session
+      description: Validates credentials and sets session cookie
       parameters:
-      - description: User credentials
+      - description: User login credentials
         in: body
         name: credentials
         required: true
@@ -171,76 +412,96 @@ paths:
       - application/json
       responses:
         "200":
-          description: Login successful
+          description: OK
           schema:
             $ref: '#/definitions/routes.LoginResponse'
         "400":
-          description: Invalid request body or missing fields
+          description: Bad Request
           schema:
             additionalProperties:
               type: string
             type: object
         "401":
-          description: Invalid credentials (email not found or incorrect password)
+          description: Unauthorized
           schema:
             additionalProperties:
               type: string
             type: object
-        "500":
-          description: Error creating or saving session
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: User login
+      summary: Authenticate a user
       tags:
       - Authentication
   /logout:
     post:
-      description: Destroys the current session and logs out the user.
+      description: Destroys session and logs out
       produces:
       - application/json
       responses:
         "200":
-          description: Logout successful
+          description: OK
           schema:
             $ref: '#/definitions/routes.LogoutResponse'
         "500":
-          description: Error during logout
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/routes.LogoutResponse'
       summary: Logout a user
       tags:
       - Authentication
-  /users:
+  /submissions:
     get:
-      description: Retrieves all users from the database.
+      description: Returns event permits submitted by the logged-in user
       produces:
       - application/json
       responses:
         "200":
-          description: List of users
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/routes.PermitSummary'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get my submissions
+      tags:
+      - Submissions
+  /users:
+    get:
+      description: Returns a list of all registered users. Admin access recommended.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
           schema:
             items:
               $ref: '#/definitions/database.User'
             type: array
         "500":
-          description: Error retrieving users
+          description: Internal Server Error
           schema:
             additionalProperties:
               type: string
             type: object
-      summary: Get all users
+      summary: Retrieve all users
       tags:
       - Users
   /users/create:
     post:
       consumes:
       - application/json
-      description: Create a new user with the required fields, including password
-        hashing.
+      description: Creates a new user with name, email, password, and role.
       parameters:
-      - description: User data
+      - description: New user data
         in: body
         name: user
         required: true
@@ -250,24 +511,23 @@ paths:
       - application/json
       responses:
         "200":
-          description: User successfully added
+          description: OK
           schema:
             additionalProperties: true
             type: object
         "400":
-          description: 'Invalid request: Unable to parse JSON or missing required
-            fields'
+          description: Bad Request
           schema:
             additionalProperties:
               type: string
             type: object
         "500":
-          description: Error processing password or saving user to database
+          description: Internal Server Error
           schema:
             additionalProperties:
               type: string
             type: object
-      summary: Create a new user
+      summary: Register a new user
       tags:
       - Users
 swagger: "2.0"

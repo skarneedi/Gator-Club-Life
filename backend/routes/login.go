@@ -29,6 +29,17 @@ func SetStore(s *session.Store) {
 	Store = s
 }
 
+// Login godoc
+// @Summary      Authenticate a user
+// @Description  Validates credentials and sets session cookie
+// @Tags         Authentication
+// @Accept       json
+// @Produce      json
+// @Param        credentials  body  LoginRequest  true  "User login credentials"
+// @Success      200  {object}  LoginResponse
+// @Failure      400  {object}  map[string]string
+// @Failure      401  {object}  map[string]string
+// @Router       /login [post]
 func Login(c *fiber.Ctx) error {
 	fmt.Println("Login API called")
 

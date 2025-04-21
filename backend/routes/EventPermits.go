@@ -7,6 +7,26 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// FullPermitPayload defines the structure for full event permit submission
+type FullPermitPayload struct {
+	EventPermit database.EventPermit     `json:"event_permit"`
+	Slots       []database.EventSlot     `json:"slots"`
+	Documents   []database.EventDocument `json:"documents"`
+	Notes       string                   `json:"notes"` // Optional notes
+}
+
+// SubmitFullEventPermit godoc
+// @Summary      Submit full event permit
+// @Description  Accepts event, slots, documents, and notes. User must be logged in.
+// @Tags         Event Permits
+// @Accept       json
+// @Produce      json
+// @Param        permit  body      FullPermitPayload  true  "Full permit payload"
+// @Success      201     {object}  map[string]interface{}
+// @Failure      400     {object}  map[string]string
+// @Failure      401     {object}  map[string]string
+// @Failure      500     {object}  map[string]string
+// @Router       /event-permits/submit [post]
 func SubmitFullEventPermit(c *fiber.Ctx) error {
 	fmt.Println("Permits Submission API called")
 
@@ -15,7 +35,7 @@ func SubmitFullEventPermit(c *fiber.Ctx) error {
 		EventPermit database.EventPermit     `json:"event_permit"`
 		Slots       []database.EventSlot     `json:"slots"`
 		Documents   []database.EventDocument `json:"documents"`
-		Notes       string                   `json:"notes"` // capture top-level notes
+		Notes       string                   `json:"notes"`
 	}
 
 	var payload FullPermitPayload

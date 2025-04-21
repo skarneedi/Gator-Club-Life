@@ -16,6 +16,15 @@ type PermitSummary struct {
 	SlotCount   int    `json:"slot_count"`
 }
 
+// GetUserSubmissions godoc
+// @Summary      Get my submissions
+// @Description  Returns event permits submitted by the logged-in user
+// @Tags         Submissions
+// @Produce      json
+// @Success      200  {array}  routes.PermitSummary
+// @Failure      401  {object}  map[string]string
+// @Failure      500  {object}  map[string]string
+// @Router       /submissions [get]
 func GetUserSubmissions(c *fiber.Ctx) error {
 	fmt.Println("My Submissions API called")
 
