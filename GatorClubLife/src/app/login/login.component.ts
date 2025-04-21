@@ -27,19 +27,17 @@ export class LoginComponent {
     private authService: AuthService
   ) {}
 
-  // Method to validate email format
   validateEmail(): boolean {
-    return this.username.endsWith('@ufl.edu'); // Check if email ends with @ufl.edu
+    return this.username.endsWith('@ufl.edu');
   }
 
   login() {
-    this.emailError = ''; // Reset email error
-    this.passwordError = ''; // Reset password error
+    this.emailError = '';
+    this.passwordError = '';
 
-    // Validate email format
     if (!this.validateEmail()) {
       this.emailError = 'Please use a valid UF email (e.g., user@ufl.edu).';
-      return; // Stop further execution if email is invalid
+      return;
     }
 
     const payload = {
@@ -48,36 +46,40 @@ export class LoginComponent {
     };
 
     this.http
-  .post<any>('http://localhost:8080/login', payload, {
-    withCredentials: true  // ✅ IMPORTANT: include credentials (session cookie)
-  })
-  .pipe(
-    catchError((error) => {
-      if (error.error?.message === 'Incorrect password') {
-        this.passwordError = 'Incorrect password';
-      } else if (error.error?.message === 'Invalid email or account not found') {
-        this.emailError = 'Invalid email or account not found';
-      } else {
-        this.emailError = 'An unexpected error occurred';
-      }
-      return throwError(() => error);
-    })
-  )
-  .subscribe((response) => {
-    const userInfo: UserInfo = {
-      id: response.user_id,
-      name: response.user_name || this.username,
-      email: response.user_email || this.username,
-      role: response.user_role || 'member',
-      joined: new Date(response.user_created_at * 1000)
-        .toISOString()
-        .split('T')[0],
-    };
+      .post<any>('http://localhost:8080/login', payload, {
+        withCredentials: true,
+      })
+      .pipe(
+        catchError((error) => {
+          if (error.error?.message === 'Incorrect password') {
+            this.passwordError = 'Incorrect password';
+          } else if (
+            error.error?.message === 'Invalid email or account not found'
+          ) {
+            this.emailError = 'Invalid email or account not found';
+          } else {
+            this.emailError = 'An unexpected error occurred';
+          }
+          return throwError(() => error);
+        })
+      )
+      .subscribe((response) => {
+        const userInfo: UserInfo = {
+          id: response.user_id,
+          name: response.user_name || this.username,
+          email: response.user_email || this.username,
+          role: response.user_role || 'member',
+          joined: new Date(response.user_created_at * 1000)
+            .toISOString()
+            .split('T')[0],
+        };
 
-    this.authService.setUser(userInfo);
-    this.router.navigate(['/home']);
-  });
+        this.authService.setUser(userInfo);
 
+const targetRoute = userInfo.role === 'admin' ? '/admin' : '/home';
+this.router.navigate([targetRoute]);
+
+      });
   }
 
   goToRegister(): void {

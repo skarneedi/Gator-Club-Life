@@ -16,6 +16,7 @@ import { EventsFormComponent } from './events-form/events-form.component';
 import { EventDatesComponent } from './event-dates/event-dates.component';
 import { AdditionalFormsComponent } from './additional-forms/additional-forms.component'; 
 import { EventReviewComponent } from './event-review/event-review.component';
+import { AdminComponent } from './admin/admin.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -27,6 +28,7 @@ export const routes: Routes = [
   { path: 'events', component: EventsComponent, canActivate: [authGuard] },
   { path: 'profile', component: MyProfileComponent, canActivate: [authGuard] },
   { path: 'my-events', component: MyEventsComponent },
+  { path: 'admin', component: AdminComponent },
   {
     path: 'organizations',
     component: OrganizationsComponent,
