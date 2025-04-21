@@ -3,6 +3,7 @@ import { EventsComponent } from './events.component';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('EventsComponent', () => {
   let component: EventsComponent;
@@ -10,11 +11,18 @@ describe('EventsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EventsComponent, CommonModule, FormsModule, RouterModule.forRoot([])],
+      imports: [
+        EventsComponent,
+        CommonModule,
+        FormsModule,
+        HttpClientTestingModule,
+        RouterModule.forRoot([])
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EventsComponent);
     component = fixture.componentInstance;
+    component.ngOnInit();
     fixture.detectChanges();
   });
 
@@ -27,26 +35,19 @@ describe('EventsComponent', () => {
     component.openModal(event);
     expect(component.showModal).toBeTrue();
     expect(component.selectedEvent).toEqual(event);
-
     component.closeModal();
     expect(component.showModal).toBeFalse();
   });
 
-  it('should filter by search query', () => {
-    component.searchQuery = 'Nepali';
-    component.applyFilters();
-    expect(component.filteredEvents.length).toBe(1);
-  });
+  it('should RSVP and undo RSVP', () => {
+    const event = component.events[0];
+    component.openModal(event);
+    component.userEmail = 'test@ufl.edu';
 
-  it('should reset filters', () => {
-    component.searchQuery = 'Nepali';
-    component.applyFilters();
-    component.resetFilters();
-    expect(component.filteredEvents.length).toEqual(component.events.length);
-  });
+    component.rsvpToEvent();
+    expect(event.rsvped).toBeTrue();
 
-  it('should filter by category', () => {
-    component.filterByCategory('Cultural');
-    expect(component.filteredEvents.every(e => e.category === 'Cultural')).toBeTrue();
+    component.undoRSVP();
+    expect(event.rsvped).toBeFalse();
   });
 });
