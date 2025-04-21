@@ -20,7 +20,6 @@ export class RegisterComponent {
   password = '';
   confirmPassword = '';
   role = '';
-
   errorMessage = '';
   submitted = false;
   passwordNotStrong = false;
@@ -36,7 +35,12 @@ export class RegisterComponent {
   emailCheckTimeout: any = null;
   usernameCheckTimeout: any = null;
 
-  passwordStrength = 0;
+  capsLockOnPassword = false;
+  capsLockOnConfirm = false;
+
+  passwordStrength: number = 0;
+  passwordStrengthLabel: string = '';
+  passwordStrengthColor: string = '';
 
   constructor(private router: Router, private http: HttpClient) {}
 
@@ -49,33 +53,46 @@ export class RegisterComponent {
   }
 
   onPasswordInput(): void {
-    this.passwordStrength = this.calculateStrength(this.password);
-    this.passwordNotStrong = this.passwordStrength < 80;
+    if (this.password) {
+      this.passwordNotStrong = !this.isPasswordStrong(this.password);
+    } else {
+      this.passwordNotStrong = false;
+    }
+
+    const hasLower = /[a-z]/.test(this.password);
+    const hasUpper = /[A-Z]/.test(this.password);
+    const hasNumber = /\d/.test(this.password);
+    const hasSpecial = /[^\w\s]/.test(this.password);
+
+    let score = 0;
+    if (hasLower) score++;
+    if (hasUpper) score++;
+    if (hasNumber) score++;
+    if (hasSpecial) score++;
+    if (this.password.length >= 8) score++;
+
+    this.passwordStrength = (score / 5) * 100;
+    if (this.passwordStrength < 40) {
+      this.passwordStrengthLabel = 'Weak';
+      this.passwordStrengthColor = 'red';
+    } else if (this.passwordStrength < 80) {
+      this.passwordStrengthLabel = 'Moderate';
+      this.passwordStrengthColor = 'orange';
+    } else {
+      this.passwordStrengthLabel = 'Strong';
+      this.passwordStrengthColor = 'green';
+    }
   }
 
-  calculateStrength(password: string): number {
-    let strength = 0;
-    if (!password) return strength;
-
-    const lengthCriteria = password.length >= 8;
-    const uppercaseCriteria = /[A-Z]/.test(password);
-    const lowercaseCriteria = /[a-z]/.test(password);
-    const numberCriteria = /\d/.test(password);
-    const specialCharCriteria = /[^\w\s]/.test(password);
-
-    if (lengthCriteria) strength += 20;
-    if (uppercaseCriteria) strength += 20;
-    if (lowercaseCriteria) strength += 20;
-    if (numberCriteria) strength += 20;
-    if (specialCharCriteria) strength += 20;
-
-    return strength;
+  isPasswordStrong(password: string): boolean {
+    const strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$/;
+    return strongRegex.test(password);
   }
 
   checkEmailAvailability(): void {
     if (this.emailCheckTimeout) clearTimeout(this.emailCheckTimeout);
-    const uflEmailRegex = /^[a-zA-Z0-9._%+-]+@ufl\.edu$/;
-    if (!this.email || !uflEmailRegex.test(this.email)) {
+    const uflRegex = /^[a-zA-Z0-9._%+-]+@ufl\.edu$/;
+    if (!this.email || !uflRegex.test(this.email)) {
       this.emailAvailable = null;
       return;
     }
@@ -84,8 +101,7 @@ export class RegisterComponent {
     this.emailAvailable = null;
 
     this.emailCheckTimeout = setTimeout(() => {
-      this.http
-        .get<{ available: boolean }>(`/api/placeholder/check-email?email=${encodeURIComponent(this.email)}`)
+      this.http.get<{ available: boolean }>(`/api/placeholder/check-email?email=${encodeURIComponent(this.email)}`)
         .subscribe({
           next: res => {
             this.emailAvailable = res.available;
@@ -110,8 +126,7 @@ export class RegisterComponent {
     this.usernameAvailable = null;
 
     this.usernameCheckTimeout = setTimeout(() => {
-      this.http
-        .get<{ available: boolean }>(`/api/placeholder/check-username?username=${encodeURIComponent(this.username)}`)
+      this.http.get<{ available: boolean }>(`/api/placeholder/check-username?username=${encodeURIComponent(this.username)}`)
         .subscribe({
           next: res => {
             this.usernameAvailable = res.available;
@@ -129,12 +144,10 @@ export class RegisterComponent {
     this.errorMessage = '';
     this.submitted = true;
 
-    if (!this.name || !this.email || !this.username || !this.password || !this.confirmPassword || !this.role) {
-      return;
-    }
+    if (!this.name || !this.email || !this.username || !this.password || !this.confirmPassword || !this.role) return;
 
-    const uflEmailRegex = /^[a-zA-Z0-9._%+-]+@ufl\.edu$/;
-    if (!uflEmailRegex.test(this.email)) {
+    const uflRegex = /^[a-zA-Z0-9._%+-]+@ufl\.edu$/;
+    if (!uflRegex.test(this.email)) {
       this.invalidEmail = true;
       this.errorMessage = 'Please use a valid @ufl.edu email address.';
       return;
@@ -153,8 +166,7 @@ export class RegisterComponent {
     }
 
     if (!this.isPasswordStrong(this.password)) {
-      this.errorMessage =
-        'Password must be at least 8 characters long and include uppercase, lowercase, digit, and special character.';
+      this.errorMessage = 'Password must meet strength requirements.';
       this.passwordNotStrong = true;
       return;
     }
@@ -166,26 +178,23 @@ export class RegisterComponent {
       user_password: this.password,
     };
 
-    this.http
-      .post<{ user_id: number }>('http://localhost:8080/users/create', payload)
+    this.http.post<{ user_id: number }>('http://localhost:8080/users/create', payload)
       .pipe(
-        catchError((error) => {
-          this.errorMessage = error.error || 'Registration failed!';
-          return throwError(() => error);
+        catchError(err => {
+          this.errorMessage = err.error || 'Registration failed!';
+          return throwError(() => err);
         })
       )
-      .subscribe({
-        next: () => {
-          this.router.navigate(['/login']);
-        },
-      });
-  }
-
-  private isPasswordStrong(password: string): boolean {
-    return this.calculateStrength(password) >= 80;
+      .subscribe(() => this.router.navigate(['/login']));
   }
 
   goToLogin(): void {
     this.router.navigate(['/login']);
+  }
+
+  handleCapsLock(event: KeyboardEvent, field: string): void {
+    const isCaps = event.getModifierState && event.getModifierState('CapsLock');
+    if (field === 'password') this.capsLockOnPassword = isCaps;
+    else if (field === 'confirm') this.capsLockOnConfirm = isCaps;
   }
 }
