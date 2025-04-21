@@ -5,7 +5,7 @@ export interface UserInfo {
   id: number;
   name: string;
   email: string;
-  role: string;
+  role: 'admin' | 'member';
   joined: string;
   phone?: string; 
   photo?: string;

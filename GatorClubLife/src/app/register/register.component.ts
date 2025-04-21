@@ -101,16 +101,17 @@ export class RegisterComponent {
     this.emailAvailable = null;
 
     this.emailCheckTimeout = setTimeout(() => {
-      this.http.get<{ available: boolean }>(`/api/placeholder/check-email?email=${encodeURIComponent(this.email)}`)
+      this.http
+        .get<{ available: boolean }>(`/api/placeholder/check-email?email=${encodeURIComponent(this.email)}`)
         .subscribe({
-          next: res => {
+          next: (res) => {
             this.emailAvailable = res.available;
             this.checkingEmail = false;
           },
           error: () => {
             this.emailAvailable = null;
             this.checkingEmail = false;
-          }
+          },
         });
     }, 400);
   }
@@ -126,16 +127,17 @@ export class RegisterComponent {
     this.usernameAvailable = null;
 
     this.usernameCheckTimeout = setTimeout(() => {
-      this.http.get<{ available: boolean }>(`/api/placeholder/check-username?username=${encodeURIComponent(this.username)}`)
+      this.http
+        .get<{ available: boolean }>(`/api/placeholder/check-username?username=${encodeURIComponent(this.username)}`)
         .subscribe({
-          next: res => {
+          next: (res) => {
             this.usernameAvailable = res.available;
             this.checkingUsername = false;
           },
           error: () => {
             this.usernameAvailable = null;
             this.checkingUsername = false;
-          }
+          },
         });
     }, 400);
   }
@@ -178,10 +180,18 @@ export class RegisterComponent {
       user_password: this.password,
     };
 
-    this.http.post<{ user_id: number }>('http://localhost:8080/users/create', payload)
+    this.http
+      .post<{ user_id: number }>('http://localhost:8080/users/create', payload)
       .pipe(
-        catchError(err => {
-          this.errorMessage = err.error || 'Registration failed!';
+        catchError((err) => {
+          // ✅ Improved error parsing to avoid [object Object]
+          if (typeof err.error === 'string') {
+            this.errorMessage = err.error;
+          } else if (err.error?.message) {
+            this.errorMessage = err.error.message;
+          } else {
+            this.errorMessage = 'Registration failed!';
+          }
           return throwError(() => err);
         })
       )

@@ -2,7 +2,7 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { AnnouncementsComponent } from './announcements/announcements.component';
-import { AuthService } from './auth.service';
+import { AuthService, UserInfo } from './auth.service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators'; 
 
@@ -22,6 +22,7 @@ export class AppComponent implements OnInit {
   userName$!: Observable<string>;
   showAnnouncements: boolean = false;
   showDropdown = false;
+  currentUser: UserInfo | null = null; // ✅ To store full user info
 
   constructor(private router: Router, private authService: AuthService) {}
 
@@ -30,24 +31,22 @@ export class AppComponent implements OnInit {
 
     this.userName$ = this.authService.userInfo$.pipe(
       map(user => user?.name || 'Guest')
-    );    
+    );
 
-    console.log('[AppComponent] Subscribed to AuthService observables');
-
-    this.isLoggedIn$.subscribe((loggedIn) => {
-      console.log('[AppComponent] isLoggedIn changed to:', loggedIn);
-    });
-
-    this.userName$.subscribe((name) => {
-      console.log('[AppComponent] userName changed to:', name);
+    this.authService.userInfo$.subscribe((user) => {
+      this.currentUser = user;
     });
 
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.showAnnouncements = event.url === '/home' || event.url === '/home/';
-        console.log('[AppComponent] NavigationEnd, showAnnouncements:', this.showAnnouncements);
       }
     });
+  }
+
+  // ✅ Expose a method to check if current user is an admin
+  isAdmin(): boolean {
+    return this.currentUser?.role === 'admin';
   }
 
   toggleDropdown(event: MouseEvent): void {
@@ -64,7 +63,6 @@ export class AppComponent implements OnInit {
   }
 
   logout(): void {
-    console.log('[AppComponent] Logging out user');
     this.authService.logout();
     this.router.navigate(['/login']);
   }
