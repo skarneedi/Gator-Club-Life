@@ -1,8 +1,10 @@
+// events.go
 package routes
 
 import (
 	"backend/database"
 	"fmt"
+	"net/smtp"
 	"strconv"
 	"time"
 
@@ -12,36 +14,13 @@ import (
 func GetEvents(c *fiber.Ctx) error {
 	var dbEvents []database.Event
 
-	clubID := c.Query("club_id")
-	category := c.Query("category")
-	dateFilter := c.Query("date")
-
 	page, _ := strconv.Atoi(c.Query("page", "1"))
 	limit, _ := strconv.Atoi(c.Query("limit", "10"))
 	offset := (page - 1) * limit
 
 	query := database.DB.Limit(limit).Offset(offset)
-
-	if clubID != "" {
-		query = query.Where("club_id = ?", clubID)
-	}
-
-	if dateFilter != "" {
-		startTime, err := time.Parse("2006-01-02", dateFilter)
-		if err == nil {
-			startUnix := startTime.Unix()
-			endUnix := startTime.Add(24 * time.Hour).Unix()
-			query = query.Where("event_date BETWEEN ? AND ?", startUnix, endUnix)
-		}
-	}
-
-	if category != "" {
-		query = query.Where("event_categories LIKE ?", "%"+category+"%")
-	}
-
 	result := query.Find(&dbEvents)
 	if result.Error != nil {
-		fmt.Println("Database Error:", result.Error)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "Error retrieving events",
 		})
@@ -49,7 +28,7 @@ func GetEvents(c *fiber.Ctx) error {
 
 	var response []fiber.Map
 	for _, ev := range dbEvents {
-		start := time.Unix(ev.EventDate, 0).Format("Jan 2, 2006 @ 3:04 PM")
+		start := time.Unix(ev.EventDate, 0).Format("2006-01-02")
 		response = append(response, fiber.Map{
 			"title":        ev.EventName,
 			"description":  ev.EventDescription,
@@ -61,24 +40,8 @@ func GetEvents(c *fiber.Ctx) error {
 		})
 	}
 
+	fmt.Println("✅ Events fetched:", response)
 	return c.JSON(response)
-}
-
-func CreateEvent(c *fiber.Ctx) error {
-	var event database.Event
-	if err := c.BodyParser(&event); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Invalid input",
-		})
-	}
-
-	if err := database.DB.Create(&event).Error; err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "Error creating event",
-		})
-	}
-
-	return c.Status(fiber.StatusCreated).JSON(event)
 }
 
 func SendRSVPConfirmation(c *fiber.Ctx) error {
@@ -87,15 +50,38 @@ func SendRSVPConfirmation(c *fiber.Ctx) error {
 		Event string `json:"event"`
 	}
 
+	// Parsing the RSVP data
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Invalid RSVP payload",
 		})
 	}
 
-	fmt.Printf("📩 Sending RSVP confirmation to %s for event: %s\n", body.Email, body.Event)
+	// Email configuration
+	from := "your-gmail@gmail.com"  // Replace with your Gmail
+	password := "your-app-password" // Replace with your app password
+	to := body.Email
+	subject := "RSVP Confirmation for " + body.Event
+	bodyText := fmt.Sprintf("Hi,\n\nYou have successfully RSVPed to the event: %s.\n\nWe look forward to seeing you!\n\n- Gator Club Life Team", body.Event)
 
+	// Constructing the email message
+	msg := "From: " + from + "\n" +
+		"To: " + to + "\n" +
+		"Subject: " + subject + "\n\n" +
+		bodyText
+
+	// Sending the email via Gmail SMTP server
+	auth := smtp.PlainAuth("", from, password, "smtp.gmail.com")
+	err := smtp.SendMail("smtp.gmail.com:587", auth, from, []string{to}, []byte(msg))
+	if err != nil {
+		fmt.Println("Error sending mail:", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to send RSVP confirmation: " + err.Error(),
+		})
+	}
+
+	fmt.Println("✅ RSVP email sent to:", to)
 	return c.JSON(fiber.Map{
-		"message": fmt.Sprintf("RSVP confirmed for %s! Email sent to %s", body.Event, body.Email),
+		"message": "RSVP confirmed and email sent!",
 	})
 }

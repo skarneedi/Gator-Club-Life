@@ -1,3 +1,4 @@
+// events.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -24,14 +25,14 @@ interface EventItem {
 })
 export class EventsComponent implements OnInit {
   searchQuery = '';
-  selectedDate: string = '';
-  selectedCategory: string = 'All';
+  selectedDate = '';
+  selectedCategory = 'All';
   showModal = false;
   selectedEvent: EventItem | null = null;
   filteredEvents: EventItem[] = [];
-  userEmail: string = '';
-  rsvpMessage: string = '';
   events: EventItem[] = [];
+  userEmail = '';
+  rsvpMessage = '';
 
   constructor(private http: HttpClient) {}
 
@@ -41,33 +42,28 @@ export class EventsComponent implements OnInit {
       this.userEmail = JSON.parse(userData)?.user_email || '';
     }
 
-    // ✅ GET request with credentials
+    this.loadEvents();
+  }
+
+  loadEvents(): void {
     this.http.get<EventItem[]>('http://localhost:8080/events', { withCredentials: true }).subscribe({
       next: (data) => {
         this.events = data;
         this.filteredEvents = [...this.events];
+        console.log("✅ Events loaded:", this.events);
       },
       error: (err) => {
-        console.error('Error fetching events:', err);
+        console.error("❌ Failed to fetch events:", err);
       }
     });
   }
 
   applyFilters(): void {
-    this.filteredEvents = this.events.filter(event => {
-      const matchesSearch = this.searchQuery === '' ||
-        event.title.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-        event.organization.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-        event.location.toLowerCase().includes(this.searchQuery.toLowerCase());
-
-      const matchesDate = this.selectedDate === '' ||
-        event.startDate.includes(this.selectedDate);
-
-      const matchesCategory = this.selectedCategory === 'All' ||
-        event.category === this.selectedCategory;
-
-      return matchesSearch && matchesDate && matchesCategory;
-    });
+    this.filteredEvents = this.events.filter(event =>
+      (this.searchQuery === '' || event.title.toLowerCase().includes(this.searchQuery.toLowerCase())) &&
+      (this.selectedDate === '' || event.startDate.includes(this.selectedDate)) &&
+      (this.selectedCategory === 'All' || event.category === this.selectedCategory)
+    );
   }
 
   resetFilters(): void {
@@ -93,29 +89,30 @@ export class EventsComponent implements OnInit {
   }
 
   rsvpToEvent(): void {
-    if (this.selectedEvent) {
-      this.selectedEvent.rsvped = true;
-      this.rsvpMessage = 'RSVP confirmed! Confirmation sent to ' + this.userEmail;
+    if (!this.selectedEvent) return;
 
-      // ✅ POST request with credentials
-      this.http.post('http://localhost:8080/events/send-confirmation', {
-        email: this.userEmail,
-        event: this.selectedEvent.title
-      }, { withCredentials: true }).subscribe({
-        next: () => {
-          console.log('Confirmation email sent.');
-        },
-        error: (err) => {
-          console.error('Error sending RSVP confirmation:', err);
-        }
-      });
-    }
+    this.selectedEvent.rsvped = true;
+    this.rsvpMessage = 'Sending RSVP...';
+
+    this.http.post('http://localhost:8080/events/send-confirmation', {
+      email: this.userEmail,
+      event: this.selectedEvent.title
+    }, { withCredentials: true }).subscribe({
+      next: (res: any) => {
+        this.rsvpMessage = res.message;
+        console.log('✅ RSVP success:', res.message);
+      },
+      error: (err) => {
+        console.error('❌ RSVP failed:', err);
+        this.rsvpMessage = 'Failed to RSVP. Please try again.';
+      }
+    });
   }
 
   undoRSVP(): void {
     if (this.selectedEvent) {
       this.selectedEvent.rsvped = false;
-      this.rsvpMessage = 'RSVP canceled.';
+      this.rsvpMessage = 'RSVP cancelled.';
     }
   }
 }
