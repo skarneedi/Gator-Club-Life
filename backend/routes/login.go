@@ -45,7 +45,7 @@ func Login(c *fiber.Ctx) error {
 	if result.Error != nil {
 		fmt.Println("User not found:", result.Error)
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"message": "Email not found",
+			"message": "Invalid email or account not found",
 		})
 	}
 
