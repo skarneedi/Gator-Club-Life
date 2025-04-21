@@ -17,6 +17,10 @@ export class AdminComponent implements OnInit {
   events: any[] = [];
   organizations: any[] = [];
   permits: any[] = [];
+  logs: string[] = [];
+  feedback: any[] = [];
+  categories: string[] = [];
+  maintenanceMode = false;
 
   newAnnouncement = { title: '', content: '', category: '' };
   announcementPosted = false;
@@ -28,6 +32,9 @@ export class AdminComponent implements OnInit {
     this.loadEvents();
     this.loadOrganizations();
     this.loadPermits();
+    this.loadLogs();
+    this.loadFeedback();
+    this.loadCategories();
   }
 
   switchTab(tab: string): void {
@@ -61,6 +68,25 @@ export class AdminComponent implements OnInit {
     ];
   }
 
+  loadLogs(): void {
+    this.logs = [
+      'User yash@ufl.edu created an event.',
+      'Announcement posted by admin.',
+      'Permit approved for Robotics Expo.'
+    ];
+  }
+
+  loadFeedback(): void {
+    this.feedback = [
+      { name: 'Emma', message: 'Great experience at the AI event!' },
+      { name: 'Liam', message: 'More events for engineers please.' }
+    ];
+  }
+
+  loadCategories(): void {
+    this.categories = ['Health', 'Tech', 'Cultural', 'Fitness'];
+  }
+
   deleteEvent(id: number): void {
     this.events = this.events.filter(e => e.id !== id);
   }
@@ -77,5 +103,15 @@ export class AdminComponent implements OnInit {
   approvePermit(id: number): void {
     const permit = this.permits.find(p => p.id === id);
     if (permit) permit.status = 'Approved';
+  }
+
+  toggleMaintenance(): void {
+    this.maintenanceMode = !this.maintenanceMode;
+  }
+
+  addCategory(newCat: string): void {
+    if (newCat && !this.categories.includes(newCat)) {
+      this.categories.push(newCat);
+    }
   }
 }

@@ -6,6 +6,10 @@
   <button (click)="switchTab('announcement')" [class.active]="activeTab === 'announcement'">Create Announcement</button>
   <button (click)="switchTab('organizations')" [class.active]="activeTab === 'organizations'">Manage Organizations</button>
   <button (click)="switchTab('permits')" [class.active]="activeTab === 'permits'">Approve Permits</button>
+  <button (click)="switchTab('logs')" [class.active]="activeTab === 'logs'">View Logs</button>
+  <button (click)="switchTab('feedback')" [class.active]="activeTab === 'feedback'">View Feedback</button>
+  <button (click)="switchTab('categories')" [class.active]="activeTab === 'categories'">Manage Categories</button>
+  <button (click)="switchTab('settings')" [class.active]="activeTab === 'settings'">Site Settings</button>
 </div>
 
 <!-- Users -->
@@ -67,4 +71,40 @@
       <button *ngIf="permit.status === 'Pending'" class="approve-btn" (click)="approvePermit(permit.id)">Approve</button>
     </li>
   </ul>
+</div>
+
+<!-- Logs -->
+<div *ngIf="activeTab === 'logs'" class="tab-section">
+  <h3>Activity Logs</h3>
+  <ul class="styled-list">
+    <li *ngFor="let log of logs">{{ log }}</li>
+  </ul>
+</div>
+
+<!-- Feedback -->
+<div *ngIf="activeTab === 'feedback'" class="tab-section">
+  <h3>Student Feedback</h3>
+  <ul class="styled-list">
+    <li *ngFor="let f of feedback"><strong>{{ f.name }}</strong>: {{ f.message }}</li>
+  </ul>
+</div>
+
+<!-- Categories -->
+<div *ngIf="activeTab === 'categories'" class="tab-section">
+  <h3>Manage Categories</h3>
+  <ul class="styled-list">
+    <li *ngFor="let c of categories">{{ c }}</li>
+  </ul>
+  <input placeholder="Add New Category" #newCat />
+  <button class="post-btn" (click)="addCategory(newCat.value); newCat.value = ''">Add</button>
+</div>
+
+<!-- Settings -->
+<div *ngIf="activeTab === 'settings'" class="tab-section">
+  <h3>Site Settings</h3>
+  <label>
+    <input type="checkbox" [(ngModel)]="maintenanceMode" (change)="toggleMaintenance()" />
+    Enable Maintenance Mode
+  </label>
+  <p>Status: <strong>{{ maintenanceMode ? 'ON' : 'OFF' }}</strong></p>
 </div>

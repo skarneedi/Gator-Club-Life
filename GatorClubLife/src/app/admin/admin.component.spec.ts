@@ -31,4 +31,16 @@ describe('AdminComponent', () => {
     component.approvePermit(1);
     expect(component.permits[0].status).toBe('Approved');
   });
+
+  it('should toggle maintenance mode', () => {
+    component.maintenanceMode = false;
+    component.toggleMaintenance();
+    expect(component.maintenanceMode).toBeTrue();
+  });
+
+  it('should add a new category', () => {
+    component.categories = ['Music'];
+    component.addCategory('Sports');
+    expect(component.categories.includes('Sports')).toBeTrue();
+  });
 });
