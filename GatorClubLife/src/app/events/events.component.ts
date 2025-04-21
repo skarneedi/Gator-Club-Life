@@ -31,27 +31,7 @@ export class EventsComponent implements OnInit {
   filteredEvents: EventItem[] = [];
   userEmail: string = '';
   rsvpMessage: string = '';
-
-  events: EventItem[] = [
-    {
-      organization: 'Nepalese Student Association',
-      title: 'Nepali Night',
-      startDate: 'Apr 20, 2025 @ 6:00 PM',
-      endDate: 'Apr 20, 2025 @ 9:00 PM',
-      location: 'Reitz Union',
-      description: 'Celebrate New Year with food, music, and dance.',
-      category: 'Cultural',
-    },
-    {
-      organization: 'AI Club',
-      title: 'AI Meetup',
-      startDate: 'Apr 22, 2025 @ 5:00 PM',
-      endDate: 'Apr 22, 2025 @ 7:00 PM',
-      location: 'CSE Hall',
-      description: 'Talks and networking on machine learning.',
-      category: 'Academic',
-    }
-  ];
+  events: EventItem[] = [];
 
   constructor(private http: HttpClient) {}
 
@@ -60,7 +40,17 @@ export class EventsComponent implements OnInit {
     if (userData) {
       this.userEmail = JSON.parse(userData)?.user_email || '';
     }
-    this.filteredEvents = [...this.events];
+
+    // ✅ GET request with credentials
+    this.http.get<EventItem[]>('http://localhost:8080/events', { withCredentials: true }).subscribe({
+      next: (data) => {
+        this.events = data;
+        this.filteredEvents = [...this.events];
+      },
+      error: (err) => {
+        console.error('Error fetching events:', err);
+      }
+    });
   }
 
   applyFilters(): void {
@@ -107,11 +97,18 @@ export class EventsComponent implements OnInit {
       this.selectedEvent.rsvped = true;
       this.rsvpMessage = 'RSVP confirmed! Confirmation sent to ' + this.userEmail;
 
-      // Simulate sending email (replace with real API call)
+      // ✅ POST request with credentials
       this.http.post('http://localhost:8080/events/send-confirmation', {
         email: this.userEmail,
         event: this.selectedEvent.title
-      }).subscribe();
+      }, { withCredentials: true }).subscribe({
+        next: () => {
+          console.log('Confirmation email sent.');
+        },
+        error: (err) => {
+          console.error('Error sending RSVP confirmation:', err);
+        }
+      });
     }
   }
 

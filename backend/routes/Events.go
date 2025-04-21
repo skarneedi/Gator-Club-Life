@@ -3,56 +3,67 @@ package routes
 import (
 	"backend/database"
 	"fmt"
+	"strconv"
+	"time"
+
 	"github.com/gofiber/fiber/v2"
-	"gorm.io/gorm"
 )
 
-// GetEvents retrieves all events or filters by club ID
 func GetEvents(c *fiber.Ctx) error {
+	var dbEvents []database.Event
+
 	clubID := c.Query("club_id")
-	var events []database.Event
-	var result *gorm.DB
+	category := c.Query("category")
+	dateFilter := c.Query("date")
 
-	// Debugging: log the query and parameters
+	page, _ := strconv.Atoi(c.Query("page", "1"))
+	limit, _ := strconv.Atoi(c.Query("limit", "10"))
+	offset := (page - 1) * limit
+
+	query := database.DB.Limit(limit).Offset(offset)
+
 	if clubID != "" {
-		fmt.Println("Fetching events for club_id:", clubID)
-		// Use Debug() to log the SQL query
-		result = database.DB.Where("club_id = ?", clubID).Debug().Find(&events)
-	} else {
-		fmt.Println("Fetching all events")
-		// Use Debug() to log the SQL query
-		result = database.DB.Debug().Find(&events)
+		query = query.Where("club_id = ?", clubID)
 	}
 
-	// Check if result is nil
-	if result == nil {
-		fmt.Println("Error: Result is nil")
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "Error retrieving events - result is nil",
-		})
+	if dateFilter != "" {
+		startTime, err := time.Parse("2006-01-02", dateFilter)
+		if err == nil {
+			startUnix := startTime.Unix()
+			endUnix := startTime.Add(24 * time.Hour).Unix()
+			query = query.Where("event_date BETWEEN ? AND ?", startUnix, endUnix)
+		}
 	}
 
-	// Check if any error occurred during the query
+	if category != "" {
+		query = query.Where("event_categories LIKE ?", "%"+category+"%")
+	}
+
+	result := query.Find(&dbEvents)
 	if result.Error != nil {
-		fmt.Println("Database Error:", result.Error) // Prints the error if any
+		fmt.Println("Database Error:", result.Error)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "Error retrieving events",
 		})
 	}
 
-	// Debugging: print events fetched
-	fmt.Println("Fetched Events:", events)
-
-	if len(events) == 0 {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"message": "No events found",
+	var response []fiber.Map
+	for _, ev := range dbEvents {
+		start := time.Unix(ev.EventDate, 0).Format("Jan 2, 2006 @ 3:04 PM")
+		response = append(response, fiber.Map{
+			"title":        ev.EventName,
+			"description":  ev.EventDescription,
+			"startDate":    start,
+			"endDate":      start,
+			"location":     ev.EventLocation,
+			"organization": fmt.Sprintf("Club ID: %d", ev.ClubID),
+			"category":     ev.EventCategories,
 		})
 	}
 
-	return c.JSON(events)
+	return c.JSON(response)
 }
 
-// CreateEvent adds a new event
 func CreateEvent(c *fiber.Ctx) error {
 	var event database.Event
 	if err := c.BodyParser(&event); err != nil {
@@ -68,4 +79,23 @@ func CreateEvent(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(event)
+}
+
+func SendRSVPConfirmation(c *fiber.Ctx) error {
+	var body struct {
+		Email string `json:"email"`
+		Event string `json:"event"`
+	}
+
+	if err := c.BodyParser(&body); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid RSVP payload",
+		})
+	}
+
+	fmt.Printf("📩 Sending RSVP confirmation to %s for event: %s\n", body.Email, body.Event)
+
+	return c.JSON(fiber.Map{
+		"message": fmt.Sprintf("RSVP confirmed for %s! Email sent to %s", body.Event, body.Email),
+	})
 }

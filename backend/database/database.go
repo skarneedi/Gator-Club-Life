@@ -49,6 +49,7 @@ type Event struct {
 	EventDescription string `gorm:"column:event_description;not null" json:"event_description"`
 	EventDate        int64  `gorm:"column:event_date;not null" json:"event_date"`
 	EventLocation    string `gorm:"column:event_location;not null" json:"event_location"`
+	EventCategories  string `gorm:"column:event_categories;not null" json:"event_categories"` // 👈 Add this line
 	OrganizedBy      *uint  `gorm:"column:organized_by" json:"organized_by"`
 	ClubID           *uint  `gorm:"column:club_id" json:"club_id"`
 	CreatedAt        int64  `gorm:"column:created_at;default:(strftime('%s', 'now'))" json:"created_at"`

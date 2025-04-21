@@ -62,6 +62,8 @@ func main() {
 	app.Get("/clubs/:id/officers", middleware.RequireAuth(), routes.GetOfficersByClubID)
 
 	app.Get("/events", middleware.RequireAuth(), routes.GetEvents)
+	app.Post("/events/send-confirmation", middleware.RequireAuth(), routes.SendRSVPConfirmation)
+
 	app.Get("/announcements", middleware.RequireAuth(), routes.GetAnnouncements)
 	app.Post("/announcements/create", middleware.RequireAuth(), routes.CreateAnnouncement)
 
