@@ -15,11 +15,11 @@ import (
 	fiberSwagger "github.com/swaggo/fiber-swagger"
 )
 
-// ✅ Shared session store across routes and middleware
 var store = session.New(session.Config{
-	CookieSecure:   false, // allow HTTP for local dev
-	CookieHTTPOnly: true,  // prevent JavaScript access
-	CookieSameSite: "Lax", // allow cookie on cross-origin form submits
+	CookieSecure:   false, // ✅ required for localhost HTTP
+	CookieHTTPOnly: true,
+	CookieSameSite: "None", // ❗ this is the key fix!
+	Expiration:     0,
 })
 
 func main() {
@@ -29,17 +29,16 @@ func main() {
 
 	app := fiber.New()
 
-	// ✅ Enable CORS with credentials to allow cookies
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     "http://localhost:4200", // your Angular frontend
+		AllowOrigins:     "http://localhost:4200",
 		AllowCredentials: true,
 	}))
 
-	// ✅ Set session store and middleware
 	routes.SetStore(store)
+	middleware.SetStore(store)
+
 	app.Use(middleware.SessionContext())
 
-	// ✅ Debug route to check session
 	app.Get("/session-check", func(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{
 			"user_email": c.Locals("user_email"),
@@ -48,32 +47,46 @@ func main() {
 		})
 	})
 
-	// ✅ Base routes
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Welcome to Gator-Club-Life!")
 	})
 	app.Get("/swagger/*", fiberSwagger.WrapHandler)
 
-	// ✅ Auth routes
 	app.Get("/users", routes.GetUsers)
 	app.Post("/users/create", routes.CreateUser)
 	app.Post("/login", routes.Login)
 	app.Post("/logout", routes.Logout)
 
-	// ✅ Core feature routes
 	app.Get("/clubs", routes.GetClubs)
-	app.Get("/events", routes.GetEvents)
-	app.Get("/announcements", routes.GetAnnouncements)
-	app.Post("/announcements/create", routes.CreateAnnouncement)
+	app.Get("/clubs/:id", middleware.RequireAuth(), routes.GetClubByID)
+	app.Get("/clubs/:id/officers", middleware.RequireAuth(), routes.GetOfficersByClubID)
 
-	// ✅ Event permit & submission
-	app.Post("/event-permits/submit", routes.SubmitFullEventPermit)
-	app.Get("/submissions", routes.GetUserSubmissions)
+	app.Get("/events", middleware.RequireAuth(), routes.GetEvents)
+	app.Get("/announcements", middleware.RequireAuth(), routes.GetAnnouncements)
+	app.Post("/announcements/create", middleware.RequireAuth(), routes.CreateAnnouncement)
 
-	// ✅ Bookings & club details
+	app.Post("/event-permits/submit", middleware.RequireAuth(), routes.SubmitFullEventPermit)
+	app.Get("/submissions", middleware.RequireAuth(), routes.GetUserSubmissions)
+
 	routes.RegisterBookingRoutes(app)
-	app.Get("/clubs/:id", routes.GetClubByID)
-	app.Get("/clubs/:id/officers", routes.GetOfficersByClubID)
+
+	app.Get("/debug-session", func(c *fiber.Ctx) error {
+		val := c.Locals("session")
+		if val == nil {
+			fmt.Println("⚠️ No session attached to context")
+			return c.SendString("No session found in context")
+		}
+		sess := val.(*session.Session)
+
+		email := sess.Get("user_email")
+		if email == nil {
+			fmt.Println("⚠️ Session exists, but no user_email stored")
+			return c.SendString("Session exists but no user_email set")
+		}
+
+		fmt.Println("✅ Session found for:", email)
+		return c.SendString(fmt.Sprintf("Session found for: %v", email))
+	})
 
 	log.Fatal(app.Listen(":8080"))
 }

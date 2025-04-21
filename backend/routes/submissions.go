@@ -17,7 +17,7 @@ type PermitSummary struct {
 }
 
 func GetUserSubmissions(c *fiber.Ctx) error {
-	fmt.Println("📬 My Submissions API called")
+	fmt.Println("My Submissions API called")
 
 	// ✅ Get email from session context (middleware set c.Locals)
 	email := c.Locals("user_email")

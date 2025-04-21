@@ -21,11 +21,11 @@ export class OrganizationDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     const orgId = this.route.snapshot.paramMap.get('id');
-    const baseUrl = 'http://localhost:8080'; // ✅ set base URL
+    const baseUrl = 'http://localhost:8080';
     console.log("📌 Organization ID from route:", orgId);
-
+  
     if (orgId) {
-      this.http.get(`${baseUrl}/clubs/${orgId}`).subscribe({
+      this.http.get(`${baseUrl}/clubs/${orgId}`, { withCredentials: true }).subscribe({
         next: (data: any) => {
           console.log("✅ Organization Data:", data);
           this.organization = {
@@ -35,8 +35,10 @@ export class OrganizationDetailsComponent implements OnInit {
         },
         error: (err) => console.error("❌ Error fetching organization:", err)
       });
-
-      this.http.get(`${baseUrl}/clubs/${orgId}/officers`).subscribe({
+  
+      this.http.get(`${baseUrl}/clubs/${orgId}/officers`, {
+        withCredentials: true
+      }).subscribe({
         next: (data: any) => {
           console.log("✅ Officers Data:", data);
           this.officers = data.map((officer: any) => ({
@@ -46,16 +48,20 @@ export class OrganizationDetailsComponent implements OnInit {
         },
         error: (err) => console.error("❌ Error fetching officers:", err)
       });
-
-      this.http.get(`${baseUrl}/announcements?club_id=${orgId}`).subscribe({
+  
+      this.http.get(`${baseUrl}/announcements?club_id=${orgId}`, {
+        withCredentials: true
+      }).subscribe({
         next: (data: any) => {
           console.log("✅ Announcements Data:", data);
           this.announcements = data;
         },
         error: (err) => console.error("❌ Error fetching announcements:", err)
       });
-
-      this.http.get(`${baseUrl}/events?club_id=${orgId}`).subscribe({
+  
+      this.http.get(`${baseUrl}/events?club_id=${orgId}`, {
+        withCredentials: true
+      }).subscribe({
         next: (data: any) => {
           console.log("✅ Events Data:", data);
           this.events = data;
@@ -65,5 +71,5 @@ export class OrganizationDetailsComponent implements OnInit {
     } else {
       console.error("❌ No organization ID found in route.");
     }
-  }
+  }  
 }

@@ -45,7 +45,9 @@ export class AnnouncementsComponent implements OnInit {
       this.isAdmin = user?.role === 'admin';
     });
 
-    this.http.get<any[]>('http://localhost:8080/announcements').subscribe({
+    this.http.get<any[]>('http://localhost:8080/announcements', {
+      withCredentials: true
+    }).subscribe({    
       next: (data) => {
         this.announcements = data.map((a, i) => ({
           id: i + 1,

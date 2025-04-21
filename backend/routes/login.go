@@ -58,25 +58,36 @@ func Login(c *fiber.Ctx) error {
 
 	fmt.Println("User authenticated:", user.UserEmail)
 
-	// 🧠 Create new session and save details
-	sess, err := Store.Get(c)
-	if err != nil {
-		fmt.Println("Failed to create session:", err)
+	// ✅ Safely get session from context with nil check
+	val := c.Locals("session")
+	if val == nil {
+		fmt.Println("⚠️ No session found in context — is SessionContext middleware enabled?")
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": "Could not create session",
+			"message": "Session middleware missing or misconfigured",
 		})
 	}
 
+	sess := val.(*session.Session)
+
+	fmt.Println("📦 Loaded session from middleware")
 	sess.Set("user_id", user.UserID)
 	sess.Set("user_email", user.UserEmail)
 	sess.Set("user_role", user.UserRole)
 
+	fmt.Printf("🔑 About to save session:\n  user_id: %v\n  user_email: %v\n  user_role: %v\n",
+		user.UserID, user.UserEmail, user.UserRole)
+
 	if err := sess.Save(); err != nil {
-		fmt.Println("Failed to save session:", err)
+		fmt.Println("❌ Failed to save session:", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "Session save failed",
 		})
 	}
+
+	fmt.Println("✅ Session saved successfully")
+
+	c.Set("Content-Type", "application/json")
+	c.Status(fiber.StatusOK)
 
 	return c.JSON(LoginResponse{
 		Message:       "Login successful",

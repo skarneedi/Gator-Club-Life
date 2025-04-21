@@ -5,7 +5,8 @@ import { AboutComponent } from './app/about/about.component';
 import { LoginComponent } from './app/login/login.component';
 import { provideRouter, Routes } from '@angular/router';
 import { appConfig } from './app/app.config';
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { authInterceptor } from './app/auth.interceptor';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -17,7 +18,9 @@ bootstrapApplication(AppComponent, {
   providers: [
     ...appConfig.providers,
     provideRouter(routes),
-    provideHttpClient(withFetch())
+    provideHttpClient(
+      withInterceptors([authInterceptor])
+    )
   ]
 })
 .catch((err) => console.error(err));
