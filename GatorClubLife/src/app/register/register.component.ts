@@ -14,7 +14,6 @@ import { throwError } from 'rxjs';
   imports: [FormsModule, HttpClientModule, CommonModule],
 })
 export class RegisterComponent {
-  // Form fields
   name = '';
   email = '';
   username = '';
@@ -22,23 +21,22 @@ export class RegisterComponent {
   confirmPassword = '';
   role = '';
 
-  // Error messages & flags
   errorMessage = '';
   submitted = false;
   passwordNotStrong = false;
   invalidEmail = false;
 
-  // Password visibility toggles
   showPassword = false;
   showConfirmPassword = false;
 
-  // Email/Username check flags
   emailAvailable: boolean | null = null;
   usernameAvailable: boolean | null = null;
   checkingEmail = false;
   checkingUsername = false;
   emailCheckTimeout: any = null;
   usernameCheckTimeout: any = null;
+
+  passwordStrength = 0;
 
   constructor(private router: Router, private http: HttpClient) {}
 
@@ -51,22 +49,29 @@ export class RegisterComponent {
   }
 
   onPasswordInput(): void {
-    if (this.password) {
-      this.passwordNotStrong = !this.isPasswordStrong(this.password);
-    } else {
-      this.passwordNotStrong = false;
-    }
+    this.passwordStrength = this.calculateStrength(this.password);
+    this.passwordNotStrong = this.passwordStrength < 80;
   }
 
-  private isPasswordStrong(password: string): boolean {
-    const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$/;
-    return strongPasswordRegex.test(password);
+  calculateStrength(password: string): number {
+    let strength = 0;
+    if (!password) return strength;
+
+    const lengthCriteria = password.length >= 8;
+    const uppercaseCriteria = /[A-Z]/.test(password);
+    const lowercaseCriteria = /[a-z]/.test(password);
+    const numberCriteria = /\d/.test(password);
+    const specialCharCriteria = /[^\w\s]/.test(password);
+
+    if (lengthCriteria) strength += 20;
+    if (uppercaseCriteria) strength += 20;
+    if (lowercaseCriteria) strength += 20;
+    if (numberCriteria) strength += 20;
+    if (specialCharCriteria) strength += 20;
+
+    return strength;
   }
 
-  /**
-   * Checks email availability
-   * TODO: Replace URL with backend API for email check
-   */
   checkEmailAvailability(): void {
     if (this.emailCheckTimeout) clearTimeout(this.emailCheckTimeout);
     const uflEmailRegex = /^[a-zA-Z0-9._%+-]+@ufl\.edu$/;
@@ -94,10 +99,6 @@ export class RegisterComponent {
     }, 400);
   }
 
-  /**
-   * Checks username availability
-   * TODO: Replace URL with backend API for username check
-   */
   checkUsernameAvailability(): void {
     if (this.usernameCheckTimeout) clearTimeout(this.usernameCheckTimeout);
     if (!this.username) {
@@ -178,6 +179,10 @@ export class RegisterComponent {
           this.router.navigate(['/login']);
         },
       });
+  }
+
+  private isPasswordStrong(password: string): boolean {
+    return this.calculateStrength(password) >= 80;
   }
 
   goToLogin(): void {

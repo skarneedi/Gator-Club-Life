@@ -59,18 +59,43 @@ select {
   z-index: 1;
 }
 
+/* Password strength bar */
+.strength-bar-container {
+  height: 6px;
+  width: 100%;
+  background-color: #eee;
+  border-radius: 4px;
+  margin-top: 6px;
+  overflow: hidden;
+}
+
+.strength-bar {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.strength-bar.weak {
+  background-color: #f44336;
+}
+
+.strength-bar.medium {
+  background-color: #ffa726;
+}
+
+.strength-bar.strong {
+  background-color: #4caf50;
+}
+
 /* Password strength message */
 .password-rules {
   margin-top: 5px;
   font-size: 0.85rem;
 }
 
-/* Valid password strength */
 .valid-message {
   color: green;
 }
 
-/* Invalid password strength */
 .invalid-message {
   color: red;
 }
@@ -123,13 +148,7 @@ button:hover {
   margin-top: 10px;
 }
 
-/* Optional: remove default browser show/hide password icons */
-input::-ms-reveal,
-input::-ms-clear {
-  display: none;
-}
-
-/* NEW: Email & Username availability feedback styles */
+/* Email & Username availability feedback styles */
 .available-msg {
   color: green;
   font-size: 0.85rem;
@@ -149,4 +168,10 @@ input::-ms-clear {
   font-size: 0.85rem;
   margin-top: 5px;
   display: block;
+}
+
+/* Remove default browser password reveal */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
 }
