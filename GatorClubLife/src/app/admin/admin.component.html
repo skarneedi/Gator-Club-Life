@@ -1,5 +1,70 @@
-<div class="admin-container">
-    <h1>Welcome Admin</h1>
-    <p>This is your admin dashboard.</p>
+<h2 class="dashboard-title">Admin Dashboard</h2>
+
+<div class="tab-buttons">
+  <button (click)="switchTab('users')" [class.active]="activeTab === 'users'">Manage Users</button>
+  <button (click)="switchTab('events')" [class.active]="activeTab === 'events'">Manage Events</button>
+  <button (click)="switchTab('announcement')" [class.active]="activeTab === 'announcement'">Create Announcement</button>
+  <button (click)="switchTab('organizations')" [class.active]="activeTab === 'organizations'">Manage Organizations</button>
+  <button (click)="switchTab('permits')" [class.active]="activeTab === 'permits'">Approve Permits</button>
+</div>
+
+<!-- Users -->
+<div *ngIf="activeTab === 'users'" class="tab-section">
+  <h3>All Registered Users</h3>
+  <div class="table-wrapper">
+    <table>
+      <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Joined</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td>{{ user.user_id }}</td>
+          <td>{{ user.user_name }}</td>
+          <td>{{ user.user_email }}</td>
+          <td>{{ user.user_role }}</td>
+          <td>{{ user.user_created_at }}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
-  
+</div>
+
+<!-- Events -->
+<div *ngIf="activeTab === 'events'" class="tab-section">
+  <h3>All Events</h3>
+  <ul class="styled-list">
+    <li *ngFor="let event of events">
+      <span class="event-title">{{ event.title }}</span> — {{ event.date }} &#64; {{ event.location }}
+      <button class="delete-btn" (click)="deleteEvent(event.id)">Delete</button>
+    </li>
+  </ul>
+</div>
+
+<!-- Announcements -->
+<div *ngIf="activeTab === 'announcement'" class="tab-section">
+  <h3>Post New Announcement</h3>
+  <input placeholder="Title" [(ngModel)]="newAnnouncement.title" />
+  <input placeholder="Category (optional)" [(ngModel)]="newAnnouncement.category" />
+  <textarea placeholder="Content" [(ngModel)]="newAnnouncement.content"></textarea>
+  <button class="post-btn" (click)="postAnnouncement()">Post</button>
+  <p *ngIf="announcementPosted" class="success-msg">✅ Announcement posted!</p>
+</div>
+
+<!-- Organizations -->
+<div *ngIf="activeTab === 'organizations'" class="tab-section">
+  <h3>Manage Organizations</h3>
+  <ul class="styled-list">
+    <li *ngFor="let club of organizations">
+      <strong>{{ club.name }}</strong>: {{ club.description }}
+    </li>
+  </ul>
+</div>
+
+<!-- Permits -->
+<div *ngIf="activeTab === 'permits'" class="tab-section">
+  <h3>Permit Submissions</h3>
+  <ul class="styled-list">
+    <li *ngFor="let permit of permits">
+      <strong>{{ permit.event }}</strong> by {{ permit.submittedBy }} — <em>Status: {{ permit.status }}</em>
+      <button *ngIf="permit.status === 'Pending'" class="approve-btn" (click)="approvePermit(permit.id)">Approve</button>
+    </li>
+  </ul>
+</div>
