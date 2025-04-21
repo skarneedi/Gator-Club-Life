@@ -10,12 +10,13 @@ import (
 )
 
 // GetAnnouncements godoc
-// @Summary      Retrieve all announcements
-// @Description  Retrieves all announcements in descending order by creation date
+// @Summary      Get announcements
+// @Description  Retrieves all announcements or by club_id
 // @Tags         Announcements
 // @Produce      json
-// @Success      200  {array}   database.Announcement  "List of announcements"
-// @Failure      500  {string}  string                 "Error retrieving announcements"
+// @Param        club_id  query     string  false  "Filter by club ID"
+// @Success      200      {array}   database.Announcement
+// @Failure      500      {string}  string
 // @Router       /announcements [get]
 func GetAnnouncements(c *fiber.Ctx) error {
 	fmt.Println("GetAnnouncements API called")
@@ -40,16 +41,15 @@ func GetAnnouncements(c *fiber.Ctx) error {
 }
 
 // CreateAnnouncement godoc
-// @Summary      Create a new announcement
-// @Description  Allows an admin user to create a new announcement
+// @Summary      Create an announcement
+// @Description  Allows an admin to create a new announcement
 // @Tags         Announcements
 // @Accept       json
 // @Produce      json
-// @Param        announcement  body      database.Announcement  true  "Announcement data"
-// @Success      200  {object} database.Announcement "Successfully created announcement"
-// @Failure      400  {string} string   "Invalid request body or missing required fields"
-// @Failure      401  {string} string   "Only admins can post announcements"
-// @Failure      500  {string} string   "Error saving announcement"
+// @Param        announcement  body      database.Announcement  true  "Announcement content"
+// @Success      200  {object}  database.Announcement
+// @Failure      400  {string}  string
+// @Failure      401  {string}  string
 // @Router       /announcements/create [post]
 func CreateAnnouncement(c *fiber.Ctx) error {
 	fmt.Println("CreateAnnouncement API called")

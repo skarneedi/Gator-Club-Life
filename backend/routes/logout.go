@@ -14,11 +14,11 @@ type LogoutResponse struct {
 
 // Logout godoc
 // @Summary      Logout a user
-// @Description  Destroys the current session and logs out the user.
+// @Description  Destroys session and logs out
 // @Tags         Authentication
 // @Produce      json
-// @Success      200  {object}  LogoutResponse  "Logout successful"
-// @Failure      500  {object}  LogoutResponse  "Error during logout"
+// @Success      200  {object}  routes.LogoutResponse
+// @Failure      500  {object}  routes.LogoutResponse
 // @Router       /logout [post]
 func Logout(c *fiber.Ctx) error {
 	fmt.Println("Logout API called")

@@ -9,12 +9,12 @@ import (
 )
 
 // GetUsers godoc
-// @Summary      Get all users
-// @Description  Retrieves all users from the database.
+// @Summary      Retrieve all users
+// @Description  Returns a list of all registered users. Admin access recommended.
 // @Tags         Users
 // @Produce      json
-// @Success      200  {array}   database.User "List of users"
-// @Failure      500  {object}  map[string]string "Error retrieving users"
+// @Success      200  {array}   database.User
+// @Failure      500  {object}  map[string]string
 // @Router       /users [get]
 func GetUsers(c *fiber.Ctx) error {
 	fmt.Println("GetUsers API called")
@@ -32,15 +32,15 @@ func GetUsers(c *fiber.Ctx) error {
 }
 
 // CreateUser godoc
-// @Summary      Create a new user
-// @Description  Create a new user with the required fields, including password hashing.
+// @Summary      Register a new user
+// @Description  Creates a new user with name, email, password, and role.
 // @Tags         Users
 // @Accept       json
 // @Produce      json
-// @Param        user  body      database.User  true  "User data"
-// @Success      200   {object}  map[string]interface{}  "User successfully added"
-// @Failure      400   {object}  map[string]string "Invalid request: Unable to parse JSON or missing required fields"
-// @Failure      500   {object}  map[string]string "Error processing password or saving user to database"
+// @Param        user  body      database.User  true  "New user data"
+// @Success      200   {object}  map[string]interface{}
+// @Failure      400   {object}  map[string]string
+// @Failure      500   {object}  map[string]string
 // @Router       /users/create [post]
 func CreateUser(c *fiber.Ctx) error {
 	fmt.Println("CreateUser API called")
