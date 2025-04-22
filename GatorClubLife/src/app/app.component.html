@@ -1,7 +1,9 @@
 <header>
   <nav class="navbar">
     <div class="logo">
-      <a routerLink="/home">GatorClubLife</a>
+      <a routerLink="/home" style="text-decoration: none; display: flex; align-items: center;">
+        <span style="color: #0021A5; font-size: 1.8rem; font-weight: bold;">GatorClubLife</span>
+      </a>      
     </div>
 
     <ul class="nav-links">
@@ -41,5 +43,5 @@
 
 <main>
   <router-outlet></router-outlet>
-  <app-announcements *ngIf="showAnnouncements"></app-announcements>
+
 </main>

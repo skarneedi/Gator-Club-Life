@@ -1,7 +1,7 @@
 /* organizations.component.css */
 .container {
   display: flex;
-  background-color: #f5e6d3; /* Light yellow background */
+  background-color: #F6C794; /* Light yellow background */
   padding: 20px;
 }
 
@@ -11,7 +11,7 @@
 }
 
 .category-list {
-  background-color: #ff7f27; /* Orange background for Filter by Categories */
+  background-color: #fd9343; /* Orange background for Filter by Categories */
   border-radius: 5px; /* Rounded corners */
   padding: 10px; /* Add padding for spacing */
   height: 100vh; /* Extend the height to fill the viewport */

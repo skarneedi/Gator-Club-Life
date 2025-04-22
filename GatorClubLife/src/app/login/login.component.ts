@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
-import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
-import { CommonModule } from '@angular/common';
 import { AuthService, UserInfo } from '../auth.service';
 
 @Component({
@@ -76,9 +75,12 @@ export class LoginComponent {
 
         this.authService.setUser(userInfo);
 
-const targetRoute = userInfo.role === 'admin' ? '/admin' : '/home';
-this.router.navigate([targetRoute]);
-
+        // ✅ Redirect based on role
+        if (userInfo.role === 'admin') {
+          this.router.navigate(['/admin']);
+        } else {
+          this.router.navigate(['/home']); // CHANGED from '/announcements' to '/home'
+        }
       });
   }
 
