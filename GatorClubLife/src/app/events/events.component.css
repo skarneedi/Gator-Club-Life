@@ -7,7 +7,7 @@
 
 body {
   font-family: 'Segoe UI', sans-serif;
-  background-color: #f6e3b4;
+  background-color: #F6C794;
 }
 
 .events-container {
@@ -20,7 +20,7 @@ body {
 h1 {
   font-size: 2.4rem;
   color: #0021A5;
-  background-color: #f7b733;
+  background-color: #f6aa71;
   padding: 15px 20px;
   margin-bottom: 20px;
 }

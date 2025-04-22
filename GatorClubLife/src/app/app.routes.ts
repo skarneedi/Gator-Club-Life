@@ -29,6 +29,8 @@ export const routes: Routes = [
   { path: 'profile', component: MyProfileComponent, canActivate: [authGuard] },
   { path: 'my-events', component: MyEventsComponent },
   { path: 'admin', component: AdminComponent },
+  { path: 'organizations', component: OrganizationsComponent, canActivate: [authGuard] },
+{ path: 'events', component: EventsComponent, canActivate: [authGuard] },
   {
     path: 'organizations',
     component: OrganizationsComponent,

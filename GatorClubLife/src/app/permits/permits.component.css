@@ -14,7 +14,7 @@ body {
 
 /* Header Section */
 header {
-  background-color: #003366; /* Dark blue header from second image */
+  background-color: #1F509A; /* Dark blue header from second image */
   color: white;
   padding: 20px;
   text-align: left;
@@ -74,7 +74,7 @@ header h1 {
 }
 
 .event-option:hover {
-  background-color: #FFA500; /* Orange background on hover */
+  background-color: #ff8c00; /* Orange background on hover */
   color: white; /* White text on orange background */
   transform: scale(1.05); /* Slightly enlarge the card on hover */
 }
