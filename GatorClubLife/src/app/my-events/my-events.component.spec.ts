@@ -17,8 +17,14 @@ describe('MyEventsComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create component', () => {
+  it('should create the component', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should show all events when "All" category is selected', () => {
+    component.selectedCategory = 'All';
+    component.applyFilters();
+    expect(component.filteredEvents.length).toBe(component.events.length);
   });
 
   it('should filter events by category', () => {
@@ -27,16 +33,16 @@ describe('MyEventsComponent', () => {
     expect(component.filteredEvents.every(e => e.category === 'Workshop')).toBeTrue();
   });
 
-  it('should search events by title', () => {
-    component.searchTerm = 'Angular';
+  it('should filter events by search term', () => {
+    component.searchTerm = 'Music';
     component.applyFilters();
-    expect(component.filteredEvents.some(e => e.title.includes('Angular'))).toBeTrue();
+    expect(component.filteredEvents.some(e => e.title.includes('Music'))).toBeTrue();
   });
 
-  it('should toggle favorite', () => {
-    const eventBefore = component.events.find(e => e.id === 1)?.isFavorite;
+  it('should toggle favorite status correctly', () => {
+    const original = component.events.find(e => e.id === 1)?.isFavorite;
     component.toggleFavorite(1);
-    const eventAfter = component.events.find(e => e.id === 1)?.isFavorite;
-    expect(eventBefore).not.toEqual(eventAfter);
+    const updated = component.events.find(e => e.id === 1)?.isFavorite;
+    expect(updated).toBe(!original);
   });
 });
