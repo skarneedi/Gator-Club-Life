@@ -44,11 +44,11 @@ import { Component } from '@angular/core';
         withCredentials: true
       }).subscribe({
         next: (res) => {
-          alert('✅ Permit submitted successfully!');
+          alert('Permit submitted successfully!');
           this.router.navigate(['/thank-you']);
         },
         error: (err) => {
-          console.error('❌ Submission failed:', err);
+          console.error('Submission failed:', err);
           alert('Submission failed. Please try again.');
         }
       });
