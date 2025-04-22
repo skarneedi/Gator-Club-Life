@@ -1,194 +1,60 @@
-package routes_test
+package main
 
 import (
 	"backend/database"
 	"backend/routes"
-	"bytes"
-	"encoding/json"
-	"net/http/httptest"
-	"testing"
+	"fmt"
+	"log"
+
+	_ "backend/docs" // Swagger docs
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/golang/mock/gomock"
-	"github.com/stretchr/testify/assert"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+	fiberSwagger "github.com/swaggo/fiber-swagger"
 )
 
-// Initialize the test database
-func initTestDB(t *testing.T) {
-	database.InitTestDB()
+// Initialize the database and migrations
+func init() {
+	// Initialize the database connection
+	database.InitDB()
+	fmt.Println("Database connection established.")
 
-	// Migrate the necessary models for the test
-	err := database.DB.AutoMigrate(&database.Event{}, &database.User{})
-	if err != nil {
-		t.Fatalf("Failed to migrate models: %v", err)
+	// Migrate the necessary models for the application
+	if err := database.DB.AutoMigrate(&database.Event{}, &database.User{}, &database.Announcement{}); err != nil {
+		fmt.Println("Failed to migrate models:", err)
 	}
 }
 
-// Test the GetEvents endpoint
-func TestGetEvents(t *testing.T) {
-	// Initialize the test database
-	initTestDB(t)
-
-	// Create some test events and users
-	event := database.Event{
-		EventName:        "Test Event",
-		EventDescription: "A test event for unit testing.",
-		EventLocation:    "Test Location",
-		EventCategories:  "Test Category",
-		EventDate:        1622541600, // Unix timestamp for testing
-		ClubID:           1,
-	}
-
-	// Add the event to the test DB
-	if err := database.DB.Create(&event).Error; err != nil {
-		t.Fatalf("Failed to insert test event: %v", err)
-	}
-
-	// Initialize the app
+// main function to set up the Fiber app and routes
+func main() {
+	// Create a new Fiber app
 	app := fiber.New()
 
+	// Enable CORS to allow cross-origin requests (useful for frontend and testing)
+	app.Use(cors.New())
+
+	// Enable logger middleware (optional but useful for debugging)
+	app.Use(logger.New())
+
 	// Set up the routes
-	app.Get("/events", routes.GetEvents)
+	setupRoutes(app)
 
-	// Create the request
-	req := httptest.NewRequest("GET", "/events", nil)
+	// Set up Swagger documentation (optional, if using Swagger for API docs)
+	app.Get("/swagger/*", fiberSwagger.WrapHandler)
 
-	// Execute the request
-	resp, err := app.Test(req)
-
-	// Ensure the request was successful
-	if err != nil {
-		t.Fatalf("Failed to make request: %v", err)
-	}
-
-	// Assert the status code is 200 OK
-	assert.Equal(t, 200, resp.StatusCode, "Expected status 200")
-
-	// Further assertions on the response body
-	var events []map[string]interface{}
-	if err := json.NewDecoder(resp.Body).Decode(&events); err != nil {
-		t.Fatalf("Failed to decode response: %v", err)
-	}
-
-	// Ensure that at least 1 event is returned
-	assert.Len(t, events, 1, "Expected 1 event to be returned")
+	// Start the server on port 8080
+	log.Fatal(app.Listen(":8080"))
 }
 
-// Test the SendRSVPConfirmation endpoint
-func TestSendRSVPConfirmation(t *testing.T) {
-	// Initialize the test database
-	initTestDB(t)
+// setupRoutes sets up the routes for the app, including those for events and RSVP confirmation
+func setupRoutes(app *fiber.App) {
+	// Events routes
+	app.Get("/events", routes.GetEvents)                               // Get all events
+	app.Post("/events/send-confirmation", routes.SendRSVPConfirmation) // Send RSVP confirmation
+	app.Post("/announcements/create", routes.CreateAnnouncement)       // Create an announcement
 
-	// Create a mock controller
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	// Create the mock email service
-	mockEmailService := NewMockEmailService(ctrl)
-	mockEmailService.EXPECT().SendEmail(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).Times(1)
-
-	// Set the mock email service in the routes package
-	routes.EmailService = mockEmailService
-
-	// Initialize the app
-	app := fiber.New()
-
-	// Set up the routes
-	app.Post("/events/send-confirmation", routes.SendRSVPConfirmation)
-
-	// Create request payload
-	payload := map[string]string{
-		"email": "user@example.com",
-		"event": "Test Event",
-	}
-	body, _ := json.Marshal(payload)
-
-	// Create the request
-	req := httptest.NewRequest("POST", "/events/send-confirmation", bytes.NewBuffer(body))
-	req.Header.Set("Content-Type", "application/json")
-
-	// Execute the request
-	resp, err := app.Test(req)
-
-	// Ensure the request was successful
-	if err != nil {
-		t.Fatalf("Failed to make request: %v", err)
-	}
-
-	// Assert the status code is 200 OK
-	assert.Equal(t, 200, resp.StatusCode, "Expected status 200")
-
-	// Further assertions can be made based on response
-	var response map[string]interface{}
-	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
-		t.Fatalf("Failed to decode response: %v", err)
-	}
-
-	// Ensure the message indicates the email was sent
-	assert.Equal(t, "RSVP confirmed and email sent!", response["message"], "Expected confirmation message")
-}
-
-// Test the SendRSVPConfirmation with missing fields
-func TestSendRSVPConfirmationMissingFields(t *testing.T) {
-	// Initialize the test database
-	initTestDB(t)
-
-	// Initialize the app
-	app := fiber.New()
-
-	// Set up the routes
-	app.Post("/events/send-confirmation", routes.SendRSVPConfirmation)
-
-	// Create request payload with missing fields
-	payload := map[string]string{}
-	body, _ := json.Marshal(payload)
-
-	// Create the request
-	req := httptest.NewRequest("POST", "/events/send-confirmation", bytes.NewBuffer(body))
-	req.Header.Set("Content-Type", "application/json")
-
-	// Execute the request
-	resp, err := app.Test(req)
-
-	// Ensure the request was successful
-	if err != nil {
-		t.Fatalf("Failed to make request: %v", err)
-	}
-
-	// Assert the status code is 400 Bad Request
-	assert.Equal(t, 400, resp.StatusCode, "Expected status 400 for missing fields")
-}
-
-// Test the SendRSVPConfirmation with an invalid email
-func TestSendRSVPConfirmationInvalidEmail(t *testing.T) {
-	// Initialize the test database
-	initTestDB(t)
-
-	// Initialize the app
-	app := fiber.New()
-
-	// Set up the routes
-	app.Post("/events/send-confirmation", routes.SendRSVPConfirmation)
-
-	// Create request payload with an invalid email
-	payload := map[string]string{
-		"email": "invalid-email",
-		"event": "Test Event",
-	}
-	body, _ := json.Marshal(payload)
-
-	// Create the request
-	req := httptest.NewRequest("POST", "/events/send-confirmation", bytes.NewBuffer(body))
-	req.Header.Set("Content-Type", "application/json")
-
-	// Execute the request
-	resp, err := app.Test(req)
-
-	// Ensure the request was successful
-	if err != nil {
-		t.Fatalf("Failed to make request: %v", err)
-	}
-
-	// Assert the status code is 400 Bad Request for invalid email
-	assert.Equal(t, 400, resp.StatusCode, "Expected status 400 for invalid email format")
+	// Other potential routes (e.g., for user management, etc.)
+	// app.Get("/users", routes.GetUsers)
+	// app.Post("/users", routes.CreateUser)
 }
