@@ -158,6 +158,58 @@ All tests were organized into the following categories:
   - Ensured proper form submission triggers via button selectors.
 - Skipped login in specific tests by intercepting login routes where needed.
 
+---
+
+### 7. Registration and Authentication Enhancements
+
+- **UF Email Restriction**:  
+  User registration is now restricted to `@ufl.edu` domains, ensuring only University of Florida students can register.
+
+- **Password Visibility Toggle**:  
+  Implemented show/hide buttons for both password and confirm-password fields to improve user accessibility during signup.
+
+- **Password Strength Meter**:  
+  A live visual indicator of password strength (Weak, Moderate, Strong) was added to encourage stronger security practices.
+
+- **Username and Email Availability Checks**:  
+  Real-time validation was added from the frontend to check for existing usernames and emails before form submission.
+
+---
+
+### 8. Admin Role Support and Dashboard
+
+- **Role Selection During Registration**:  
+  Users now choose their role (either `admin` or `member`) at the time of registration.
+
+- **Role-Based Login Redirection**:  
+  After successful login:
+  - Members are redirected to the Home page.
+  - Admins are redirected to a dedicated Admin Dashboard.
+
+- **Admin Dashboard**:  
+  - Accessible only to users with the `admin` role.
+  - Hidden from regular users (members).
+  - Includes basic features like managing users, viewing events, and posting announcements.
+
+---
+
+### 9. Event Details and RSVP Functionality
+
+- **Learn More Modal for Events**:  
+  Users can now view detailed information for each event in a modal, improving the user experience without leaving the page.
+
+- **RSVP and Undo RSVP Support**:  
+  Users can RSVP for an event and undo it later if needed. These actions update instantly and are backed by real-time UI changes.
+
+---
+
+### 10. Website UI Styling
+
+- General UI improvements were made across all components for a cleaner, more responsive, and intuitive design.
+- The homepage, event listings, registration and admin pages were restyled and optimized.
+
+---
+
 ## Testing Accomplishments
 
 ### Unit Testing (25 Test Cases)
@@ -221,6 +273,10 @@ All unit tests were executed using Jasmine + Karma, with zero failures.
 - Mouseleave on Dropdown: dropdown would disappear prematurely.
 - Permit Sidebar Visibility: fixed render logic per step.
 - Cypress Timeout & Test Detection: resolved no-tests-found issue.
+
+## Overview of Work Completed
+
+This sprint focused on improving the core user flows, role-based functionality, and event engagement capabilities of the GatorClubLife platform. 
 
 ## Conclusion
 This final sprint encapsulated the complete end-to-end implementation of the Permits workflow, Organization discovery, user profile experience, and submission management. By ensuring robust Cypress automation and unit test coverage, the application has reached a feature-complete and test-validated state.
