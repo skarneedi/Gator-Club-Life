@@ -1,4 +1,3 @@
-// events.go
 package routes
 
 import (
@@ -50,8 +49,8 @@ func SendRSVPConfirmation(c *fiber.Ctx) error {
 		Event string `json:"event"`
 	}
 
-	// Parsing the RSVP data
-	if err := c.BodyParser(&body); err != nil {
+	// Parse and validate the RSVP data
+	if err := c.BodyParser(&body); err != nil || body.Email == "" || body.Event == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "Invalid RSVP payload",
 		})
@@ -64,13 +63,13 @@ func SendRSVPConfirmation(c *fiber.Ctx) error {
 	subject := "RSVP Confirmation for " + body.Event
 	bodyText := fmt.Sprintf("Hi,\n\nYou have successfully RSVPed to the event: %s.\n\nWe look forward to seeing you!\n\n- Gator Club Life Team", body.Event)
 
-	// Constructing the email message
+	// Construct the email message
 	msg := "From: " + from + "\n" +
 		"To: " + to + "\n" +
 		"Subject: " + subject + "\n\n" +
 		bodyText
 
-	// Sending the email via Gmail SMTP server
+	// Send the email
 	auth := smtp.PlainAuth("", from, password, "smtp.gmail.com")
 	err := smtp.SendMail("smtp.gmail.com:587", auth, from, []string{to}, []byte(msg))
 	if err != nil {
@@ -83,5 +82,24 @@ func SendRSVPConfirmation(c *fiber.Ctx) error {
 	fmt.Println("✅ RSVP email sent to:", to)
 	return c.JSON(fiber.Map{
 		"message": "RSVP confirmed and email sent!",
+	})
+}
+
+func CreateEvent(c *fiber.Ctx) error {
+	var newEvent database.Event
+	if err := c.BodyParser(&newEvent); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid event data",
+		})
+	}
+
+	if err := database.DB.Create(&newEvent).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Failed to create event",
+		})
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"event_id": newEvent.EventID,
 	})
 }
