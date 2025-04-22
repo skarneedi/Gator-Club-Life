@@ -1,94 +1,194 @@
-package main
+package routes_test
 
 import (
 	"backend/database"
-	"backend/middleware"
 	"backend/routes"
-	"fmt"
-	"log"
-
-	_ "backend/docs"
+	"bytes"
+	"encoding/json"
+	"net/http/httptest"
+	"testing"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/gofiber/fiber/v2/middleware/session"
-	fiberSwagger "github.com/swaggo/fiber-swagger"
+	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
 )
 
-var store = session.New(session.Config{
-	CookieSecure:   false, // ✅ required for localhost HTTP
-	CookieHTTPOnly: true,
-	CookieSameSite: "None", // ❗ this is the key fix!
-	Expiration:     0,
-})
+// Initialize the test database
+func initTestDB(t *testing.T) {
+	database.InitTestDB()
 
-func main() {
-	fmt.Println("Starting Gator-Club-Life Backend...")
-	database.InitDB()
-	fmt.Println("Database Connection Successful!")
+	// Migrate the necessary models for the test
+	err := database.DB.AutoMigrate(&database.Event{}, &database.User{})
+	if err != nil {
+		t.Fatalf("Failed to migrate models: %v", err)
+	}
+}
 
+// Test the GetEvents endpoint
+func TestGetEvents(t *testing.T) {
+	// Initialize the test database
+	initTestDB(t)
+
+	// Create some test events and users
+	event := database.Event{
+		EventName:        "Test Event",
+		EventDescription: "A test event for unit testing.",
+		EventLocation:    "Test Location",
+		EventCategories:  "Test Category",
+		EventDate:        1622541600, // Unix timestamp for testing
+		ClubID:           1,
+	}
+
+	// Add the event to the test DB
+	if err := database.DB.Create(&event).Error; err != nil {
+		t.Fatalf("Failed to insert test event: %v", err)
+	}
+
+	// Initialize the app
 	app := fiber.New()
 
-	app.Use(cors.New(cors.Config{
-		AllowOrigins:     "http://localhost:4200",
-		AllowCredentials: true,
-	}))
+	// Set up the routes
+	app.Get("/events", routes.GetEvents)
 
-	routes.SetStore(store)
-	middleware.SetStore(store)
+	// Create the request
+	req := httptest.NewRequest("GET", "/events", nil)
 
-	app.Use(middleware.SessionContext())
+	// Execute the request
+	resp, err := app.Test(req)
 
-	app.Get("/session-check", func(c *fiber.Ctx) error {
-		return c.JSON(fiber.Map{
-			"user_email": c.Locals("user_email"),
-			"user_id":    c.Locals("user_id"),
-			"user_role":  c.Locals("user_role"),
-		})
-	})
+	// Ensure the request was successful
+	if err != nil {
+		t.Fatalf("Failed to make request: %v", err)
+	}
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Welcome to Gator-Club-Life!")
-	})
-	app.Get("/swagger/*", fiberSwagger.WrapHandler)
+	// Assert the status code is 200 OK
+	assert.Equal(t, 200, resp.StatusCode, "Expected status 200")
 
-	app.Get("/users", routes.GetUsers)
-	app.Post("/users/create", routes.CreateUser)
-	app.Post("/login", routes.Login)
-	app.Post("/logout", routes.Logout)
+	// Further assertions on the response body
+	var events []map[string]interface{}
+	if err := json.NewDecoder(resp.Body).Decode(&events); err != nil {
+		t.Fatalf("Failed to decode response: %v", err)
+	}
 
-	app.Get("/clubs", routes.GetClubs)
-	app.Get("/clubs/:id", middleware.RequireAuth(), routes.GetClubByID)
-	app.Get("/clubs/:id/officers", middleware.RequireAuth(), routes.GetOfficersByClubID)
+	// Ensure that at least 1 event is returned
+	assert.Len(t, events, 1, "Expected 1 event to be returned")
+}
 
-	app.Get("/events", middleware.RequireAuth(), routes.GetEvents)
-	app.Post("/events/send-confirmation", middleware.RequireAuth(), routes.SendRSVPConfirmation)
+// Test the SendRSVPConfirmation endpoint
+func TestSendRSVPConfirmation(t *testing.T) {
+	// Initialize the test database
+	initTestDB(t)
 
-	app.Get("/announcements", middleware.RequireAuth(), routes.GetAnnouncements)
-	app.Post("/announcements/create", middleware.RequireAuth(), routes.CreateAnnouncement)
+	// Create a mock controller
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
 
-	app.Post("/event-permits/submit", middleware.RequireAuth(), routes.SubmitFullEventPermit)
-	app.Get("/submissions", middleware.RequireAuth(), routes.GetUserSubmissions)
+	// Create the mock email service
+	mockEmailService := NewMockEmailService(ctrl)
+	mockEmailService.EXPECT().SendEmail(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil).Times(1)
 
-	routes.RegisterBookingRoutes(app)
+	// Set the mock email service in the routes package
+	routes.EmailService = mockEmailService
 
-	app.Get("/debug-session", func(c *fiber.Ctx) error {
-		val := c.Locals("session")
-		if val == nil {
-			fmt.Println("⚠️ No session attached to context")
-			return c.SendString("No session found in context")
-		}
-		sess := val.(*session.Session)
+	// Initialize the app
+	app := fiber.New()
 
-		email := sess.Get("user_email")
-		if email == nil {
-			fmt.Println("⚠️ Session exists, but no user_email stored")
-			return c.SendString("Session exists but no user_email set")
-		}
+	// Set up the routes
+	app.Post("/events/send-confirmation", routes.SendRSVPConfirmation)
 
-		fmt.Println("✅ Session found for:", email)
-		return c.SendString(fmt.Sprintf("Session found for: %v", email))
-	})
+	// Create request payload
+	payload := map[string]string{
+		"email": "user@example.com",
+		"event": "Test Event",
+	}
+	body, _ := json.Marshal(payload)
 
-	log.Fatal(app.Listen(":8080"))
+	// Create the request
+	req := httptest.NewRequest("POST", "/events/send-confirmation", bytes.NewBuffer(body))
+	req.Header.Set("Content-Type", "application/json")
+
+	// Execute the request
+	resp, err := app.Test(req)
+
+	// Ensure the request was successful
+	if err != nil {
+		t.Fatalf("Failed to make request: %v", err)
+	}
+
+	// Assert the status code is 200 OK
+	assert.Equal(t, 200, resp.StatusCode, "Expected status 200")
+
+	// Further assertions can be made based on response
+	var response map[string]interface{}
+	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
+		t.Fatalf("Failed to decode response: %v", err)
+	}
+
+	// Ensure the message indicates the email was sent
+	assert.Equal(t, "RSVP confirmed and email sent!", response["message"], "Expected confirmation message")
+}
+
+// Test the SendRSVPConfirmation with missing fields
+func TestSendRSVPConfirmationMissingFields(t *testing.T) {
+	// Initialize the test database
+	initTestDB(t)
+
+	// Initialize the app
+	app := fiber.New()
+
+	// Set up the routes
+	app.Post("/events/send-confirmation", routes.SendRSVPConfirmation)
+
+	// Create request payload with missing fields
+	payload := map[string]string{}
+	body, _ := json.Marshal(payload)
+
+	// Create the request
+	req := httptest.NewRequest("POST", "/events/send-confirmation", bytes.NewBuffer(body))
+	req.Header.Set("Content-Type", "application/json")
+
+	// Execute the request
+	resp, err := app.Test(req)
+
+	// Ensure the request was successful
+	if err != nil {
+		t.Fatalf("Failed to make request: %v", err)
+	}
+
+	// Assert the status code is 400 Bad Request
+	assert.Equal(t, 400, resp.StatusCode, "Expected status 400 for missing fields")
+}
+
+// Test the SendRSVPConfirmation with an invalid email
+func TestSendRSVPConfirmationInvalidEmail(t *testing.T) {
+	// Initialize the test database
+	initTestDB(t)
+
+	// Initialize the app
+	app := fiber.New()
+
+	// Set up the routes
+	app.Post("/events/send-confirmation", routes.SendRSVPConfirmation)
+
+	// Create request payload with an invalid email
+	payload := map[string]string{
+		"email": "invalid-email",
+		"event": "Test Event",
+	}
+	body, _ := json.Marshal(payload)
+
+	// Create the request
+	req := httptest.NewRequest("POST", "/events/send-confirmation", bytes.NewBuffer(body))
+	req.Header.Set("Content-Type", "application/json")
+
+	// Execute the request
+	resp, err := app.Test(req)
+
+	// Ensure the request was successful
+	if err != nil {
+		t.Fatalf("Failed to make request: %v", err)
+	}
+
+	// Assert the status code is 400 Bad Request for invalid email
+	assert.Equal(t, 400, resp.StatusCode, "Expected status 400 for invalid email format")
 }
