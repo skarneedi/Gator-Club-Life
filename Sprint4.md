@@ -109,3 +109,118 @@ All tests were organized into the following categories:
 - `TestDuplicateUserRegistration` – Prevents duplicates.
 ![Unit Tests for Users API](ResultScreenshots/UsersAPI_S4_UnitTestResults.png)
 
+
+## Frontend Development Overview
+
+### 1. Permits Workflow (End-to-End Implementation)
+- Developed a complete multi-step Permits workflow:
+  - Step 1: Basic Information – Captures core event details.
+  - Step 2: Event Dates – Calendar integration with FullCalendar.
+  - Step 3: Additional Forms – File upload and notes support.
+  - Step 4: Final Review – Consolidated permit summary view.
+- Integrated EventPermitService for shared state across steps.
+- Added sidebar UI to visually track user progress.
+
+### 2. Organizations Page
+- Built a fully functional Organizations listing page.
+- Features:
+  - Dynamic search bar (by name, location, or keywords).
+  - Sidebar category filters for streamlined browsing.
+  - Interactive cards with routing to organization detail view.
+- Applied responsive design using TailwindCSS utilities.
+
+### 3. Organization Details Page
+- Dynamically loads organization data using route parameters.
+- Fetches and displays:
+  - Officer/Advisor data.
+  - Purpose section.
+  - Linked announcements and upcoming events.
+- Modular layout with sidebar and content zones.
+
+### 4. My Submissions Component
+- Structured into three tabs: My Permits, Org. Registrations, and Applications.
+- After discussion we decided to only have My Permits and removed the remaining tabs.
+- Built My Permits section with:
+  - Search and filter functionality.
+  - Status chips for Completed, Pending, and Denied permits.
+  - Clean table layout to view past submissions.
+
+### 5. My Events Component
+- Developed an interactive view showing a user’s saved or RSVP'd events.
+- Included:
+  - Filter by category.
+  - Search by event name.
+  - Favorite toggling.
+
+### 6. Login Workflow Debugging
+- Resolved login-related Cypress testing bugs:
+  - Fixed routing issues during Cypress test login.
+  - Ensured proper form submission triggers via button selectors.
+- Skipped login in specific tests by intercepting login routes where needed.
+
+## Testing Accomplishments
+
+### Unit Testing (25 Test Cases)
+All unit tests were executed using Jasmine + Karma, with zero failures.  
+
+**Highlights:**
+- Login Error Handling  
+- Sidebar Dropdown (Click, MouseLeave, Toggle)
+- Organization Cards Filtering  
+- Permit Navigation Logic  
+- Dynamic Page Load for Org Details
+
+**Unit Test Coverage Snapshot:**
+
+| Component | Test Cases |
+|-----------|------------|
+| OrganizationsComponent | should create |
+| EventsComponent | create, search, category filtering |
+| PermitsComponent | should create |
+| LoginComponent | error handling, validation |
+| AppComponent (Dropdown) | toggle, click outside, render |
+| MySubmissionsComponent | should create |
+| MyProfileComponent | editable phone, toggle edit |
+| AuthGuard, AuthService | creation, guards |
+| OrganizationDetailsComponent | dynamic data test |
+| AnnouncementsComponent | structure, data render |
+
+**Total Unit Tests:** 25  
+**Failures:** 0  
+**Screenshot:** 
+![image](https://github.com/user-attachments/assets/91f7c216-9787-4eab-92e2-95ece4f3ad9c)
+![image](https://github.com/user-attachments/assets/c3ffa612-a0a5-48a2-8559-55818892ca39)
+![image](https://github.com/user-attachments/assets/c65eeac9-da6d-42e0-8c76-b8e7023d4db5)
+![image](https://github.com/user-attachments/assets/3b534b20-c507-4a76-82b8-3d09b0d21a57)
+![image](https://github.com/user-attachments/assets/a16d91a1-5a75-4ae0-96b4-2e90200eeac2)
+![image](https://github.com/user-attachments/assets/55bbaedd-f47f-4b17-a08e-6aab178961f2)
+![image](https://github.com/user-attachments/assets/f778cd99-466f-4a66-8352-c9b7a69f3294)
+![image](https://github.com/user-attachments/assets/0996332b-ad8e-4d2f-a8a1-4ce3c83101af)
+![image](https://github.com/user-attachments/assets/9d1fe894-7532-43ad-a17e-31e73603ccf6)
+![image](https://github.com/user-attachments/assets/01ba254d-39d4-4b70-8daf-6ba91b120309)
+![image](https://github.com/user-attachments/assets/ae8d1912-b826-4393-b536-2cd61066bdca)
+![image](https://github.com/user-attachments/assets/16d1a119-aba0-484e-8c7e-4ba1256ffbc6)
+![image](https://github.com/user-attachments/assets/0e166870-fed7-4b46-a369-800d188aab1d)
+
+### Cypress End-to-End Testing
+
+- Wrote full E2E Cypress workflows for:
+![image](https://github.com/user-attachments/assets/0e5976cc-c613-442f-b73f-c9715627222e)
+
+![image](https://github.com/user-attachments/assets/5e89618c-5435-41d6-abdc-c8d3583fca53)
+
+- Used `cy.intercept()` and dynamic assertions to mock APIs where applicable.
+
+**Cypress Highlights:**
+- `cy.get('button[type="submit"]')` for form auth.
+- `.organization-card` load tests passed after adding `timeout`.
+
+## Bugs Fixed / Issues Closed
+- Login Submit Selector bug: corrected Cypress login trigger.
+- Organization Filtering Cypress Error: fixed missing DOM issue.
+- Mouseleave on Dropdown: dropdown would disappear prematurely.
+- Permit Sidebar Visibility: fixed render logic per step.
+- Cypress Timeout & Test Detection: resolved no-tests-found issue.
+
+## Conclusion
+This final sprint encapsulated the complete end-to-end implementation of the Permits workflow, Organization discovery, user profile experience, and submission management. By ensuring robust Cypress automation and unit test coverage, the application has reached a feature-complete and test-validated state.
