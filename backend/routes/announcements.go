@@ -65,8 +65,14 @@ func CreateAnnouncement(c *fiber.Ctx) error {
 	if user.UserRole != "admin" {
 		return c.Status(fiber.StatusUnauthorized).SendString("Only admins can post announcements")
 	}
+	
+	ann.AnnouncementCreatedAt = time.Now()
+
+	if err := database.DB.Create(&ann).Error; err != nil {
+		fmt.Println("Error saving announcement:", err)
+		return c.Status(fiber.StatusInternalServerError).SendString("Error saving announcement")
+	}
 
 	
-
 	return c.JSON(ann)
 }
