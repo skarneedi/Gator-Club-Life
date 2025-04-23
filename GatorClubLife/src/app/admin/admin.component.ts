@@ -1,9 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { AnnouncementsService } from '../services/announcements.service';  // Import the service
-import { HttpClient } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { AnnouncementsService } from '../services/announcements.service';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-admin',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    HttpClientModule,
+  ],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.css']
 })
@@ -19,10 +27,13 @@ export class AdminComponent implements OnInit {
   categories: string[] = [];
   maintenanceMode = false;
 
-  newAnnouncement = { title: '', content: '', category: '' }; // Store the new announcement data
+  newAnnouncement = { title: '', content: '', category: '' };
   announcementPosted = false;
 
-  constructor(private announcementsService: AnnouncementsService, private http: HttpClient) {}
+  constructor(
+    private announcementsService: AnnouncementsService,
+    private http: HttpClient
+  ) {}
 
   ngOnInit(): void {
     this.loadUsers();
@@ -34,18 +45,15 @@ export class AdminComponent implements OnInit {
     this.loadCategories();
   }
 
-  // Switch active tab (e.g., users, events)
   switchTab(tab: string): void {
     this.activeTab = tab;
   }
 
-  // Load users from backend (you can modify this based on actual API endpoint)
   loadUsers(): void {
     this.http.get<any[]>('http://localhost:8080/users', { withCredentials: true })
       .subscribe(data => this.users = data);
   }
 
-  // Load events (this can be replaced with dynamic data from your backend)
   loadEvents(): void {
     this.events = [
       { id: 1, title: 'Robotics Expo', date: '2025-04-25', location: 'Engineering Hall' },
@@ -53,7 +61,6 @@ export class AdminComponent implements OnInit {
     ];
   }
 
-  // Load organizations (replace with dynamic data from your backend)
   loadOrganizations(): void {
     this.organizations = [
       { name: 'AI Explorers', description: 'Interested in AI & ML' },
@@ -62,7 +69,6 @@ export class AdminComponent implements OnInit {
     ];
   }
 
-  // Load permits (replace with dynamic data from your backend)
   loadPermits(): void {
     this.permits = [
       { id: 1, event: 'Charity Run', submittedBy: 'sonali@ufl.edu', status: 'Pending' },
@@ -70,7 +76,6 @@ export class AdminComponent implements OnInit {
     ];
   }
 
-  // Load logs (replace with dynamic data from your backend)
   loadLogs(): void {
     this.logs = [
       'User yash@ufl.edu created an event.',
@@ -79,7 +84,6 @@ export class AdminComponent implements OnInit {
     ];
   }
 
-  // Load feedback (replace with dynamic data from your backend)
   loadFeedback(): void {
     this.feedback = [
       { name: 'Emma', message: 'Great experience at the AI event!' },
@@ -87,45 +91,36 @@ export class AdminComponent implements OnInit {
     ];
   }
 
-  // Load categories (you can replace with dynamic categories)
   loadCategories(): void {
     this.categories = ['Health', 'Tech', 'Cultural', 'Fitness'];
   }
 
-  // Delete event (this will update the local events list)
   deleteEvent(id: number): void {
     this.events = this.events.filter(e => e.id !== id);
   }
 
-  // Post a new announcement using the AnnouncementsService
   postAnnouncement(): void {
     if (this.newAnnouncement.title && this.newAnnouncement.content) {
-      // Call the service to post the new announcement to the backend
       this.announcementsService.postAnnouncement(this.newAnnouncement);
       this.announcementPosted = true;
-      
-      // Reset the announcement fields
+
       setTimeout(() => {
         this.announcementPosted = false;
       }, 3000);
 
-      // Reset form data
       this.newAnnouncement = { title: '', content: '', category: '' };
     }
   }
 
-  // Approve permit (this is just a simple status update)
   approvePermit(id: number): void {
     const permit = this.permits.find(p => p.id === id);
     if (permit) permit.status = 'Approved';
   }
 
-  // Toggle maintenance mode on/off
   toggleMaintenance(): void {
     this.maintenanceMode = !this.maintenanceMode;
   }
 
-  // Add a new category
   addCategory(newCat: string): void {
     if (newCat && !this.categories.includes(newCat)) {
       this.categories.push(newCat);
